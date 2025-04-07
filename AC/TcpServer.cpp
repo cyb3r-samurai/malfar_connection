@@ -8,7 +8,7 @@ TcpServer::TcpServer(QObject* parent) :
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist(-127, 128);
     signal_data = new QList<c_pair>;
-    for (qsizetype i =0; i < 1000; i++) {
+    for (qsizetype i =0; i < 1100; i++) {
         c_pair data;
         data.I = dist(rng);
         data.Q = dist(rng);
@@ -37,14 +37,14 @@ void TcpServer::keep_alive()
     }
     Header header_test;
     header_test.msg_type = 0x83;
-    header_test.n =  No_alignmet_size::report + 40;
+    header_test.n =  No_alignmet_size::report + 512;
     qDebug() << "Header n " << header_test.n;
     QByteArray header_bytes = header_test.serializeStruct();
-    Report test(20);
-    test.m = 20;
-    for(qsizetype i = 0;i < 20; i++) {
+    Report test(256);
+    test.m = 256;
+    for(qsizetype i = 0;i < 256; i++) {
         test.info[i][0] =signal_data->at(i).I;
-        test.info[i][1] = signal_data->at(i+20).Q;
+        test.info[i][1] = signal_data->at(i+256).Q;
     }
     QByteArray data = test.serializeStruct();
     socket_->write(header_bytes);
@@ -53,14 +53,14 @@ void TcpServer::keep_alive()
 
     Header header_test2;
     header_test2.msg_type = 0x83;
-    header_test2.n =  No_alignmet_size::report + 40;
+    header_test2.n =  No_alignmet_size::report + 512;
     QByteArray header_bytes2 = header_test2.serializeStruct();
-    Report test2(20);
+    Report test2(256);
     test2.number = 8;
-    test2.m = 20;
-    for(qsizetype i = 0;i < 20; i++) {
-        test2.info[i][0] =signal_data->at(i+40).I;
-        test2.info[i][1] = signal_data->at(i+60).Q;
+    test2.m = 256;
+    for(qsizetype i = 0;i < 256; i++) {
+        test2.info[i][0] =signal_data->at(i+512).I;
+        test2.info[i][1] = signal_data->at(i+768).Q;
     }
     QByteArray data2 = test2.serializeStruct();
     socket_->write(header_bytes2);
@@ -76,7 +76,7 @@ void TcpServer::on_client_connecting()
     socketList_.append(socket_);
     m_timer_ = new QTimer(this);
     connect(m_timer_, &QTimer::timeout, this, &TcpServer::keep_alive, Qt::QueuedConnection);
-    m_timer_->start(1000);
+    m_timer_->start(5000);
 }
 
 void TcpServer::client_disconnected()

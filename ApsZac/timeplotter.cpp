@@ -9,7 +9,7 @@ TimePlotter::TimePlotter(QCustomPlot* plotter, QObject *parent) : QObject(parent
     iGraph->setPen(QPen(Qt::blue));
     qGraph->setPen(QPen(Qt::red));
     plot->xAxis->setLabel("t");
-    plot->yAxis->setLabel("I");
+    plot->yAxis->setLabel("I/Q");
    // plot->yAxis2->setLabel("Q");
    // plot->yAxis2->setVisible(true);
     plot->setInteractions(QCP::iRangeDrag |

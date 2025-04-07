@@ -61,6 +61,7 @@ public:
     QListView *list_ka;
     QHBoxLayout *horizontalLayout;
     QCustomPlot *pl_time;
+    QCustomPlot *dft_plot;
     QHBoxLayout *horizontalLayout_3;
     QListView *listView;
     QVBoxLayout *verticalLayout_2;
@@ -219,6 +220,14 @@ public:
         pl_time->setMinimumSize(QSize(100, 0));
 
         horizontalLayout->addWidget(pl_time);
+
+        dft_plot = new QCustomPlot(groupBox_3);
+        dft_plot->setObjectName("dft_plot");
+        sizePolicy4.setHeightForWidth(dft_plot->sizePolicy().hasHeightForWidth());
+        dft_plot->setSizePolicy(sizePolicy4);
+        dft_plot->setMinimumSize(QSize(300, 0));
+
+        horizontalLayout->addWidget(dft_plot);
 
 
         horizontalLayout_2->addLayout(horizontalLayout);

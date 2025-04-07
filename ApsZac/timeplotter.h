@@ -8,6 +8,7 @@ class TimePlotter : public QObject
 {
     Q_OBJECT
 public:
+
     explicit TimePlotter(QCustomPlot *plotter, QObject *parent = nullptr);
     QCustomPlot *plot;
     QCPGraph* iGraph;

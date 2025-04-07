@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->list_ka->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onKaSelected);
     time_plotter = new TimePlotter(ui->pl_time, this);
+    dft_plotter = new DftPlotter(ui->dft_plot, this);
 
 }
 
@@ -87,8 +88,9 @@ void MainWindow::replotGraphs()
     }
 
     CelData cel = m_celmodel->getKaData(selectedKa);
-    QVector<double> time_data;
+    m_dsp.input(cel.iData, cel.qData);
 
+    QVector<double> time_data;
     time_data.resize(cel.iData.count());
 
     for(qsizetype i = 0; i < cel.iData.count(); i++) {
@@ -96,6 +98,9 @@ void MainWindow::replotGraphs()
     }
     time_plotter->setIData(time_data, cel.iData);
     time_plotter->setQData(time_data, cel.qData);
+
+    dft_plotter->setAmpDistData(m_dsp.freqVector(), m_dsp.ampDistDb());
+
 }
 
 void MainWindow::on_btnConnect_clicked()

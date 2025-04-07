@@ -9,6 +9,8 @@
 #include "c_window.h"
 #include "timeplotter.h"
 #include "celmodel.h"
+#include "dftplotter.h"
+#include "dsp.h"
 
 #include <QAbstractSocket>
 #include <QMainWindow>
@@ -56,8 +58,11 @@ private:
     QList<SubSessionInfo> * test_data_;
     C_window *c_window;
     TimePlotter *time_plotter;
+    DftPlotter *dft_plotter;
     CelModel *m_celmodel;
     QStandardItemModel *m_kamodel;
+    Dsp m_dsp;
+
 
     int selectedKa;
 

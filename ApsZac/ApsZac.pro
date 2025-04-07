@@ -13,10 +13,13 @@ SOURCES += \
     Message.cpp \
     c_window.cpp \
     celmodel.cpp \
+    dftplotter.cpp \
+    dsp.cpp \
     main.cpp \
     mainwindow.cpp \
     messagehandler.cpp \
     messageprocessor.cpp \
+    minfft.c \
     packet.cpp \
     qcustomplot.cpp \
     simpletabledata.cpp \
@@ -27,9 +30,12 @@ HEADERS += \
     Message.h \
     c_window.h \
     celmodel.h \
+    dftplotter.h \
+    dsp.h \
     mainwindow.h \
     messagehandler.h \
     messageprocessor.h \
+    minfft.h \
     packet.h \
     qcustomplot.h \
     simpletabledata.h \

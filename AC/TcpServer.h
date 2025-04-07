@@ -48,6 +48,5 @@ private:
 
     Header DeserializeHeader(QByteArray& data);
     QList<c_pair>* signal_data;
-
 };
 #endif // TCPSERVER_H

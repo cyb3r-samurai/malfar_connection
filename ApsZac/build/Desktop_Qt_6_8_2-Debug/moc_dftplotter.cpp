@@ -1,12 +1,14 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'c_dialog.h'
+** Meta object code from reading C++ file 'dftplotter.h'
 **
 ** Created by: The Qt Meta Object Compiler version 68 (Qt 6.8.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../c_dialog.h"
+#include "../../dftplotter.h"
+#include <QtGui/qtextcursor.h>
+#include <QtGui/qscreen.h>
 #include <QtCore/qmetatype.h>
 
 #include <QtCore/qtmochelpers.h>
@@ -16,7 +18,7 @@
 
 #include <QtCore/qxptype_traits.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'c_dialog.h' doesn't include <QObject>."
+#error "The header file 'dftplotter.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 68
 #error "This file was generated using the moc from 6.8.2. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -31,19 +33,19 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 QT_WARNING_DISABLE_GCC("-Wuseless-cast")
 namespace {
-struct qt_meta_tag_ZN8C_DialogE_t {};
+struct qt_meta_tag_ZN10DftPlotterE_t {};
 } // unnamed namespace
 
 
 #ifdef QT_MOC_HAS_STRINGDATA
-static constexpr auto qt_meta_stringdata_ZN8C_DialogE = QtMocHelpers::stringData(
-    "C_Dialog"
+static constexpr auto qt_meta_stringdata_ZN10DftPlotterE = QtMocHelpers::stringData(
+    "DftPlotter"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
 #endif // !QT_MOC_HAS_STRINGDATA
 
-Q_CONSTINIT static const uint qt_meta_data_ZN8C_DialogE[] = {
+Q_CONSTINIT static const uint qt_meta_data_ZN10DftPlotterE[] = {
 
  // content:
       12,       // revision
@@ -59,44 +61,44 @@ Q_CONSTINIT static const uint qt_meta_data_ZN8C_DialogE[] = {
        0        // eod
 };
 
-Q_CONSTINIT const QMetaObject C_Dialog::staticMetaObject = { {
-    QMetaObject::SuperData::link<QDialog::staticMetaObject>(),
-    qt_meta_stringdata_ZN8C_DialogE.offsetsAndSizes,
-    qt_meta_data_ZN8C_DialogE,
+Q_CONSTINIT const QMetaObject DftPlotter::staticMetaObject = { {
+    QMetaObject::SuperData::link<QObject::staticMetaObject>(),
+    qt_meta_stringdata_ZN10DftPlotterE.offsetsAndSizes,
+    qt_meta_data_ZN10DftPlotterE,
     qt_static_metacall,
     nullptr,
-    qt_incomplete_metaTypeArray<qt_meta_tag_ZN8C_DialogE_t,
+    qt_incomplete_metaTypeArray<qt_meta_tag_ZN10DftPlotterE_t,
         // Q_OBJECT / Q_GADGET
-        QtPrivate::TypeAndForceComplete<C_Dialog, std::true_type>
+        QtPrivate::TypeAndForceComplete<DftPlotter, std::true_type>
     >,
     nullptr
 } };
 
-void C_Dialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void DftPlotter::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    auto *_t = static_cast<C_Dialog *>(_o);
+    auto *_t = static_cast<DftPlotter *>(_o);
     (void)_t;
     (void)_c;
     (void)_id;
     (void)_a;
 }
 
-const QMetaObject *C_Dialog::metaObject() const
+const QMetaObject *DftPlotter::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *C_Dialog::qt_metacast(const char *_clname)
+void *DftPlotter::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_ZN8C_DialogE.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_ZN10DftPlotterE.stringdata0))
         return static_cast<void*>(this);
-    return QDialog::qt_metacast(_clname);
+    return QObject::qt_metacast(_clname);
 }
 
-int C_Dialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int DftPlotter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QDialog::qt_metacall(_c, _id, _a);
+    _id = QObject::qt_metacall(_c, _id, _a);
     return _id;
 }
 QT_WARNING_POP
