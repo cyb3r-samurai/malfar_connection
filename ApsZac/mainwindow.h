@@ -16,6 +16,7 @@
 #include <QMainWindow>
 #include <QMetaEnum>
 #include <QTcpSocket>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -51,7 +52,7 @@ signals:
 
 private:
     Ui::MainWindow* ui;
-    DeviceController controller_;
+    DeviceController* controller_;
     MessageProcessor* m_processor_;
     SimpleTableData* model_;
     MessageStorage message_storage_;
@@ -62,6 +63,7 @@ private:
     CelModel *m_celmodel;
     QStandardItemModel *m_kamodel;
     Dsp m_dsp;
+    QThread *client_thread;
 
 
     int selectedKa;

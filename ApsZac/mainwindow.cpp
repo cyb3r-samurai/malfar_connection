@@ -10,7 +10,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->cB_msg_type->addItem("Состояние приема", QVariant(0));
     ui->cB_msg_type->addItem("Активные сеансы", QVariant(1));
     ui->cB_msg_type->addItem("Состояние Ас", QVariant(2));
+
+    client_thread = new QThread;
+    controller_ = new DeviceController;
+
+    controller_->moveToThread(client_thread);
     setDeviceController();
+    client_thread->start();
 
     model_ = new SimpleTableData();
     model_->populate();
@@ -20,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_celmodel = new CelModel;
     m_processor_ = new MessageProcessor(nullptr, &message_storage_, model_, m_celmodel);
     connect(this, &MainWindow::on_request, m_processor_, &MessageProcessor::set_request);
-    connect(m_processor_, &MessageProcessor::message_ready, &controller_, &DeviceController::send);
-    connect(&controller_, &DeviceController::data_ready, m_processor_, &MessageProcessor::device_data_ready);
+    connect(m_processor_, &MessageProcessor::message_ready, controller_, &DeviceController::send);
+    connect(controller_, &DeviceController::data_ready, m_processor_, &MessageProcessor::device_data_ready);
 
     m_kamodel = new QStandardItemModel;
     ui->list_ka->setModel(m_kamodel);
@@ -74,10 +80,10 @@ void MainWindow::kaReceived(int kaNumber)
 
 void MainWindow::setDeviceController()
 {
-    connect(&controller_, &DeviceController::connected, this, &MainWindow::device_connected);
-    connect(&controller_, &DeviceController::disconnected, this, &MainWindow::device_disconnected);
-    connect(&controller_, &DeviceController::state_changed, this, &MainWindow::device_state_changed);
-    connect(&controller_, &DeviceController::error_occured, this, &MainWindow::device_error_occured);
+    connect(controller_, &DeviceController::connected, this, &MainWindow::device_connected);
+    connect(controller_, &DeviceController::disconnected, this, &MainWindow::device_disconnected);
+    connect(controller_, &DeviceController::state_changed, this, &MainWindow::device_state_changed);
+    connect(controller_, &DeviceController::error_occured, this, &MainWindow::device_error_occured);
  //   connect(&controller_, &DeviceController::data_ready, this, &MainWindow::device_data_ready);
 }
 
@@ -87,8 +93,10 @@ void MainWindow::replotGraphs()
         return;
     }
 
+    qDebug() << "Mainwindow thread " << QThread::currentThreadId() ;
+
     CelData cel = m_celmodel->getKaData(selectedKa);
-    m_dsp.input(cel.iData, cel.qData);
+//    m_dsp.input(cel.iData, cel.qData);
 
     QVector<double> time_data;
     time_data.resize(cel.iData.count());
@@ -99,22 +107,25 @@ void MainWindow::replotGraphs()
     time_plotter->setIData(time_data, cel.iData);
     time_plotter->setQData(time_data, cel.qData);
 
-    dft_plotter->setAmpDistData(m_dsp.freqVector(), m_dsp.ampDistDb());
+ //   dft_plotter->setAmpDistData(m_dsp.freqVector(), m_dsp.ampDistDb());
 
 }
 
 void MainWindow::on_btnConnect_clicked()
 {
-    if(controller_.is_connected()) {
-        controller_.disconnect();
+    if(controller_->is_connected()) {
+        controller_->disconnect();
     }
     else {
+       // client_thread = new QThread;
+       // controller_.moveToThread(client_thread);
+       // connect()
         auto ip = ui->lnIPAddress->text();
         auto port = ui->spinPort->value();
         QHostAddress address(ip);
         if (QAbstractSocket::IPv4Protocol == address.protocol()) {
         }
-        controller_.connect_to_device(ip, port);
+        controller_->connect_to_device(ip, port);
     }
 }
 

@@ -56,7 +56,8 @@ void DeviceController::socket_state_changed(QAbstractSocket::SocketState state)
 }
 
 void DeviceController::socket_ready_read()
-    {
+{
+    qDebug() << "socket thread " << QThread::currentThreadId() ;
     while(socket_.bytesAvailable() >= HEADER_SIZE) {
         QByteArray header_bytes = socket_.read(HEADER_SIZE);
         Header header = DeserializeHeader(header_bytes);

@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QDataStream>
+#include <QThread>
 
 
 class DeviceController : public QObject
