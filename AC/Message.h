@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include <QtTypes>
+//#include <QtTypes>
 #include <QVector>
 #include <QIODevice>
 

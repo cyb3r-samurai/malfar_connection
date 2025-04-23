@@ -10,9 +10,16 @@ QT += widgets
 SOURCES += \
         Message.cpp \
         TcpServer.cpp \
+        ac.cpp \
+        blockingbuffer.cpp \
+        dataserver.cpp \
         main.cpp \
         messageprocessor.cpp \
-        packet.cpp
+        packet.cpp \
+        reportdata.cpp \
+        sector.cpp \
+        session.cpp \
+        sessionfactory.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -22,11 +29,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     Message.h \
     TcpServer.h \
-    fpm/fixed.hpp \
-    fpm/ios.hpp \
-    fpm/math.hpp \
+    ac.h \
+    blockingbuffer.h \
+    dataserver.h \
     messageprocessor.h \
-    packet.h
+    packet.h \
+    reportdata.h \
+    sector.h \
+    session.h \
+    sessionfactory.h
 
 DISTFILES += \
     Signal.txt

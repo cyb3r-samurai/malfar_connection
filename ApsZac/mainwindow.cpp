@@ -14,9 +14,9 @@ MainWindow::MainWindow(QWidget *parent)
     client_thread = new QThread;
     controller_ = new DeviceController;
 
-    controller_->moveToThread(client_thread);
+    //controller_->moveToThread(client_thread);
     setDeviceController();
-    client_thread->start();
+   // client_thread->start();
 
     model_ = new SimpleTableData();
     model_->populate();
