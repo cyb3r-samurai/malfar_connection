@@ -16,6 +16,9 @@ C_window::C_window(QString& number, QWidget *parent)
     ui->cb_pol->addItem("линейная -45%", QVariant(6));
 
     ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+    ui->dateTimeEdit_2->setDateTime(QDateTime::currentDateTime());
+
+
 }
 
 C_window::~C_window()
@@ -54,15 +57,17 @@ void C_window::on_pushButton_3_clicked()
 {
     Cel cel_;
 
-    cel_.number = 21;
-    cel_.sesssion_number = ui->ln_session->text().toUInt();
+    cel_.chanel_number = ui->ln_session->text().toUInt();
     auto data = ui->cb_pol->itemData(ui->cb_pol->currentIndex());
     cel_.polarization = data.toInt();
+    cel_.ka_number = ui->lineEdit->text().toInt();
     float a = ui->ln_freq->text().toFloat();
-    cel_.frequency = (uint32_t)(*(uint32_t*)&a);
-    QDateTime time = ui->dateTimeEdit->dateTime();
-    cel_.time = seconds_since_epoch(time);
-    cel_.step = ui->ln_step->text().toUInt();
+    cel_.frequency = a;
+    QDateTime time_start = ui->dateTimeEdit->dateTime();
+    QDateTime time_end = ui->dateTimeEdit_2->dateTime();
+
+    cel_.start_time = double(time_start.toSecsSinceEpoch()) / double (86400) + 25569;
+    cel_.end_time = double(time_end.toSecsSinceEpoch()) / double(86400) + 25569;
     cel_.m = ui->tableWidget->rowCount();
 
     cel_.cel = new qint16*[cel_.m] ;

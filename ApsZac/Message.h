@@ -16,7 +16,7 @@ public:
 };
 
 namespace No_alignment_size {
-    const quint8 cel = 16;
+    const quint8 cel = 26;
 };
 enum class Request_Type
 {
@@ -127,16 +127,15 @@ struct MessageStorage {
 
 class Cel {
 public:
-    quint16 number;
-    qint8 sesssion_number;
+    quint8 chanel_number;
     qint8 polarization;
+    quint16 ka_number;
     quint32 frequency;
-    quint32 time;
-    quint16 step;
+    double start_time;
+    double end_time;
     quint16 m;
     qint16 **cel;
 
-    friend QDataStream &operator<< (QDataStream &stream, Cel &cel);
+    friend QDataStream &operator << (QDataStream &stream, Cel &cel);
 };
-
 #endif // MESSAGE_H

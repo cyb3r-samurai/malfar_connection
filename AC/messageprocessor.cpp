@@ -8,7 +8,7 @@ MessageProcessor::MessageProcessor(QObject *parent)
 
 void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
 {
-    if(header.msg_type == 0x01) {
+    if(header.msg_type == 0x02) {
         Requst_Message r_m;
         QDataStream stream(&msg_data, QIODevice::ReadOnly);
         stream.setByteOrder(QDataStream::LittleEndian);
@@ -22,8 +22,9 @@ void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data
             QDataStream stream(&msg_data, QIODevice::ReadOnly);
             stream.setByteOrder(QDataStream::LittleEndian);
             Cel cel;
-            qDebug() << "Cel recieved";
             stream >> cel;
+            qDebug() << "Cel recieved";
+            qDebug() << cel.chanel_number;
             emit cel_recieved(std::make_shared<Cel>(std::move(cel)));
         }
     }

@@ -10,7 +10,7 @@ public:
     uint16_t version = 0xAC01;
     uint8_t msg_type;
     uint8_t zero = 0x00;
-    uint32_t time;
+    double time;
     uint32_t n;
 
     QByteArray serializeStruct();

@@ -9,8 +9,7 @@ QByteArray Header::serializeStruct()
 {
     QByteArray data;
     QDataStream stream(&data, QDataStream::WriteOnly);
-    stream.setByteOrder(QDataStream::LittleEndian);
-
+    stream.setByteOrder(QDataStream::BigEndian);
     stream << version << msg_type << zero << time << n;
 
     return data;

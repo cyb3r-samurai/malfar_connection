@@ -1,7 +1,5 @@
 #include "planfactory.h"
 
-
-
 PlanFactory::PlanFactory(std::map<int, DataChanel> *data_plans,
                          std::map<int, SectorPlan> *sector_plans) :
     m_data_plans{data_plans}, m_sector_plans{sector_plans}
@@ -25,7 +23,7 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         if((current_sector_number != sector_number) || (i == cel_plan->m-1)) {
             bool chanel_status =
                 (*m_data_plans)[cel_plan->chanel_number].validateSegment(segment_ptr);
-            if(!chanel_status) {
+            if(chanel_status) {
                 int sector_status =
                     (*m_sector_plans)[current_sector_number].validateSegment(segment_ptr);
                 if (sector_status == 0) {
@@ -33,7 +31,7 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                     (*m_data_plans)[cel_plan->chanel_number].append(segment_ptr);
                 }
             }
-            segment_ptr.reset();
+            //segment_ptr.reset();
             if(i != cel_plan->m-1) {
                 segment_ptr = std::make_shared<SegmentPlan>();
                 sector_number = current_sector_number;
@@ -47,4 +45,9 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         segment_ptr->appendCel(cel_plan);
     }
     return true;
+}
+
+uint8_t PlanFactory::calculate_sector(int16_t vec, const std::vector<Sector> &sector_vector)
+{
+    return 1;
 }

@@ -1,8 +1,24 @@
 #include "sectorplan.h"
 
-SectorPlan::SectorPlan() {}
+#include <QDebug>
 
-int SectorPlan::validateSegment(std::shared_ptr<SegmentPlan>)
+SectorPlan::SectorPlan() {
+ segment_plan  =new std::list<std::shared_ptr<SegmentPlan>>;
+}
+
+void SectorPlan::append(std::shared_ptr<SegmentPlan> planPtr)
+{
+
+    segment_plan->push_back(planPtr);
+}
+
+int SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr)
 {
     return 0;
+}
+
+void SectorPlan::display_info()
+{
+    qDebug() << "display_info";
+    qDebug() << segment_plan->size();
 }

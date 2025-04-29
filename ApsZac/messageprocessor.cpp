@@ -52,17 +52,20 @@ void MessageProcessor::set_request(Request_Type r_t)
 void MessageProcessor::set_cel(Cel cel)
 {
     Header header;
-    header.msg_type = 0x02;
+    header.msg_type = 0x01;
     header.n = No_alignment_size::cel + 4 * cel.m;
 
     QByteArray header_bytes;
     QByteArray message_bytes;
 
     header_bytes = header.serializeStruct();
-
+    qDebug() << cel.start_time;
+    qDebug() << cel.end_time;
     QDataStream stream(&message_bytes, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
     stream << cel;
+    qDebug() << "Message data size";
+    qDebug() << message_bytes.size();
 
     emit message_ready(header_bytes, message_bytes);
 }

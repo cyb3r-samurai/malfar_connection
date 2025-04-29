@@ -1,5 +1,5 @@
 #include "TcpServer.h"
-#define HEADER_SIZE 12
+#define HEADER_SIZE 16
 
 TcpServer::TcpServer(QObject* parent) :
     QObject{parent}
@@ -26,10 +26,12 @@ TcpServer::TcpServer(QObject* parent) :
 
     server_ = new QTcpServer(this);
     message_processor_ = new MessageProcessor();
+    m_ac = new AC;
 
     connect(server_, &QTcpServer::newConnection, this, &TcpServer::on_client_connecting);
     connect(this, &TcpServer::client_msg_received, message_processor_, &MessageProcessor::on_client_msg_recieved);
     connect(message_processor_, &MessageProcessor::message_created, this, &TcpServer::on_message_ready);
+    connect(message_processor_, &MessageProcessor::cel_recieved, m_ac, &AC::OnCelRecieved);
 
     started_ = server_->listen(QHostAddress::Any, 5555);
     if (!started_) {
@@ -105,6 +107,8 @@ void TcpServer::client_data_ready()
     while(socket->bytesAvailable() >= HEADER_SIZE) {
         header_bytes = socket->read(HEADER_SIZE);
         header = DeserializeHeader(header_bytes);
+        qDebug() << "msg bytes";
+        qDebug() << header.n;
         msg_bytes = socket->read(header.n);
         emit client_msg_received(header, msg_bytes);
     }
@@ -123,9 +127,15 @@ Header TcpServer::DeserializeHeader(QByteArray &data)
 {
     Header header;
     QDataStream stream(data);
-    stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setByteOrder(QDataStream::BigEndian);
 
-    stream >> header.version >> header.msg_type >> header.time >> header.n;
+    stream >> header.version >> header.msg_type >>header.zero >> header.time >> header.n;
+    qDebug() <<"Header Check";
+    qDebug() << header.version;
+    qDebug() << header.msg_type;
+    qDebug() << header.zero;
+    qDebug() << header.time;
+    qDebug() << header.n;
 
     return header;
 }

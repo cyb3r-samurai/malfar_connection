@@ -1,7 +1,9 @@
+// Класс управляет планми примема АС.
+//TODO :: добавить класс шадулер с адекватным интерфейсом.
+
 #ifndef AC_H
 #define AC_H
 
-#include "sector.h"
 #include "Message.h"
 #include "datachanel.h"
 #include "planfactory.h"
@@ -11,9 +13,7 @@
 #include <QTimer>
 #include <QDateTime>
 
-#include <vector>
 #include <map>
-#include <optional>
 
 
 class AC : public QObject
@@ -25,6 +25,7 @@ public:
 signals:
     void SessionStarted(int , int);
     void SessionEnd(int, int);
+    void plans_changed();
     void sector_plan_chanhed(const std::map<int, SectorPlan>&);
     void chanel_plan_chnaged(const std::map<int, DataChanel>&);
 

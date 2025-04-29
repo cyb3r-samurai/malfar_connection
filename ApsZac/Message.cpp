@@ -59,8 +59,8 @@ QDataStream &operator >>(QDataStream &stream, Report &report){
 }
 
 QDataStream &operator << (QDataStream &stream, Cel &cel) {
-    stream << cel.number << cel.sesssion_number << cel.polarization
-           << cel.frequency << cel.time << cel.step << cel.m;
+    stream << cel.chanel_number << cel.polarization << cel.ka_number
+           << cel.frequency << cel.start_time << cel.end_time << cel.m;
     for(quint16 i = 0; i < cel.m; i++) {
         for(qsizetype j = 0; j < 2; j++) {
             stream << cel.cel[i][j];

@@ -11,6 +11,7 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <random>
+#include <memory>
 
 struct c_pair{
     qint8 I;
