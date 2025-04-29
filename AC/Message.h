@@ -1,3 +1,5 @@
+// Структуры для отправки и приема сообщений клиенту
+
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
@@ -20,68 +22,39 @@ public:
     quint8 msg_type;
 };
 
-struct SessionInfo{
+struct ChanelInfo{
 public:
-    quint8 a = 1;
-    quint8 b = 2;
-    quint16 c = 3;
-    quint16 d[2] = {1,2};
+    quint32 freq;// Центральная чистотв в МГЦЖц
+    quint16 ka_number;
+    qint16 vec[2]; // Текущий азимут, угол места
+    quint8 real_chanel_number; // номер физического канала приема(луча) в секторе приема.
+    qint8 pol;
+    float signal_level;
+    quint8 sector_number;
+    qint8 sector_state;
+    qint16 sector_start; // Азимут начала сектора
+    qint16 sector_end;   // Азиту конца сектора
 
-    friend QDataStream &operator<< (QDataStream &stream, SessionInfo &sC);
-};
-
-struct SectorInfo{
-public:
-    qint16 a = 1;
-    qint16 b = 2;
-    qint8 c = 4;
-    quint8 m = 4;
-    SessionInfo* session_mas;
-
-    friend QDataStream &operator <<(QDataStream &stream, SectorInfo &sC);
+    friend QDataStream &operator <<(QDataStream &stream, ChanelInfo &ch_i);
 };
 
 class RecieveState {
 public:
     RecieveState(quint8 n_);
     quint8 n;
-    SectorInfo * sector_mas;
+    ChanelInfo * chanel_mas;
 
     QByteArray serializeStruct();
 };
 
-class SubSessionInfo {
-public:
-    quint16 a = 114;
-    qint8 b = 2;
-    qint8 c = 2;
-    quint32 d = 23;
-    quint32 strart_time = 1;
-    quint32 end_time = 23;
-    qint16 first_c[2] = {1, 2};
-    qint16 last_c[2] = {1, 4};
-
-    friend QDataStream &operator <<(QDataStream &stream, SubSessionInfo &sC);
-};
-
-class SessionsInfo {
-public:
-    SessionsInfo(quint8 n);
-
-    quint8 n;
-    SubSessionInfo* session_mas;
-
-    QByteArray serializeStruct();
-};
 
 class Report {
 public:
     Report(quint16 m);
-    quint8 session_id = 13;
-    quint8 state = 3;
-    quint16 number = 5;
-    quint32 time = 4;
-    quint16 offset = 4;
+    quint8 chanel_number = 13;
+    quint8 ac_state = 3;
+    quint16 ka_number = 5;
+    double time = 4;
     qint16 az[2] = {1,2};
     quint16 m;
     qint8** info;
@@ -89,26 +62,108 @@ public:
     QByteArray serializeStruct();
 };
 
+class Emmiter_state{
+public:
+    quint8 pol;
+    quint8 state;
+    float signal_level; //Среднеквадратический урдвень сигнала на входу АЦП
+
+    friend QDataStream &operator << (QDataStream &stream, Emmiter_state &emmiter);
+};
+
+class CAM_state {
+public:
+    CAM_state(quint8 n);
+
+    quint8 cam_state;
+    float amperage;
+    float temperature;
+    quint8 emmiter_count;
+    Emmiter_state* emm_state;
+
+    friend QDataStream &operator << (QDataStream &stream, CAM_state &emmiter);
+};
+
+class CDO_state {
+public:
+
+    CDO_state(quint8 n);
+    quint8 state;
+    float amperage;
+    float voltage;
+    float temperature;
+    quint8 cdo_state;
+    quint8 cam_count;
+    CAM_state ** cam_info;
+
+    friend QDataStream &operator << (QDataStream &stream, CDO_state &cdo_state);
+};
+
+
 class AcState {
 public:
-    qint8 state_ac = 12;
-    qint8 state_sch = 42;
-    qint8 comm_state = 4;
-    qint8 comm_state2 = 5;
+    quint8 state_ac = 12;
+    quint8 state_sch = 42;
+    quint8 comm_state = 4;
+    quint8 comm_state2 = 5;
+
+    quint8 secor_count = 4;
+
+    CDO_state cdo_state;
 
     QByteArray serializeStruct();
 };
+
+
 class Cel {
 public:
-    quint16 number;
-    qint8 sesssion_number;
+    quint8 chanel_number;
     qint8 polarization;
+    quint16 ka_number;
     quint32 frequency;
-    quint32 time;
-    quint16 step;
+    double start_time;
+    double end_time;
     quint16 m;
     qint16 **cel;
 
     friend QDataStream &operator >> (QDataStream &stream, Cel &cel);
 };
+class Status {
+public:
+    double time;
+    quint8 msg_type;
+    quint8 status;
+
+    QByteArray SerialiazeStruct();
+};
+
+struct MessageSegmentPlan {
+    uint8_t sector_number; // 1, 2, 3, 4
+    uint8_t chanel_number; // номер физического канала приема
+    uint8_t pol; // 1 - правая круговая
+        // 2 - левая круговая
+        // 3 - вертикальная
+        // 4 - горизонтальная
+        // 5 - линейная + 45 град
+        // 6 - линейна - 45 град
+    uint16_t ka_number;
+    double start_time;
+    double end_time;
+    uint16_t m;
+    int16_t** cel;
+};
+
+struct ChanelData {
+    uint8_t chanel_number;
+    uint8_t segment_data;
+    MessageSegmentPlan* segment_plan;
+};
+
+class DataChanelInfo {
+public:
+    DataChanelInfo();
+    uint8_t chanel_count;
+    ChanelData * chanel_data;
+};
+
 #endif // MESSAGE_H

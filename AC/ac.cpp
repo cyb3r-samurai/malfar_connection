@@ -4,38 +4,20 @@
 AC::AC(QObject *parent) :
     QObject{parent}
 {
-    m_session_factory = new SessionFactory;
-
+    m_chanel_plans = new std::map<int, DataChanel>;
+    m_sector_plans = new std::map<int, SectorPlan> ;
+    m_plan_factory =  new PlanFactory(m_chanel_plans, m_sector_plans);
 
     m_timer->start(1000);
-    connect(m_timer, &QTimer::timeout, this, &AC::OnTimer);
+    connect(m_timer, &QTimer::timeout, this, &AC::CheckTime);
 }
 
-
-void AC::OnCelRecieved(Cel& cel)
+void AC::OnCelRecieved(std::shared_ptr<Cel> cel)
 {
-    m_scheduled_sessions_queue.push(m_session_factory->CreateSession(std::move(cel)));
-}
+    if(m_plan_factory->createPlan(cel)) {
 
-void AC::OnTimer()
-{
-    std::unique_ptr<Session>& incoming_session
-        = const_cast<std::unique_ptr<Session>&>(m_scheduled_sessions_queue.top());
-
-    uint32_t current_time = seconds_since_epoch();
-    if ((*incoming_session).getStart_time() < current_time) {
-        // TODO:: Применить целеукозание
-        m_started_sessions_queue.emplace(std::move(incoming_session));
-        m_scheduled_sessions_queue.pop();
     }
+    else {
 
-}
-
-uint32_t AC::seconds_since_epoch()
-{
-    QDateTime now = QDateTime::currentDateTime();
-    QDateTime epoch(QDate(2000, 1, 1), QTime(0, 0, 0), Qt::UTC);
-    qint64 time =  now.toSecsSinceEpoch();
-    qint64 epoch_time = epoch.toSecsSinceEpoch();
-    return time - epoch_time;
+    }
 }

@@ -12,14 +12,16 @@ SOURCES += \
         TcpServer.cpp \
         ac.cpp \
         blockingbuffer.cpp \
+        datachanel.cpp \
         dataserver.cpp \
         main.cpp \
         messageprocessor.cpp \
         packet.cpp \
+        planfactory.cpp \
         reportdata.cpp \
         sector.cpp \
-        session.cpp \
-        sessionfactory.cpp
+        sectorplan.cpp \
+        segmentplan.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -31,13 +33,15 @@ HEADERS += \
     TcpServer.h \
     ac.h \
     blockingbuffer.h \
+    datachanel.h \
     dataserver.h \
     messageprocessor.h \
     packet.h \
+    planfactory.h \
     reportdata.h \
     sector.h \
-    session.h \
-    sessionfactory.h
+    sectorplan.h \
+    segmentplan.h
 
 DISTFILES += \
     Signal.txt

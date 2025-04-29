@@ -4,6 +4,7 @@
 #include "Message.h"
 #include "packet.h"
 #include "messageprocessor.h"
+#include "ac.h"
 
 #include <QObject>
 #include <QTcpServer>
@@ -36,6 +37,7 @@ private slots:
     void client_disconnected();
 
     void client_data_ready();
+
     void on_message_ready(Header, QByteArray);
 
 private:
@@ -44,9 +46,10 @@ private:
     QTcpSocket* socket_;
     bool started_;
     QTimer* m_timer_;
-    MessageProcessor message_processor_;
+    MessageProcessor *message_processor_;
+    AC* m_ac;
 
     Header DeserializeHeader(QByteArray& data);
-    QList<c_pair>* signal_data;
+    //QList<c_pair>* signal_data;
 };
 #endif // TCPSERVER_H

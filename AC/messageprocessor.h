@@ -16,6 +16,7 @@ public:
 
 signals:
     void message_created(Header, QByteArray);
+    void cel_recieved(std::shared_ptr<Cel> m_cel);
 
 public slots:
     void on_client_msg_recieved(Header, QByteArray);
@@ -24,6 +25,8 @@ private:
     void create_responce(quint8);
     quint32 seconds_since_epoch();
     QDateTime secondsToDatetime(quint32 sec) const;
+    QList<RecieveState> m_recieve_state;
+    DataChanelInfo* current_data_chanel_info;
 };
 
 #endif // MESSAGEPROCESSOR_H
