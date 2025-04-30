@@ -13,6 +13,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QDateTime>
+#include <QThread>
 
 #include <map>
 

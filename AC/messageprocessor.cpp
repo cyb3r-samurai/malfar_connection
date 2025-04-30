@@ -11,6 +11,7 @@ MessageProcessor::MessageProcessor(PlanStorage* p_s, QObject *parent)
 
 void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
 {
+    //qDebug() << QThread::currentThreadId();
     if(header.msg_type == 0x02) {
         Requst_Message r_m;
         QDataStream stream(&msg_data, QIODevice::ReadOnly);

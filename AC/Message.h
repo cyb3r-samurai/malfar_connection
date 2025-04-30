@@ -1,11 +1,12 @@
-// Структуры для отправки и приема сообщений клиенту
+// Структуры сообщений
 
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-//#include <QtTypes>
+
 #include <QVector>
 #include <QIODevice>
+
 
 namespace No_alignmet_size {
     const quint8 session_info = 8;
@@ -41,6 +42,7 @@ public:
 class RecieveState {
 public:
     RecieveState(quint8 n_);
+  //  RecieveState(std::map<int, DataChanel> &&);
     quint8 n;
     ChanelInfo * chanel_mas;
 

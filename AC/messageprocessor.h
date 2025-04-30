@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QTimer>
+#include <QThread>
 
 #include "Message.h"
 #include "packet.h"

@@ -12,3 +12,8 @@ bool DataChanel::validateSegment(std::shared_ptr<SegmentPlan> new_plan)
 {
     return true;
 }
+
+std::list<std::shared_ptr<SegmentPlan> > DataChanel::segments() const
+{
+    return m_segments;
+}

@@ -28,6 +28,7 @@ public:
                  // 5 - линейная + 45 град
                  // 6 - линейна - 45 град
     uint16_t ka_number;
+    uint32_t freq;
     double start_time;
     double end_time;
     uint16_t m;

@@ -6,11 +6,13 @@
 #include "messageprocessor.h"
 #include "packet.h"
 #include "planstorage.h"
+#include "reportstatechecker.h"
 
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
+#include <QThread>
 
 #include <memory>
 
@@ -46,13 +48,17 @@ private:
     QTcpServer* server_;
     QList<QTcpSocket *> socketList_;
     QTcpSocket* socket_;
-    bool started_;
     QTimer* m_timer_;
     MessageProcessor *message_processor_;
     AC* m_ac;
     PlanStorage* m_plan_storage;
+    ReportStateChecker * m_report_state_checker;
+
+    QThread * thread_message_processor;
+    QThread * thread_ac;
+
+    bool started_;
 
     Header DeserializeHeader(QByteArray& data);
-    //QList<c_pair>* signal_data;
 };
 #endif // TCPSERVER_H

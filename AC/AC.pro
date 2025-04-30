@@ -18,7 +18,7 @@ SOURCES += \
         packet.cpp \
         planfactory.cpp \
         planstorage.cpp \
-        reportdata.cpp \
+        reportstatechecker.cpp \
         sector.cpp \
         sectorplan.cpp \
         segmentplan.cpp
@@ -38,7 +38,7 @@ HEADERS += \
     packet.h \
     planfactory.h \
     planstorage.h \
-    reportdata.h \
+    reportstatechecker.h \
     sector.h \
     sectorplan.h \
     segmentplan.h

@@ -15,11 +15,12 @@ AC::AC(PlanStorage *p_s, QObject *parent) :
 void AC::OnCelRecieved(std::shared_ptr<Cel> cel)
 {
     qDebug() << "cel recieved in ac";
+    qDebug() << QThread::currentThreadId();
     qDebug() << cel->chanel_number;
 
     if(m_plan_factory->createPlan(cel)) {
         qDebug() << "Plan created";
-        m_plan_storage->changePlans(*m_sector_plans);
+        m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
     }
     else {
 

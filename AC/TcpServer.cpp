@@ -24,11 +24,22 @@ TcpServer::TcpServer(QObject* parent) :
    // std::cout << OADAte;
     //qDebug() << OADAte;
 
+
+    thread_message_processor = new QThread();
+    thread_ac = new QThread();
+
+
     m_plan_storage = new PlanStorage();
     server_ = new QTcpServer(this);
     message_processor_ = new MessageProcessor(m_plan_storage);
     m_ac = new AC(m_plan_storage);
+    m_report_state_checker = new ReportStateChecker(m_plan_storage);
 
+    message_processor_->moveToThread(thread_message_processor);
+    m_ac->moveToThread(thread_ac);
+
+    thread_ac->start();
+    thread_message_processor->start();
     connect(server_, &QTcpServer::newConnection, this, &TcpServer::on_client_connecting);
     connect(this, &TcpServer::client_msg_received, message_processor_, &MessageProcessor::on_client_msg_recieved);
     connect(message_processor_, &MessageProcessor::message_created, this, &TcpServer::on_message_ready);
@@ -40,6 +51,7 @@ TcpServer::TcpServer(QObject* parent) :
     } else {
         qDebug() <<"Server started";
     }
+    qDebug() << QThread::currentThreadId();
 }
 
 
