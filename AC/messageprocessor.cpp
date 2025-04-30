@@ -1,9 +1,12 @@
 #include "messageprocessor.h"
 
-MessageProcessor::MessageProcessor(QObject *parent)
-    : QObject{parent}
+MessageProcessor::MessageProcessor(PlanStorage* p_s, QObject *parent)
+    : QObject{parent}, m_plan_storage{p_s}
 {
+    my_timer = new QTimer();
+    my_timer->start(2000);
 
+    connect(my_timer, &QTimer::timeout, this, &MessageProcessor::keep_alive);
 }
 
 void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
@@ -14,7 +17,7 @@ void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data
         stream.setByteOrder(QDataStream::LittleEndian);
         stream >> r_m.msg_type;
         qDebug() << "Request msg recieved";
-      //  create_responce(r_m.msg_type);
+        create_responce(r_m.msg_type);
     }
     else
     {
@@ -28,6 +31,14 @@ void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data
             emit cel_recieved(std::make_shared<Cel>(std::move(cel)));
         }
     }
+}
+
+void MessageProcessor::keep_alive()
+{
+    m_plan_storage->lockRead();
+    m_test_data = m_plan_storage->sector_plans();
+    m_plan_storage->unloock();
+    print_current_state();
 }
 
 void MessageProcessor::create_responce(quint8 type)
@@ -100,4 +111,14 @@ QDateTime MessageProcessor::secondsToDatetime(quint32 seconds) const
 {
     QDateTime epoch(QDate(2000, 1, 1), QTime(0, 0, 0), Qt::UTC);
     return epoch.addSecs(seconds);
+}
+
+void MessageProcessor::print_current_state() const
+{
+    qDebug() << "current AC state :";
+    qDebug() << "initiated sector count" << m_test_data->size();
+    for(size_t i = 1; i <= m_test_data->size(); ++i) {
+        qDebug() << "Sector number: " << i;
+        (*m_test_data)[i].display_info();
+    }
 }

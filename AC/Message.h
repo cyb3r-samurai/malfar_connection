@@ -158,12 +158,4 @@ struct ChanelData {
     uint8_t segment_data;
     MessageSegmentPlan* segment_plan;
 };
-
-class DataChanelInfo {
-public:
-    DataChanelInfo();
-    uint8_t chanel_count;
-    ChanelData * chanel_data;
-};
-
 #endif // MESSAGE_H

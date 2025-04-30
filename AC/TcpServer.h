@@ -1,16 +1,17 @@
 #ifndef TCPSERVER_H
 #define TCPSERVER_H
 
-#include "Message.h"
-#include "packet.h"
-#include "messageprocessor.h"
 #include "ac.h"
+#include "Message.h"
+#include "messageprocessor.h"
+#include "packet.h"
+#include "planstorage.h"
 
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
-#include <random>
+
 #include <memory>
 
 struct c_pair{
@@ -49,6 +50,7 @@ private:
     QTimer* m_timer_;
     MessageProcessor *message_processor_;
     AC* m_ac;
+    PlanStorage* m_plan_storage;
 
     Header DeserializeHeader(QByteArray& data);
     //QList<c_pair>* signal_data;

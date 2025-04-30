@@ -8,7 +8,6 @@ SectorPlan::SectorPlan() {
 
 void SectorPlan::append(std::shared_ptr<SegmentPlan> planPtr)
 {
-
     segment_plan->push_back(planPtr);
 }
 
@@ -19,6 +18,5 @@ int SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr)
 
 void SectorPlan::display_info()
 {
-    qDebug() << "display_info";
-    qDebug() << segment_plan->size();
+    qDebug() << "Segments count in sector: " << segment_plan->size();
 }

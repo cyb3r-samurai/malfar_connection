@@ -6,8 +6,6 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
-#include "blockingbuffer.h"
-
 class DataServer : public QObject
 {
     Q_OBJECT

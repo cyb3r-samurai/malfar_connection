@@ -1,7 +1,7 @@
 #include "ac.h"
 
-AC::AC(QObject *parent) :
-    QObject{parent}
+AC::AC(PlanStorage *p_s, QObject *parent) :
+    QObject{parent}, m_plan_storage{p_s}
 {
     m_chanel_plans = new std::map<int, DataChanel>;
     m_sector_plans = new std::map<int, SectorPlan> ;
@@ -19,7 +19,7 @@ void AC::OnCelRecieved(std::shared_ptr<Cel> cel)
 
     if(m_plan_factory->createPlan(cel)) {
         qDebug() << "Plan created";
-        (*m_sector_plans)[1].display_info();
+        m_plan_storage->changePlans(*m_sector_plans);
     }
     else {
 

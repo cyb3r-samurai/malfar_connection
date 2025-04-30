@@ -24,9 +24,10 @@ TcpServer::TcpServer(QObject* parent) :
    // std::cout << OADAte;
     //qDebug() << OADAte;
 
+    m_plan_storage = new PlanStorage();
     server_ = new QTcpServer(this);
-    message_processor_ = new MessageProcessor();
-    m_ac = new AC;
+    message_processor_ = new MessageProcessor(m_plan_storage);
+    m_ac = new AC(m_plan_storage);
 
     connect(server_, &QTcpServer::newConnection, this, &TcpServer::on_client_connecting);
     connect(this, &TcpServer::client_msg_received, message_processor_, &MessageProcessor::on_client_msg_recieved);

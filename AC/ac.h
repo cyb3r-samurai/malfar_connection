@@ -8,6 +8,7 @@
 #include "datachanel.h"
 #include "planfactory.h"
 #include "sectorplan.h"
+#include "planstorage.h"
 
 #include <QObject>
 #include <QTimer>
@@ -20,7 +21,7 @@ class AC : public QObject
 {
     Q_OBJECT
 public:
-    explicit AC(QObject* parent = nullptr);
+    explicit AC(PlanStorage* p_s, QObject* parent = nullptr);
 
 signals:
     void SessionStarted(int , int);
@@ -43,6 +44,7 @@ private:
     std::map<int, DataChanel>* m_chanel_plans;
 
     PlanFactory* m_plan_factory;
+    PlanStorage* m_plan_storage;
 
     QTimer* m_timer;
 };
