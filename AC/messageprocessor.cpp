@@ -1,12 +1,14 @@
 #include "messageprocessor.h"
 
-MessageProcessor::MessageProcessor(PlanStorage* p_s, QObject *parent)
-    : QObject{parent}, m_plan_storage{p_s}
+MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker * r_s, QObject *parent)
+    : QObject{parent}, m_state_checker{r_s}, m_plan_storage{p_s}
 {
     my_timer = new QTimer();
     my_timer->start(2000);
 
     connect(my_timer, &QTimer::timeout, this, &MessageProcessor::keep_alive);
+    connect(my_timer, &QTimer::timeout, r_s, &ReportStateChecker::onTimer);
+    connect(r_s, &ReportStateChecker::reciveStateCreated, this, &MessageProcessor::onReciveStateCreated);
 }
 
 void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
@@ -40,6 +42,19 @@ void MessageProcessor::keep_alive()
     m_test_data = m_plan_storage->sector_plans();
     m_plan_storage->unloock();
     print_current_state();
+}
+
+void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
+{
+
+    qDebug() << "Recive state recieved in MessageProcessor";
+    qDebug() << "Number of segments in ReciveState";
+    qDebug() << r_s->n;
+    for(int i = 0; i < r_s->n; ++i) {
+        qDebug() << "segment data";
+        qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
+                 <<r_s->chanel_mas[i].signal_level;
+    }
 }
 
 void MessageProcessor::create_responce(quint8 type)

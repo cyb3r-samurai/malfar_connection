@@ -31,9 +31,9 @@ TcpServer::TcpServer(QObject* parent) :
 
     m_plan_storage = new PlanStorage();
     server_ = new QTcpServer(this);
-    message_processor_ = new MessageProcessor(m_plan_storage);
     m_ac = new AC(m_plan_storage);
     m_report_state_checker = new ReportStateChecker(m_plan_storage);
+    message_processor_ = new MessageProcessor(m_plan_storage, m_report_state_checker);
 
     message_processor_->moveToThread(thread_message_processor);
     m_ac->moveToThread(thread_ac);
@@ -100,9 +100,6 @@ void TcpServer::on_client_connecting()
     connect(socket_, &QTcpSocket::readyRead, this, &TcpServer::client_data_ready);
     connect(socket_, &QTcpSocket::disconnected, this, &TcpServer::client_disconnected);
     socketList_.append(socket_);
-    m_timer_ = new QTimer(this);
-    connect(m_timer_, &QTimer::timeout, this, &TcpServer::keep_alive, Qt::QueuedConnection);
-    m_timer_->start(5000);
 }
 
 void TcpServer::client_disconnected()

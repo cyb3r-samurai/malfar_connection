@@ -2,6 +2,7 @@
 
 PlanStorage::PlanStorage() {
     m_sector_plans = new std::map<int, SectorPlan>;
+    m_data_chanels_plans  = new std::map<int, DataChanel>;
 }
 
 bool PlanStorage::changePlans(const std::map<int, SectorPlan> &new_sector_plan,

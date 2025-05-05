@@ -41,11 +41,13 @@ public:
 
 class RecieveState {
 public:
+    RecieveState();
     RecieveState(quint8 n_);
   //  RecieveState(std::map<int, DataChanel> &&);
     quint8 n;
     ChanelInfo * chanel_mas;
 
+    void initializeChanelMas(quint8 n);
     QByteArray serializeStruct();
 };
 

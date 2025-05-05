@@ -19,7 +19,7 @@ class ReportStateChecker : public QObject
 public:
     explicit ReportStateChecker(PlanStorage* p_s, QObject *parent = nullptr);
 
-private slots:
+public slots:
     void onTimer();
 
 signals:
@@ -27,7 +27,7 @@ signals:
     void acStateCreated(std::shared_ptr<AcState>);
 
 private:
-    QTimer* m_timer;
+//    QTimer* m_timer;
     PlanStorage *m_plan_storage;
 
     std::map<int, DataChanel> *m_data_chanel_plans;

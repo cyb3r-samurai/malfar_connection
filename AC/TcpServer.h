@@ -48,7 +48,6 @@ private:
     QTcpServer* server_;
     QList<QTcpSocket *> socketList_;
     QTcpSocket* socket_;
-    QTimer* m_timer_;
     MessageProcessor *message_processor_;
     AC* m_ac;
     PlanStorage* m_plan_storage;

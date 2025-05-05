@@ -2,10 +2,21 @@
 #include <QDebug>
 
 
+RecieveState::RecieveState()
+{
+
+}
+
 RecieveState::RecieveState(quint8 n_)
     : n(n_)
 {
     chanel_mas = new ChanelInfo[n];
+}
+
+void RecieveState::initializeChanelMas(quint8 n)
+{
+    chanel_mas = new ChanelInfo[n];
+
 }
 
 QByteArray RecieveState::serializeStruct()

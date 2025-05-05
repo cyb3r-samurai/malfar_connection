@@ -11,8 +11,9 @@ class MessageProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit MessageProcessor (QObject *parent = nullptr, MessageStorage* message_storage = nullptr
-                              ,SimpleTableData *model = nullptr, CelModel *celmodel = nullptr);
+    explicit MessageProcessor (QObject *parent = nullptr,
+                               SimpleTableData *model = nullptr,
+                               CelModel *celmodel = nullptr);
 
 public slots:
     void device_data_ready(Packet);
@@ -24,7 +25,6 @@ signals:
 private:
     SimpleTableData* model;
     QList<MessageHandler *> handlers_;
-    MessageStorage* message_storage_;
     CelModel* m_celmodel;
 };
 

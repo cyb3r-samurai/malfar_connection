@@ -10,13 +10,14 @@
 #include "Message.h"
 #include "packet.h"
 #include "planstorage.h"
+#include "reportstatechecker.h"
 
 
 class MessageProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit MessageProcessor(PlanStorage * p_s, QObject *parent = nullptr);
+    explicit MessageProcessor(PlanStorage * p_s, ReportStateChecker * r_s, QObject *parent = nullptr);
 
 signals:
     void message_created(Header, QByteArray);
@@ -27,14 +28,15 @@ public slots:
 
 private slots:
     void keep_alive();
+    void onReciveStateCreated(std::shared_ptr<RecieveState>);
 
 private:
     QTimer* my_timer;
     void create_responce(quint8);
     quint32 seconds_since_epoch();
     QDateTime secondsToDatetime(quint32 sec) const;
-    QList<RecieveState> m_recieve_state;
 
+    ReportStateChecker* m_state_checker;
     PlanStorage* m_plan_storage;
     std::map<int, SectorPlan>* m_test_data;
     void print_current_state() const;

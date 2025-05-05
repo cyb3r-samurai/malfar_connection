@@ -118,12 +118,6 @@ public:
     friend QDataStream &operator>> (QDataStream &stream, AcState &sC);
 };
 
-struct MessageStorage {
-    QList<QPair<Header, RecieveState>> ResiveState_s;
-    QList<QPair<Header, SessionsInfo>> SessionsInfo_s;
-    QList<QPair<Header, Report>> Report_s;
-    QList<QPair<Header, AcState>> AcState_s;
-};
 
 class Cel {
 public:
