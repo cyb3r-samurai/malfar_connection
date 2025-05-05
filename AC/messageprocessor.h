@@ -6,18 +6,21 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QThread>
+#include <QList>
 
+#include "ac.h"
 #include "Message.h"
 #include "packet.h"
 #include "planstorage.h"
 #include "reportstatechecker.h"
-
+#include "messagehandler.h"
+#include "celhandler.h"
 
 class MessageProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit MessageProcessor(PlanStorage * p_s, ReportStateChecker * r_s, QObject *parent = nullptr);
+    explicit MessageProcessor(PlanStorage * p_s, ReportStateChecker * r_s, AC* ac, QObject *parent = nullptr);
 
 signals:
     void message_created(Header, QByteArray);
@@ -36,8 +39,12 @@ private:
     quint32 seconds_since_epoch();
     QDateTime secondsToDatetime(quint32 sec) const;
 
+    QList<std::shared_ptr<MessageHandler>>* m_msg_handlers;
     ReportStateChecker* m_state_checker;
     PlanStorage* m_plan_storage;
+
+    std::shared_ptr<CelHandler> m_cel_handler_ptr;
+    AC* m_ac;
     std::map<int, SectorPlan>* m_test_data;
     void print_current_state() const;
 };

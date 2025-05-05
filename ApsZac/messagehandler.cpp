@@ -2,9 +2,10 @@
 
 MessageHandler::MessageHandler() {}
 
-RecieveStateHandler::RecieveStateHandler(QList<QPair<Header, RecieveState> > *storage)
-    : recieve_state_storage_{storage}
-{}
+RecieveStateHandler::RecieveStateHandler()
+{
+
+}
 
 RecieveState RecieveStateHandler::deserialize_recieve_state(QByteArray &data)
 {
@@ -21,13 +22,12 @@ bool RecieveStateHandler::HandleMessage( Packet &packet) {
     }
     RecieveState  rs  = deserialize_recieve_state(packet.data);
     qDebug() << "Secotor info recieved";
-    recieve_state_storage_->append(QPair<Header, RecieveState>(packet.header, rs));
     return true;
 }
 
 
-SessionsInfoHandler::SessionsInfoHandler(QList<QPair<Header, SessionsInfo> > *storage, SimpleTableData *model)
-    : sessions_info_storage_{storage}, model{model}
+SessionsInfoHandler::SessionsInfoHandler(SimpleTableData *model)
+    : model{model}
 {}
 
 bool SessionsInfoHandler::HandleMessage (Packet &packet)
@@ -37,7 +37,6 @@ bool SessionsInfoHandler::HandleMessage (Packet &packet)
     }
     SessionsInfo si = deserialize_sessions_info(packet.data);
     qDebug() << "Sessions info recieved";
-    sessions_info_storage_->append(QPair<Header, SessionsInfo> (packet.header, si));
     QList<SubSessionInfo> new_values;
     for (quint8 i = 0; i < si.n; i++) {
         new_values.append(si.session_mas[i]);
@@ -57,8 +56,8 @@ SessionsInfo SessionsInfoHandler::deserialize_sessions_info(QByteArray &data)
     return s_i;
 }
 
-ReportHandler::ReportHandler(QList<QPair<Header, Report> > *storage, CelModel *celmodel)
-    : report_info_storage_{storage}, m_celmodel{celmodel}
+ReportHandler::ReportHandler(CelModel *celmodel)
+    : m_celmodel{celmodel}
 {
 
 }
@@ -102,8 +101,7 @@ Report ReportHandler::deserialize_report(QByteArray &data)
     return report;
 }
 
-AcStateHandler::AcStateHandler(QList<QPair<Header, AcState> > *storage)
-    :ac_state_storage_{storage}
+AcStateHandler::AcStateHandler()
 {
 
 }
@@ -115,7 +113,6 @@ bool AcStateHandler::HandleMessage(Packet &packet)
     }
     AcState state = deserialize_ac_state(packet.data);
     qDebug() <<"AcState recieved";
-    ac_state_storage_->append(QPair<Header, AcState>(packet.header, state));
     return true;
 
 }

@@ -1,13 +1,12 @@
 #include "messageprocessor.h"
 
-MessageProcessor::MessageProcessor(QObject *parent, MessageStorage *message_storage_,
-                                   SimpleTableData *model, CelModel *celmodel)
-    : QObject{parent} ,model{model}, message_storage_{message_storage_}, m_celmodel{celmodel}
+MessageProcessor::MessageProcessor(QObject *parent, SimpleTableData *model, CelModel *celmodel)
+    : QObject{parent} ,model{model}, m_celmodel{celmodel}
 {
-    handlers_.append(new RecieveStateHandler(&message_storage_->ResiveState_s));
-    handlers_.append(new SessionsInfoHandler(&message_storage_->SessionsInfo_s, model));
-    handlers_.append(new ReportHandler(&message_storage_->Report_s, m_celmodel));
-    handlers_.append(new AcStateHandler(&message_storage_->AcState_s));
+    handlers_.append(new RecieveStateHandler());
+    handlers_.append(new SessionsInfoHandler(model));
+    handlers_.append(new ReportHandler(m_celmodel));
+    handlers_.append(new AcStateHandler());
 }
 
 void MessageProcessor::device_data_ready(Packet packet)

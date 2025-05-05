@@ -55,7 +55,6 @@ private:
     DeviceController* controller_;
     MessageProcessor* m_processor_;
     SimpleTableData* model_;
-    MessageStorage message_storage_;
     QList<SubSessionInfo> * test_data_;
     C_window *c_window;
     TimePlotter *time_plotter;

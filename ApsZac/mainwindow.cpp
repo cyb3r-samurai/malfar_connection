@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     m_celmodel = new CelModel;
-    m_processor_ = new MessageProcessor(nullptr, &message_storage_, model_, m_celmodel);
+    m_processor_ = new MessageProcessor(nullptr,model_, m_celmodel);
     connect(this, &MainWindow::on_request, m_processor_, &MessageProcessor::set_request);
     connect(m_processor_, &MessageProcessor::message_ready, controller_, &DeviceController::send);
     connect(controller_, &DeviceController::data_ready, m_processor_, &MessageProcessor::device_data_ready);

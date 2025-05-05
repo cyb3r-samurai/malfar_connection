@@ -1,11 +1,16 @@
 #include "messageprocessor.h"
 
-MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker * r_s, QObject *parent)
-    : QObject{parent}, m_state_checker{r_s}, m_plan_storage{p_s}
+MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker* r_s, AC* ac, QObject *parent)
+    : QObject{parent}, m_state_checker{r_s}, m_plan_storage{p_s}, m_ac{ac}
 {
     my_timer = new QTimer();
     my_timer->start(2000);
 
+    m_msg_handlers = new QList<std::shared_ptr<MessageHandler>>;
+//how to connect signal from abstract
+    m_cel_handler_ptr = std::make_shared<CelHandler>();
+    connect(m_cel_handler_ptr.get(), &CelHandler::celCreated, m_ac, &AC::OnCelRecieved);
+    m_msg_handlers->append(m_cel_handler_ptr);
     connect(my_timer, &QTimer::timeout, this, &MessageProcessor::keep_alive);
     connect(my_timer, &QTimer::timeout, r_s, &ReportStateChecker::onTimer);
     connect(r_s, &ReportStateChecker::reciveStateCreated, this, &MessageProcessor::onReciveStateCreated);
@@ -13,27 +18,13 @@ MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker * r_s, Q
 
 void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
 {
-    //qDebug() << QThread::currentThreadId();
-    if(header.msg_type == 0x02) {
-        Requst_Message r_m;
-        QDataStream stream(&msg_data, QIODevice::ReadOnly);
-        stream.setByteOrder(QDataStream::LittleEndian);
-        stream >> r_m.msg_type;
-        qDebug() << "Request msg recieved";
-        create_responce(r_m.msg_type);
-    }
-    else
-    {
-        if (header.msg_type == 0x01) {
-            QDataStream stream(&msg_data, QIODevice::ReadOnly);
-            stream.setByteOrder(QDataStream::LittleEndian);
-            Cel cel;
-            stream >> cel;
-            qDebug() << "Cel recieved";
-            qDebug() << cel.chanel_number;
-            emit cel_recieved(std::make_shared<Cel>(std::move(cel)));
+    Packet packet(header, msg_data);
+    for (qsizetype i = 0; i < m_msg_handlers->size(); i++) {
+        if(m_msg_handlers->at(i)->handleMessage(packet)) {
+            qDebug() << "Message handled";
         }
     }
+    //qDebug() << QThread::currentThreadId();
 }
 
 void MessageProcessor::keep_alive()

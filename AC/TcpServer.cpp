@@ -33,7 +33,7 @@ TcpServer::TcpServer(QObject* parent) :
     server_ = new QTcpServer(this);
     m_ac = new AC(m_plan_storage);
     m_report_state_checker = new ReportStateChecker(m_plan_storage);
-    message_processor_ = new MessageProcessor(m_plan_storage, m_report_state_checker);
+    message_processor_ = new MessageProcessor(m_plan_storage, m_report_state_checker, m_ac);
 
     message_processor_->moveToThread(thread_message_processor);
     m_ac->moveToThread(thread_ac);
@@ -43,7 +43,7 @@ TcpServer::TcpServer(QObject* parent) :
     connect(server_, &QTcpServer::newConnection, this, &TcpServer::on_client_connecting);
     connect(this, &TcpServer::client_msg_received, message_processor_, &MessageProcessor::on_client_msg_recieved);
     connect(message_processor_, &MessageProcessor::message_created, this, &TcpServer::on_message_ready);
-    connect(message_processor_, &MessageProcessor::cel_recieved, m_ac, &AC::OnCelRecieved);
+  //  connect(message_processor_, &MessageProcessor::cel_recieved, m_ac, &AC::OnCelRecieved);
 
     started_ = server_->listen(QHostAddress::Any, 5555);
     if (!started_) {

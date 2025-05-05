@@ -11,9 +11,11 @@ SOURCES += \
         Message.cpp \
         TcpServer.cpp \
         ac.cpp \
+        celhandler.cpp \
         datachanel.cpp \
         dataserver.cpp \
         main.cpp \
+        messagehandler.cpp \
         messageprocessor.cpp \
         packet.cpp \
         planfactory.cpp \
@@ -32,8 +34,10 @@ HEADERS += \
     Message.h \
     TcpServer.h \
     ac.h \
+    celhandler.h \
     datachanel.h \
     dataserver.h \
+    messagehandler.h \
     messageprocessor.h \
     packet.h \
     planfactory.h \
