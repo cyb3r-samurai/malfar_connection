@@ -23,7 +23,8 @@ SOURCES += \
         reportstatechecker.cpp \
         sector.cpp \
         sectorplan.cpp \
-        segmentplan.cpp
+        segmentplan.cpp \
+        sequentialidprovider.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -37,6 +38,7 @@ HEADERS += \
     celhandler.h \
     datachanel.h \
     dataserver.h \
+    messagebroker.h \
     messagehandler.h \
     messageprocessor.h \
     packet.h \
@@ -45,7 +47,8 @@ HEADERS += \
     reportstatechecker.h \
     sector.h \
     sectorplan.h \
-    segmentplan.h
+    segmentplan.h \
+    sequentialidprovider.h
 
 DISTFILES += \
     Signal.txt

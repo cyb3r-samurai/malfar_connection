@@ -13,10 +13,10 @@ class CelHandler : public MessageHandler
     Q_OBJECT
 public:
     explicit CelHandler(QObject *parent = nullptr);
-    virtual bool handleMessage(Packet) override;
+    virtual bool handleMessage( Packet&) override;
 
 signals:
-   void celCreated(std::shared_ptr<Cel>);
+   void celCreated(std::shared_ptr<Cel>, long long);
 
 };
 

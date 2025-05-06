@@ -68,3 +68,8 @@ QDataStream &operator << (QDataStream &stream, Cel &cel) {
     }
     return stream;
 }
+
+Status::Status()
+{
+
+}

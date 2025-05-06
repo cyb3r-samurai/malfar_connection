@@ -1,5 +1,5 @@
 #include "DeviceController.h"
-#define HEADER_SIZE 12
+#define HEADER_SIZE 16
 
 DeviceController::DeviceController(QObject *parent)
     : QObject{parent}
@@ -73,7 +73,7 @@ Header DeviceController::DeserializeHeader(QByteArray& data)
 {
     Header header;
     QDataStream stream(data);
-    stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setByteOrder(QDataStream::BigEndian);
 
     stream >> header.version >> header.msg_type >> header.zero >> header.time >> header.n;
 

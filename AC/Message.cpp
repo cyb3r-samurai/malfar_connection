@@ -140,6 +140,12 @@ CDO_state::CDO_state(quint8 n) :
     }
 }
 
+Status::Status(double time_, quint8 msg_type_, quint8 status_)
+    : time{time_}, msg_type{msg_type_}, status{status_}
+{
+
+}
+
 QByteArray Status::SerialiazeStruct()
 {
     QByteArray data;

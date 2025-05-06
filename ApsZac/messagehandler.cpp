@@ -125,3 +125,28 @@ AcState AcStateHandler::deserialize_ac_state(QByteArray &data)
     stream >> state;
     return state;
 }
+
+StatusHandler::StatusHandler()
+{
+
+}
+
+bool StatusHandler::HandleMessage(Packet &packet)
+{
+    if(packet.header.msg_type != 0x80) {
+        return false;
+    }
+    Status s = deserialize_status(packet.data);
+    qDebug() << "recive responce";
+    qDebug() << "status: " << s.stat << "msg Type :" << s.msg_type << "time : " << s.time ;
+    return true;
+}
+
+Status StatusHandler::deserialize_status(QByteArray &data)
+{
+    Status s;
+    QDataStream stream (&data, QDataStream::ReadOnly);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream >> s.time >> s.msg_type >> s.stat;
+    return s;
+}

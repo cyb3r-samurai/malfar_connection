@@ -10,11 +10,15 @@
 
 #include "ac.h"
 #include "Message.h"
+#include "messagebroker.h"
 #include "packet.h"
 #include "planstorage.h"
 #include "reportstatechecker.h"
 #include "messagehandler.h"
 #include "celhandler.h"
+#include "sequentialidprovider.h"
+
+#include <functional>
 
 class MessageProcessor : public QObject
 {
@@ -28,10 +32,13 @@ signals:
 
 public slots:
     void on_client_msg_recieved(Header, QByteArray);
+    void handlePacket(Packet& packet);
+    void savePacket(Packet& packet);
 
 private slots:
     void keep_alive();
     void onReciveStateCreated(std::shared_ptr<RecieveState>);
+    void statusResponse(long long, quint8);
 
 private:
     QTimer* my_timer;
@@ -39,6 +46,7 @@ private:
     quint32 seconds_since_epoch();
     QDateTime secondsToDatetime(quint32 sec) const;
 
+    QVector<Packet>* m_packet_storage;
     QList<std::shared_ptr<MessageHandler>>* m_msg_handlers;
     ReportStateChecker* m_state_checker;
     PlanStorage* m_plan_storage;

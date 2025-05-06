@@ -1,6 +1,12 @@
 #include "packet.h"
 
-Packet::Packet(Header header_, QByteArray data_) : header(header_), data(data_)
+Packet::Packet()
+{
+
+}
+
+Packet::Packet(Header header_, QByteArray data_, long long id_) :
+    header{header_}, data{data_}, id{id_}
 {
 
 }

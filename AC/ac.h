@@ -30,9 +30,11 @@ signals:
     void plans_changed();
     void sector_plan_chanhed(const std::map<int, SectorPlan>&);
     void chanel_plan_chnaged(const std::map<int, DataChanel>&);
+    void messageHandled(long long, quint8);
 
 public slots:
-    void OnCelRecieved(std::shared_ptr<Cel> cel);
+    void OnCelRecieved(std::shared_ptr<Cel> cel, long long);
+    void stopRecive();
 
 private slots:
     void CheckTime();

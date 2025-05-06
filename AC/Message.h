@@ -14,8 +14,9 @@ namespace No_alignmet_size {
     const quint8 recieve_state = 1;
     const quint8 subsession_info = 20;
     const quint8 sessions_info = 1;
-    const quint8 report = 16;
+    const quint8 report = 26;
     const quint8 as_state = 3;
+    const quint8 status = 10;
 };
 
 class Requst_Message {
@@ -134,6 +135,7 @@ public:
 };
 class Status {
 public:
+    Status(double time_, quint8 msg_type_, quint8 status_);
     double time;
     quint8 msg_type;
     quint8 status;

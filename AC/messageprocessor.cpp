@@ -3,27 +3,34 @@
 MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker* r_s, AC* ac, QObject *parent)
     : QObject{parent}, m_state_checker{r_s}, m_plan_storage{p_s}, m_ac{ac}
 {
+    m_packet_storage = new QVector<Packet>;
+
     my_timer = new QTimer();
     my_timer->start(2000);
+    connect(my_timer, &QTimer::timeout, this, &MessageProcessor::keep_alive);
+    connect(my_timer, &QTimer::timeout, r_s, &ReportStateChecker::onTimer);
 
     m_msg_handlers = new QList<std::shared_ptr<MessageHandler>>;
-//how to connect signal from abstract
     m_cel_handler_ptr = std::make_shared<CelHandler>();
     connect(m_cel_handler_ptr.get(), &CelHandler::celCreated, m_ac, &AC::OnCelRecieved);
     m_msg_handlers->append(m_cel_handler_ptr);
-    connect(my_timer, &QTimer::timeout, this, &MessageProcessor::keep_alive);
-    connect(my_timer, &QTimer::timeout, r_s, &ReportStateChecker::onTimer);
+
     connect(r_s, &ReportStateChecker::reciveStateCreated, this, &MessageProcessor::onReciveStateCreated);
+    connect(ac, &AC::messageHandled, this, &MessageProcessor::statusResponse);
+
+    auto &broker = MessageBroker::get();
+    connect(&broker, &MessageBroker::MessagePublished, this, &MessageProcessor::handlePacket);
+    connect(&broker, &MessageBroker::MessagePublished, this, &MessageProcessor::savePacket);
 }
 
 void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
 {
-    Packet packet(header, msg_data);
-    for (qsizetype i = 0; i < m_msg_handlers->size(); i++) {
-        if(m_msg_handlers->at(i)->handleMessage(packet)) {
-            qDebug() << "Message handled";
-        }
-    }
+    auto &provider = SequentialIdProvider::get();
+    long long id = provider.next();
+    Packet packet(header, msg_data, id);
+
+    auto &broker = MessageBroker::get();
+    broker.publish(packet);
     //qDebug() << QThread::currentThreadId();
 }
 
@@ -33,6 +40,20 @@ void MessageProcessor::keep_alive()
     m_test_data = m_plan_storage->sector_plans();
     m_plan_storage->unloock();
     print_current_state();
+}
+
+void MessageProcessor::handlePacket(Packet &packet)
+{
+    for (qsizetype i = 0; i < m_msg_handlers->size(); ++i) {
+        if(m_msg_handlers->at(i)->handleMessage(packet)) {
+            qDebug() << "Message handled";
+        }
+    }
+}
+
+void MessageProcessor::savePacket(Packet &packet)
+{
+    m_packet_storage->push_back(packet);
 }
 
 void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
@@ -46,6 +67,32 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
         qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
                  <<r_s->chanel_mas[i].signal_level;
     }
+}
+
+void MessageProcessor::statusResponse(long long id, quint8 status)
+{
+    qDebug() << "Messgae ID: " << id << " Status " << status;
+    double time;
+    quint8 msg_type;
+    auto it = m_packet_storage->begin();
+    while(it != m_packet_storage->end()) {
+        if(it->id == id) {
+            time = it->header.time;
+            msg_type = it->header.msg_type;
+            break;
+        }
+        ++it;
+    }
+    if (it == m_packet_storage->end()) {
+        qDebug() << "Missing id";
+        return;
+    }
+
+    Status s(time, msg_type, status);
+    Header header;
+    header.msg_type = 0x80;
+    header.n = No_alignmet_size::status;
+    emit message_created(header, s.SerialiazeStruct());
 }
 
 void MessageProcessor::create_responce(quint8 type)

@@ -11,7 +11,7 @@ class MessageHandler : public QObject
     Q_OBJECT
 public:
     explicit MessageHandler(QObject *parent = nullptr);
-    virtual bool handleMessage(Packet) = 0;
+    virtual bool handleMessage(Packet&) = 0;
 };
 
 #endif // MESSAGEHANDLER_H

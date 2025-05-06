@@ -7,7 +7,6 @@
 
 #include "packet.h"
 
-
 class CelData{
 public:
     int kaNumber;
@@ -15,9 +14,19 @@ public:
     QVector<double> qData;
 };
 
+class Status {
+public:
+    Status();
+    double time;
+    quint8 msg_type;
+    quint8 stat;
+};
+
 namespace No_alignment_size {
     const quint8 cel = 26;
+    const quint8 status = 10;
 };
+
 enum class Request_Type
 {
     recieve_state,

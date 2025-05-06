@@ -13,7 +13,7 @@ QByteArray Header::serializeStruct()
     stream.setByteOrder(QDataStream::BigEndian);
 
     stream << version << msg_type << zero << time << n;
-    qDebug() << "Check header";
-    qDebug() << version << msg_type << zero << time << n;
+   // qDebug() << "Check header";
+   // qDebug() << version << msg_type << zero << time << n;
     return data;
 }

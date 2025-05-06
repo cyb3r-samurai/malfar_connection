@@ -12,19 +12,25 @@ AC::AC(PlanStorage *p_s, QObject *parent) :
     connect(m_timer, &QTimer::timeout, this, &AC::CheckTime);
 }
 
-void AC::OnCelRecieved(std::shared_ptr<Cel> cel)
+void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
 {
     qDebug() << "cel recieved in ac";
-    qDebug() << QThread::currentThreadId();
+   // qDebug() << QThread::currentThreadId();
     qDebug() << cel->chanel_number;
 
     if(m_plan_factory->createPlan(cel)) {
+        emit messageHandled(packet_id, 0);
         qDebug() << "Plan created";
         m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
     }
     else {
 
     }
+}
+
+void AC::stopRecive()
+{
+
 }
 
 

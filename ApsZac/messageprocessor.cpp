@@ -7,6 +7,7 @@ MessageProcessor::MessageProcessor(QObject *parent, SimpleTableData *model, CelM
     handlers_.append(new SessionsInfoHandler(model));
     handlers_.append(new ReportHandler(m_celmodel));
     handlers_.append(new AcStateHandler());
+    handlers_.append(new StatusHandler);
 }
 
 void MessageProcessor::device_data_ready(Packet packet)

@@ -25,6 +25,14 @@ public:
 private:
 };
 
+class StatusHandler : public MessageHandler
+{
+public:
+    StatusHandler();
+    virtual bool HandleMessage(Packet &packet)override;
+    Status deserialize_status(QByteArray& data);
+};
+
 class SessionsInfoHandler : public MessageHandler
 {
 public:
