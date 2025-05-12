@@ -11,6 +11,7 @@ SOURCES += \
         Message.cpp \
         TcpServer.cpp \
         ac.cpp \
+        acstatehandler.cpp \
         celhandler.cpp \
         datachanel.cpp \
         dataserver.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     Message.h \
     TcpServer.h \
     ac.h \
+    acstatehandler.h \
     celhandler.h \
     datachanel.h \
     dataserver.h \

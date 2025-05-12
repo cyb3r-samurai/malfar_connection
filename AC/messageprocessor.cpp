@@ -21,11 +21,14 @@ MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker* r_s, AC
     m_msg_handlers->append(stop_handler_ptr);
 
     auto session_request_ptr = std::make_shared<SessionRequestHandler>();
-    connect(session_request_ptr.get(), &SessionRequestHandler::requestRecieved, m_ac, &AC::onSessionRequest);
+    connect(session_request_ptr.get(), &SessionRequestHandler::requestRecieved,
+            m_state_checker, &ReportStateChecker::onRequest);
+
     m_msg_handlers->append(session_request_ptr);
 
-
     connect(r_s, &ReportStateChecker::reciveStateCreated, this, &MessageProcessor::onReciveStateCreated);
+    connect(r_s, &ReportStateChecker::sessionInfoCreated, this, &MessageProcessor::onSessionStateCreated);
+    connect(r_s, &ReportStateChecker::acStateCreated, this, &MessageProcessor::onAcStateCreated);
     connect(ac, &AC::messageHandled, this, &MessageProcessor::statusResponse);
 
     auto &broker = MessageBroker::get();
@@ -81,8 +84,18 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
     //     Header header;
     //     header.msg_type  = 0x81;
     //     header.n = No_alignmet_size::recieve_state + r_s->n * No_alignmet_size::chanel_info;
-    // emit message_created(header, r_s->serializeStruct());
-    //}
+    //     emit message_created(header, r_s->serializeStruct());
+    // }
+}
+
+void MessageProcessor::onSessionStateCreated(std::shared_ptr<SessionInfo> s_i)
+{
+    qDebug() << "Session ready to be send";
+}
+
+void MessageProcessor::onAcStateCreated(std::shared_ptr<AcState> a_s)
+{
+    qDebug() << "AcState ready to be send";
 }
 
 void MessageProcessor::statusResponse(long long id, quint8 status)

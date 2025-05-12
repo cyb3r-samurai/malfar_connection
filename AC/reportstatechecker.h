@@ -21,7 +21,8 @@ public:
 
 public slots:
     void onTimer();
-    void onRequest();
+    void onRequest(long long);
+    void onAcStateRequest(long long);
 
 signals:
     void reciveStateCreated(std::shared_ptr<RecieveState>);

@@ -72,6 +72,11 @@ QByteArray Report::serializeStruct()
     return data;
 }
 
+AcState::AcState()
+{
+    cdo_state = new CDO_state[sector_count];
+}
+
 QByteArray AcState::serializeStruct()
 {
     QByteArray data;
@@ -118,27 +123,11 @@ inline QDataStream &operator<< (QDataStream &stream, CDO_state& cdo_state)
            << cdo_state.voltage << cdo_state.temperature
            << cdo_state.cdo_state << cdo_state.cam_count;
     for (int i = 0; i < cdo_state.cam_count; ++i) {
-        stream << *(cdo_state.cam_info[i]);
+        stream << cdo_state.cam_info[i];
     }
         return stream;
 }
 
-
-
-CAM_state::CAM_state(quint8 n) :
-    emmiter_count{n}
-{
-    emm_state = new Emmiter_state[n];
-}
-
-CDO_state::CDO_state(quint8 n) :
-    cam_count{n}
-{
-    cam_info = new CAM_state*[n];
-    for (int i = 0; i < cam_count; ++i) {
-        cam_info [i] = new CAM_state(16);
-    }
-}
 
 Status::Status(double time_, quint8 msg_type_, quint8 status_)
     : time{time_}, msg_type{msg_type_}, status{status_}
@@ -185,4 +174,14 @@ inline QDataStream &operator<< (QDataStream &stream, MessageSegmentPlan& m_seg_p
     }
 
     return stream;
+}
+
+CAM_state::CAM_state()
+{
+    emm_state = new Emmiter_state[emmiter_count];
+}
+
+CDO_state::CDO_state()
+{
+    cam_info = new CAM_state[cam_count];
 }

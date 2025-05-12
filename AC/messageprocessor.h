@@ -40,6 +40,8 @@ public slots:
 private slots:
     void keep_alive();
     void onReciveStateCreated(std::shared_ptr<RecieveState>);
+    void onSessionStateCreated(std::shared_ptr<SessionInfo>);
+    void onAcStateCreated(std::shared_ptr<AcState>);
     void statusResponse(long long, quint8);
 
 private:

@@ -70,22 +70,22 @@ public:
 
 class Emmiter_state{
 public:
-    quint8 pol;
-    quint8 state;
-    float signal_level; //Среднеквадратический урдвень сигнала на входу АЦП
+    quint8 pol = 1;
+    quint8 state = 1;
+    float signal_level = 1; //Среднеквадратический урдвень сигнала на входу АЦП
 
     friend QDataStream &operator << (QDataStream &stream, Emmiter_state &emmiter);
 };
 
 class CAM_state {
 public:
-    CAM_state(quint8 n);
+    CAM_state();
 
-    quint8 cam_state;
-    float amperage;
-    float temperature;
-    quint8 emmiter_count;
-    Emmiter_state* emm_state;
+    quint8 cam_state = 1;
+    float amperage = 1;
+    float temperature = 1;
+    quint8 emmiter_count = 24;
+    Emmiter_state* emm_state ;
 
     friend QDataStream &operator << (QDataStream &stream, CAM_state &emmiter);
 };
@@ -93,14 +93,14 @@ public:
 class CDO_state {
 public:
 
-    CDO_state(quint8 n);
-    quint8 state;
-    float amperage;
-    float voltage;
-    float temperature;
-    quint8 cdo_state;
-    quint8 cam_count;
-    CAM_state ** cam_info;
+    CDO_state();
+    quint8 state = 1;
+    float amperage = 1;
+    float voltage = 1;
+    float temperature = 1;
+    quint8 cdo_state = 1;
+    quint8 cam_count = 16;
+    CAM_state * cam_info;
 
     friend QDataStream &operator << (QDataStream &stream, CDO_state &cdo_state);
 };
@@ -108,14 +108,15 @@ public:
 
 class AcState {
 public:
+    AcState();
     quint8 state_ac = 12;
     quint8 state_sch = 42;
     quint8 comm_state = 4;
     quint8 comm_state2 = 5;
 
-    quint8 secor_count = 4;
+    quint8 sector_count = 4;
 
-    CDO_state cdo_state;
+    CDO_state* cdo_state;
 
     QByteArray serializeStruct();
 };

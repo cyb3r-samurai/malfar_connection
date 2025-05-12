@@ -19,7 +19,7 @@ void ReportStateChecker::onTimer()
     }
 }
 
-void ReportStateChecker::onRequest()
+void ReportStateChecker::onRequest(long long)
 {
     //update data in class
     m_plan_storage->lockRead();
@@ -29,6 +29,17 @@ void ReportStateChecker::onRequest()
     if(m_data_chanel_plans) {
         create_session_info();
     }
+}
+
+void ReportStateChecker::onAcStateRequest(long long)
+{
+    create_ac_state();
+}
+
+void ReportStateChecker::create_ac_state()
+{
+    auto ac_state_ptr = std::make_shared<AcState>();
+    emit acStateCreated(ac_state_ptr);
 }
 
 void ReportStateChecker::create_session_info()

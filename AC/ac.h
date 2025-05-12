@@ -34,7 +34,6 @@ signals:
 
 public slots:
     void OnCelRecieved(std::shared_ptr<Cel> cel, long long);
-    void onSessionRequest(long long);
     void onStopRecieve(long long);
 
 private slots:

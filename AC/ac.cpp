@@ -28,10 +28,6 @@ void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
     }
 }
 
-void AC::onSessionRequest(long long)
-{
-
-}
 
 void AC::onStopRecieve(long long packet_id)
 {
