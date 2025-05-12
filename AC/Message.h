@@ -17,6 +17,7 @@ namespace No_alignmet_size {
     const quint8 report = 26;
     const quint8 as_state = 3;
     const quint8 status = 10;
+    const quint8 chanel_info = 22;
 };
 
 class Requst_Message {
@@ -157,11 +158,23 @@ struct MessageSegmentPlan {
     double end_time;
     uint16_t m;
     int16_t** cel;
+
+    friend QDataStream &operator << (QDataStream &stream, MessageSegmentPlan& msg_seg);
 };
 
 struct ChanelData {
     uint8_t chanel_number;
-    uint8_t segment_data;
+    uint8_t segment_count;
     MessageSegmentPlan* segment_plan;
+
+    friend QDataStream &operator << (QDataStream &stream, ChanelData& ch_data);
+};
+
+class SessionInfo {
+public:
+    uint8_t active_data_chanel_count;
+    ChanelData * m_chanel_data;
+
+    QByteArray SerializeStruct();
 };
 #endif // MESSAGE_H

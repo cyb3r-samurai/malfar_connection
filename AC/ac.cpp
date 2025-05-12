@@ -19,18 +19,26 @@ void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
     qDebug() << cel->chanel_number;
 
     if(m_plan_factory->createPlan(cel)) {
-        emit messageHandled(packet_id, 0);
         qDebug() << "Plan created";
         m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
+        emit messageHandled(packet_id, 0);
     }
     else {
 
     }
 }
 
-void AC::stopRecive()
+void AC::onSessionRequest(long long)
 {
 
+}
+
+void AC::onStopRecieve(long long packet_id)
+{
+    m_chanel_plans->clear();
+    m_sector_plans->clear();
+    m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
+    emit messageHandled(packet_id, 0);
 }
 
 

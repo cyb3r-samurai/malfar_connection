@@ -25,6 +25,8 @@ public:
                 std::map<int, SectorPlan>* sector_plans);
     bool createPlan(std::shared_ptr<Cel> cel);
 
+    void clearPlans();
+
 private:
     std::map<int, DataChanel>* m_data_plans;
     std::map<int, SectorPlan>* m_sector_plans;

@@ -1,4 +1,5 @@
 #include "planfactory.h"
+#include <QDebug>
 
 PlanFactory::PlanFactory(std::map<int, DataChanel> *data_plans,
                          std::map<int, SectorPlan> *sector_plans) :
@@ -46,6 +47,14 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         segment_ptr->appendCel(cel_plan);
     }
     return true;
+}
+
+void PlanFactory::clearPlans()
+{
+    qDebug() << "Clear data in plan factory";
+    m_sector_plans->clear();
+    m_data_plans->clear();
+
 }
 
 uint8_t PlanFactory::calculate_sector(int16_t vec, const std::vector<Sector> &sector_vector)

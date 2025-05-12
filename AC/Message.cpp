@@ -156,3 +156,33 @@ QByteArray Status::SerialiazeStruct()
 
     return data;
 }
+
+QByteArray SessionInfo::SerializeStruct()
+{
+    QByteArray data;
+    QDataStream stream (&data, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::LittleEndian);
+
+    stream << active_data_chanel_count << m_chanel_data;
+
+    return data;
+}
+
+inline QDataStream &operator<< (QDataStream &stream, ChanelData& ch_data) {
+    stream << ch_data.chanel_number << ch_data.segment_count << ch_data.segment_plan;
+
+    return stream;
+}
+
+
+inline QDataStream &operator<< (QDataStream &stream, MessageSegmentPlan& m_seg_plan) {
+    stream << m_seg_plan.sector_number << m_seg_plan.chanel_number << m_seg_plan.pol
+           << m_seg_plan.ka_number << m_seg_plan.start_time << m_seg_plan.end_time
+           << m_seg_plan.m;
+
+    for( int i = 0; i < m_seg_plan.m; ++i) {
+        stream << m_seg_plan.cel[i][0] << m_seg_plan.cel[i][1];
+    }
+
+    return stream;
+}

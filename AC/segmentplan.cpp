@@ -30,3 +30,8 @@ void SegmentPlan::appendCel(std::shared_ptr<Cel> celPtr)
 
     current_index++;
 }
+
+MessageSegmentPlan SegmentPlan::toMessage()
+{
+
+}

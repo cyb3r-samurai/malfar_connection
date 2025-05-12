@@ -16,7 +16,9 @@
 #include "reportstatechecker.h"
 #include "messagehandler.h"
 #include "celhandler.h"
+#include "stophandler.h"
 #include "sequentialidprovider.h"
+#include "sessionrequesthandler.h"
 
 #include <functional>
 
@@ -51,7 +53,6 @@ private:
     ReportStateChecker* m_state_checker;
     PlanStorage* m_plan_storage;
 
-    std::shared_ptr<CelHandler> m_cel_handler_ptr;
     AC* m_ac;
     std::map<int, SectorPlan>* m_test_data;
     void print_current_state() const;

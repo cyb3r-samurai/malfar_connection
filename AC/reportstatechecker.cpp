@@ -19,6 +19,55 @@ void ReportStateChecker::onTimer()
     }
 }
 
+void ReportStateChecker::onRequest()
+{
+    //update data in class
+    m_plan_storage->lockRead();
+    m_data_chanel_plans = m_plan_storage->data_chanels_plans();
+    m_plan_storage->unloock();
+
+    if(m_data_chanel_plans) {
+        create_session_info();
+    }
+}
+
+void ReportStateChecker::create_session_info()
+{
+
+    quint8 active_chanels_count = m_data_chanel_plans->size();
+
+    auto sessionInfoPtr = std::make_shared<SessionInfo>();
+    sessionInfoPtr->active_data_chanel_count = active_chanels_count;
+    sessionInfoPtr->m_chanel_data = new ChanelData[active_chanels_count];
+
+    int chanel_mas_count = 0;
+    auto plans_it = m_data_chanel_plans->begin();
+    while (plans_it != m_data_chanel_plans->end()) {
+        int chanel_number = plans_it->first;
+        int segment_mas_count = 0;
+
+        ChanelData *current_chanel =
+            &(sessionInfoPtr->m_chanel_data[chanel_mas_count]);
+        std::list<std::shared_ptr<SegmentPlan>> segments =
+            (*m_data_chanel_plans)[chanel_number].segments();
+
+        current_chanel->chanel_number = chanel_number;
+        current_chanel->segment_count = segments.size();
+        current_chanel->segment_plan = new MessageSegmentPlan[segments.size()];
+
+        auto segment_it = segments.begin();
+        while (segment_it != segments.end()) {
+            auto current_segment = segment_it->get();
+            current_chanel->segment_plan[segment_mas_count] =
+                current_segment->toMessage();
+            ++segment_mas_count;
+            ++segment_it;
+        }
+        ++chanel_mas_count;
+        ++plans_it;
+    }
+    emit sessionInfoCreated(sessionInfoPtr);
+}
 void ReportStateChecker::create_recieve_state()
 {
     auto recievedStatePtr = std::make_shared<RecieveState>();

@@ -11,9 +11,19 @@ MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker* r_s, AC
     connect(my_timer, &QTimer::timeout, r_s, &ReportStateChecker::onTimer);
 
     m_msg_handlers = new QList<std::shared_ptr<MessageHandler>>;
-    m_cel_handler_ptr = std::make_shared<CelHandler>();
+
+    auto m_cel_handler_ptr = std::make_shared<CelHandler>();
     connect(m_cel_handler_ptr.get(), &CelHandler::celCreated, m_ac, &AC::OnCelRecieved);
     m_msg_handlers->append(m_cel_handler_ptr);
+
+    auto  stop_handler_ptr = std::make_shared<StopHandler>();
+    connect(stop_handler_ptr.get(), &StopHandler::stopRecieve, m_ac, &AC::onStopRecieve);
+    m_msg_handlers->append(stop_handler_ptr);
+
+    auto session_request_ptr = std::make_shared<SessionRequestHandler>();
+    connect(session_request_ptr.get(), &SessionRequestHandler::requestRecieved, m_ac, &AC::onSessionRequest);
+    m_msg_handlers->append(session_request_ptr);
+
 
     connect(r_s, &ReportStateChecker::reciveStateCreated, this, &MessageProcessor::onReciveStateCreated);
     connect(ac, &AC::messageHandled, this, &MessageProcessor::statusResponse);
@@ -67,6 +77,12 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
         qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
                  <<r_s->chanel_mas[i].signal_level;
     }
+    // if (r_s->n > 0) {
+    //     Header header;
+    //     header.msg_type  = 0x81;
+    //     header.n = No_alignmet_size::recieve_state + r_s->n * No_alignmet_size::chanel_info;
+    // emit message_created(header, r_s->serializeStruct());
+    //}
 }
 
 void MessageProcessor::statusResponse(long long id, quint8 status)

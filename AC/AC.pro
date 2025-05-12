@@ -24,7 +24,9 @@ SOURCES += \
         sector.cpp \
         sectorplan.cpp \
         segmentplan.cpp \
-        sequentialidprovider.cpp
+        sequentialidprovider.cpp \
+        sessionrequesthandler.cpp \
+        stophandler.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -48,7 +50,9 @@ HEADERS += \
     sector.h \
     sectorplan.h \
     segmentplan.h \
-    sequentialidprovider.h
+    sequentialidprovider.h \
+    sessionrequesthandler.h \
+    stophandler.h
 
 DISTFILES += \
     Signal.txt

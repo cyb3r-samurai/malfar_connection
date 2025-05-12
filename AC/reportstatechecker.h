@@ -21,10 +21,12 @@ public:
 
 public slots:
     void onTimer();
+    void onRequest();
 
 signals:
     void reciveStateCreated(std::shared_ptr<RecieveState>);
     void acStateCreated(std::shared_ptr<AcState>);
+    void sessionInfoCreated(std::shared_ptr<SessionInfo>);
 
 private:
 //    QTimer* m_timer;
@@ -32,8 +34,9 @@ private:
 
     std::map<int, DataChanel> *m_data_chanel_plans;
 
-    void create_recieve_state();
     void create_ac_state();
+    void create_session_info();
+    void create_recieve_state();
 };
 
 #endif // REPORTSTATECHECKER_H

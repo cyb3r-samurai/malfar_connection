@@ -40,6 +40,7 @@ public:
 
     void initCel(std::shared_ptr<Cel> cel, uint8_t sector_number);
     void appendCel(std::shared_ptr<Cel> cel);
+    MessageSegmentPlan toMessage();
 };
 
 #endif // SEGMENTPLAN_H
