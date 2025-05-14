@@ -20,3 +20,8 @@ void SectorPlan::display_info()
 {
     qDebug() << "Segments count in sector: " << segment_plan->size();
 }
+
+std::list<std::shared_ptr<SegmentPlan> > *SectorPlan::getSegment_plan()
+{
+    return segment_plan;
+}

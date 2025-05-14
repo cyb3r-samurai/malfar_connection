@@ -5,13 +5,14 @@
 
 #include <cstdint>
 #include <vector>
+#include <list>
 #include <memory>
 
 struct TimeCelDistribution
 {
-    std::vector<int16_t> az;
-    std::vector<int16_t> angle;
-    std::vector<double> time;
+    std::list<int16_t> az;
+    std::list<int16_t> angle;
+    std::list<double> time;
 };
 
 class SegmentPlan
@@ -33,6 +34,7 @@ public:
     double end_time;
     uint16_t m;
     int16_t** cel;
+    uint8_t data_chanel_number;
 
     TimeCelDistribution* time_cel;
     uint16_t current_index = 0;

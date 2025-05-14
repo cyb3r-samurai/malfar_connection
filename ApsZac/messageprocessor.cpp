@@ -55,6 +55,14 @@ void MessageProcessor::set_cel(Cel cel)
     header.msg_type = 0x01;
     header.n = No_alignment_size::cel + 4 * cel.m;
 
+    QDateTime now = QDateTime::currentDateTime();
+    quint64  sec = now.toSecsSinceEpoch();
+    qDebug() << sec;
+
+    double OADate = double(now.toSecsSinceEpoch()) / double (86400) + 25569;
+    header.time = OADate;
+
+
     QByteArray header_bytes;
     QByteArray message_bytes;
 

@@ -16,6 +16,8 @@ public:
     int validateSegment(std::shared_ptr<SegmentPlan>);
     void display_info();
 
+    std::list<std::shared_ptr<SegmentPlan> > *getSegment_plan() ;
+
 private:
     std::list<std::shared_ptr<SegmentPlan>>* segment_plan;
 };

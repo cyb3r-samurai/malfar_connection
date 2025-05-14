@@ -13,6 +13,7 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <QThread>
+#include <QSettings>
 
 #include <memory>
 
@@ -59,5 +60,14 @@ private:
     bool started_;
 
     Header DeserializeHeader(QByteArray& data);
+
+    void loadSettings();
+    void saveSettings();
+
+
+    struct SPreferences {
+        int port;
+    };
+    SPreferences m_preferences;
 };
 #endif // TCPSERVER_H

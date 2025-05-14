@@ -8,7 +8,7 @@ AC::AC(PlanStorage *p_s, QObject *parent) :
     m_plan_factory =  new PlanFactory(m_chanel_plans, m_sector_plans);
 
     m_timer = new QTimer;
-   // m_timer->start(1000);
+    m_timer->start(1000);
     connect(m_timer, &QTimer::timeout, this, &AC::CheckTime);
 }
 
@@ -41,8 +41,50 @@ void AC::onStopRecieve(long long packet_id)
 void AC::CheckTime()
 {
     int size = m_sector_plans->size();
-    for(int i = 1; i < size; i++) {
+    auto sector_it =  m_sector_plans->begin();
 
+    QDateTime now = QDateTime::currentDateTime();
+    quint64  sec = now.toSecsSinceEpoch();
+
+    double OADAte = double(now.toSecsSinceEpoch()) / double (86400) + 25569;
+    while(sector_it != m_sector_plans->end()) {
+        auto segment_list = sector_it->second.getSegment_plan();
+        auto segment_it = segment_list->begin();
+        while (segment_it != segment_list->end()) {
+            auto segment_ptr = segment_it->get();
+            auto first_time_it = segment_ptr->time_cel->time.begin();
+            if (first_time_it != segment_ptr->time_cel->time.end()) {
+                double first_time = *first_time_it;
+                while (first_time <= OADAte) {
+                    qDebug() << "cel accepted " << segment_ptr->time_cel->time.front()
+                            << segment_ptr->time_cel->angle.front() << segment_ptr->time_cel->az.front();
+                    ++first_time_it;
+                    segment_ptr->time_cel->time.pop_front();
+                    segment_ptr->time_cel->angle.pop_front();
+                    segment_ptr->time_cel->az.pop_front();
+                    if(first_time_it == segment_ptr->time_cel->time.end()) {
+                        m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
+                        if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
+                            m_chanel_plans->extract(segment_ptr->data_chanel_number);
+                        }
+                        segment_list->erase(segment_it++);
+                        if (segment_it == segment_list->end()) {
+                            m_sector_plans->erase(sector_it++);
+                        }
+                        m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
+                        break;
+                    }
+                    first_time = *first_time_it;
+            }
+        }
+
+            if (first_time_it != segment_ptr->time_cel->time.end()) {
+                ++segment_it;
+                }
+        }
+        if( sector_it != m_sector_plans->end()) {
+            ++sector_it;
+        }
     }
-
 }
+

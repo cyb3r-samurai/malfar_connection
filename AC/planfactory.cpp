@@ -29,6 +29,7 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 int sector_status =
                     (*m_sector_plans)[current_sector_number].validateSegment(segment_ptr);
                 if (sector_status == 0) {
+                    segment_ptr->data_chanel_number = cel_plan->chanel_number;
                     (*m_sector_plans)[current_sector_number].append(segment_ptr);
                     (*m_data_plans)[cel_plan->chanel_number].append(segment_ptr);
                 }

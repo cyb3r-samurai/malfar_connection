@@ -13,10 +13,13 @@ public:
     DataChanel();
     bool append(std::shared_ptr<SegmentPlan> new_plan);
     bool validateSegment(std::shared_ptr<SegmentPlan> new_plan);
+    bool pop();
+    bool is_empty();
 
     std::list<std::shared_ptr<SegmentPlan> > segments() const;
 
 private:
+    bool empty = true;
     std::list<std::shared_ptr<SegmentPlan>> m_segments;
 };
 

@@ -14,7 +14,7 @@ void SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb)
     end_time = celPtr->end_time;
     m = celPtr->m;
  //   cel = celPtr->cel;
-    delta = (end_time - start_time)/ double(m);
+    delta = (end_time - start_time)/ double(m - 1);
     time_cel->time.push_back(start_time);
     time_cel->az.push_back(celPtr->cel[current_index][0]);
     time_cel->angle.push_back(celPtr->cel[current_index][1]);

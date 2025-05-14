@@ -16,15 +16,15 @@ TcpServer::TcpServer(QObject* parent) :
     //     signal_data->append(data);
     // }
 
-    // QDateTime now = QDateTime::currentDateTime();
-    // quint64  sec = now.toSecsSinceEpoch();
-    // qDebug() << sec;
+     QDateTime now = QDateTime::currentDateTime();
+     quint64  sec = now.toSecsSinceEpoch();
+     qDebug() << sec;
 
-    // double OADAte = double(now.toSecsSinceEpoch()) / double (86400) + 25569;
+     double OADAte = double(now.toSecsSinceEpoch()) / double (86400) + 25569;
    // std::cout << OADAte;
     //qDebug() << OADAte;
 
-
+    loadSettings();
     thread_message_processor = new QThread();
     thread_ac = new QThread();
 
@@ -149,3 +149,17 @@ Header TcpServer::DeserializeHeader(QByteArray &data)
 
     return header;
 }
+
+void TcpServer::loadSettings()
+{
+    QSettings settings;
+    qDebug() << settings.fileName();
+    m_preferences.port = settings.value("port", 5555).toInt();
+}
+
+void TcpServer::saveSettings()
+{
+    QSettings settings;
+    settings.setValue("port", 5555);
+}
+
