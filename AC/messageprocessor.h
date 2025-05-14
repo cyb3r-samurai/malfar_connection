@@ -36,6 +36,7 @@ public slots:
     void on_client_msg_recieved(Header, QByteArray);
     void handlePacket(Packet& packet);
     void savePacket(Packet& packet);
+    void on_connected();
 
 private slots:
     void keep_alive();
@@ -47,6 +48,7 @@ private slots:
 private:
     QTimer* my_timer;
     void create_responce(quint8);
+    bool m_connected = false;
     quint32 seconds_since_epoch();
     QDateTime secondsToDatetime(quint32 sec) const;
 

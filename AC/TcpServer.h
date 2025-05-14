@@ -33,6 +33,7 @@ public:
     void ClientConnected();
     void DataRecieved(QByteArray);
     void client_msg_received(Header, QByteArray);
+    void connected();
 
 
 private slots:

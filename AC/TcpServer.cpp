@@ -43,6 +43,7 @@ TcpServer::TcpServer(QObject* parent) :
     connect(server_, &QTcpServer::newConnection, this, &TcpServer::on_client_connecting);
     connect(this, &TcpServer::client_msg_received, message_processor_, &MessageProcessor::on_client_msg_recieved);
     connect(message_processor_, &MessageProcessor::message_created, this, &TcpServer::on_message_ready);
+    connect(this, &TcpServer::connected, message_processor_, &MessageProcessor::on_connected);
   //  connect(message_processor_, &MessageProcessor::cel_recieved, m_ac, &AC::OnCelRecieved);
 
     started_ = server_->listen(QHostAddress::Any, 5555);
@@ -100,6 +101,8 @@ void TcpServer::on_client_connecting()
     connect(socket_, &QTcpSocket::readyRead, this, &TcpServer::client_data_ready);
     connect(socket_, &QTcpSocket::disconnected, this, &TcpServer::client_disconnected);
     socketList_.append(socket_);
+
+    emit connected();
 }
 
 void TcpServer::client_disconnected()

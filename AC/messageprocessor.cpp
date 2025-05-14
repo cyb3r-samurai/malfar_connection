@@ -69,6 +69,11 @@ void MessageProcessor::savePacket(Packet &packet)
     m_packet_storage->push_back(packet);
 }
 
+void MessageProcessor::on_connected()
+{
+    m_connected = true;
+}
+
 void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
 {
 
@@ -80,12 +85,12 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
         qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
                  <<r_s->chanel_mas[i].signal_level;
     }
-    // if (r_s->n > 0) {
-    //     Header header;
-    //     header.msg_type  = 0x81;
-    //     header.n = No_alignmet_size::recieve_state + r_s->n * No_alignmet_size::chanel_info;
-    //     emit message_created(header, r_s->serializeStruct());
-    // }
+    if (m_connected) {
+         Header header;
+         header.msg_type  = 0x81;
+         header.n = No_alignmet_size::recieve_state + r_s->n * No_alignmet_size::chanel_info;
+         emit message_created(header, r_s->serializeStruct());
+    }
 }
 
 void MessageProcessor::onSessionStateCreated(std::shared_ptr<SessionInfo> s_i)
