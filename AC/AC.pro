@@ -15,6 +15,8 @@ SOURCES += \
         celhandler.cpp \
         datachanel.cpp \
         dataserver.cpp \
+        logger.cpp \
+        logmessage.cpp \
         main.cpp \
         messagehandler.cpp \
         messageprocessor.cpp \
@@ -42,6 +44,8 @@ HEADERS += \
     celhandler.h \
     datachanel.h \
     dataserver.h \
+    logger.h \
+    logmessage.h \
     messagebroker.h \
     messagehandler.h \
     messageprocessor.h \

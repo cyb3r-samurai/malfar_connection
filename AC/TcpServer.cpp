@@ -50,7 +50,7 @@ TcpServer::TcpServer(QObject* parent) :
     if (!started_) {
         qDebug() << "Server could not start";
     } else {
-        qDebug() <<"Server started";
+        qInfo() <<"Server started";
     }
     qDebug() << QThread::currentThreadId();
 }
