@@ -47,7 +47,6 @@ private slots:
 
 private:
     QTimer* my_timer;
-    void create_responce(quint8);
     bool m_connected = false;
     quint32 seconds_since_epoch();
     QDateTime secondsToDatetime(quint32 sec) const;

@@ -9,6 +9,7 @@
 #include "reportstatechecker.h"
 
 #include <QObject>
+#include <QCoreApplication>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
@@ -28,17 +29,19 @@ public:
     explicit TcpServer(QObject *parent = nullptr);
     bool isStarted() const;
     void StartSending();
+    void Terminate();
 
     signals:
     void ClientConnected();
     void DataRecieved(QByteArray);
     void client_msg_received(Header, QByteArray);
     void connected();
+    void finish();
 
+public slots:
+    void Timequit();
 
 private slots:
-    void keep_alive();
-
     void on_client_connecting();
     void client_disconnected();
 

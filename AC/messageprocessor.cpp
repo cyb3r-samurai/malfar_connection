@@ -52,14 +52,13 @@ void MessageProcessor::keep_alive()
     m_plan_storage->lockRead();
     m_test_data = m_plan_storage->sector_plans();
     m_plan_storage->unloock();
-    print_current_state();
+    //print_current_state();
 }
 
 void MessageProcessor::handlePacket(Packet &packet)
 {
     for (qsizetype i = 0; i < m_msg_handlers->size(); ++i) {
         if(m_msg_handlers->at(i)->handleMessage(packet)) {
-            qDebug() << "Message handled";
         }
     }
 }
@@ -77,13 +76,13 @@ void MessageProcessor::on_connected()
 void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
 {
 
-    qDebug() << "Recive state recieved in MessageProcessor";
-    qDebug() << "Number of segments in ReciveState";
-    qDebug() << r_s->n;
+    //qDebug() << "Recive state recieved in MessageProcessor";
+   // qDebug() << "Number of segments in ReciveState";
+    //qDebug() << r_s->n;
     for(int i = 0; i < r_s->n; ++i) {
-        qDebug() << "segment data";
-        qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
-                 <<r_s->chanel_mas[i].signal_level;
+        //qDebug() << "segment data";
+        //qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
+        //         <<r_s->chanel_mas[i].signal_level;
     }
     if (m_connected) {
          Header header;
@@ -105,7 +104,7 @@ void MessageProcessor::onAcStateCreated(std::shared_ptr<AcState> a_s)
 
 void MessageProcessor::statusResponse(long long id, quint8 status)
 {
-    qDebug() << "Messgae ID: " << id << " Status " << status;
+  //  qDebug() << "Messgae ID: " << id << " Status " << status;
     double time;
     quint8 msg_type;
     auto it = m_packet_storage->begin();
@@ -118,7 +117,7 @@ void MessageProcessor::statusResponse(long long id, quint8 status)
         ++it;
     }
     if (it == m_packet_storage->end()) {
-        qDebug() << "Missing id";
+        qWarning() << "Missing id";
         return;
     }
 
@@ -127,63 +126,6 @@ void MessageProcessor::statusResponse(long long id, quint8 status)
     header.msg_type = 0x80;
     header.n = No_alignmet_size::status;
     emit message_created(header, s.SerialiazeStruct());
-}
-
-void MessageProcessor::create_responce(quint8 type)
-{
-    // switch (type) {
-    // case 0x81: {
-    //     Header header;
-    //     header.msg_type = 0x81;
-    //     RecieveState r_s(1);
-    //     r_s.sector_mas[0].session_mas = new SessionInfo[2];
-    //     r_s.sector_mas[0].m = 2;
-    //     r_s.sector_mas[0].session_mas[0].a = 33;
-
-    //     header.n = No_alignmet_size::session_info * 2 + No_alignmet_size::sector_info
-    //                + No_alignmet_size::recieve_state;
-    //     QByteArray msg_bytes = r_s.serializeStruct();
-    //     emit message_created(header, msg_bytes);
-    // }
-    //     break;
-    // case 0x82: {
-    //     Header header;
-    //     header.msg_type = 0x82;
-    //     SessionsInfo s_i(2);
-    //     s_i.session_mas[0].a = 0;
-    //     s_i.session_mas[1].a = 1;
-    //     s_i.session_mas[0].b = 23;
-    //     s_i.session_mas[1].b = 53;
-
-    //     s_i.session_mas[0].strart_time = seconds_since_epoch();
-    //     s_i.session_mas[0].end_time = seconds_since_epoch() + 15;
-    //     s_i.session_mas[1].strart_time = seconds_since_epoch();
-    //     s_i.session_mas[1].end_time = seconds_since_epoch() + 20;
-
-    //     float a = 1.72;
-    //     uint32_t b = (uint32_t)(*(uint32_t*)&a);
-
-    //     s_i.session_mas[0].d = b;
-    //     s_i.session_mas[1].d = b;
-
-    //     header.n = No_alignmet_size::subsession_info*2 + No_alignmet_size::sessions_info;
-    //     QByteArray msg_bytes = s_i.serializeStruct();
-    //     emit message_created(header, msg_bytes);
-    // }
-    //     break;
-    // case 0x84: {
-    //     Header header;
-    //     header.msg_type = 0x84;
-    //     AcState state;
-
-    //     header.n = No_alignmet_size::as_state;
-    //     QByteArray msg_bytes = state.serializeStruct();
-    //     emit message_created(header, msg_bytes);
-    // }
-    //     break;
-    // default:
-    //     break;
-    // }
 }
 
 quint32 MessageProcessor::seconds_since_epoch()

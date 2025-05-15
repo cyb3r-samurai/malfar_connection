@@ -11,8 +11,7 @@ bool CelHandler::handleMessage(Packet &packet)
         stream.setByteOrder(QDataStream::LittleEndian);
         Cel cel;
         stream >> cel;
-        qDebug() << "Cel recieved";
-        qDebug() << cel.chanel_number;
+        qInfo() << "Получено целеуказание";
         emit celCreated(std::make_shared<Cel>(std::move(cel)), packet.id);
         return true;
     }

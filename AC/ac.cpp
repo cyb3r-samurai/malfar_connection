@@ -14,12 +14,8 @@ AC::AC(PlanStorage *p_s, QObject *parent) :
 
 void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
 {
-    qDebug() << "cel recieved in ac";
-   // qDebug() << QThread::currentThreadId();
-    qDebug() << cel->chanel_number;
-
     if(m_plan_factory->createPlan(cel)) {
-        qDebug() << "Plan created";
+        qInfo() << "Планы созданы в канале данных:" << cel->chanel_number;
         m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
         emit messageHandled(packet_id, 0);
     }
@@ -56,8 +52,10 @@ void AC::CheckTime()
             if (first_time_it != segment_ptr->time_cel->time.end()) {
                 double first_time = *first_time_it;
                 while (first_time <= OADAte) {
-                    qDebug() << "cel accepted " << segment_ptr->time_cel->time.front()
-                            << segment_ptr->time_cel->angle.front() << segment_ptr->time_cel->az.front();
+                    qint64 sec2 = (first_time - 25569) * 86400;
+                    QDateTime time = QDateTime::fromSecsSinceEpoch(sec2);
+                    qInfo() << "Целеукозание применено: угол" << segment_ptr->time_cel->angle.front() << ", азимут" << segment_ptr->time_cel->az
+                            << "Запланированное время: " << sec2;
                     ++first_time_it;
                     segment_ptr->time_cel->time.pop_front();
                     segment_ptr->time_cel->angle.pop_front();
@@ -66,6 +64,7 @@ void AC::CheckTime()
                         m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
                             m_chanel_plans->extract(segment_ptr->data_chanel_number);
+                            qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены";
                         }
                         segment_list->erase(segment_it++);
                         if (segment_it == segment_list->end()) {

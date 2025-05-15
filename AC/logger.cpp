@@ -20,7 +20,6 @@ void Logger::msgHandler(const QtMsgType type, const QMessageLogContext &context,
 void Logger::installMsgHandler()
 {
     qInstallMessageHandler(msgHandler);
-
 }
 
 Logger::~Logger()
