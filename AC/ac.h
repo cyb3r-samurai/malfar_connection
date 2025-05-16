@@ -46,6 +46,8 @@ private:
     // Каналы данных
     std::map<int, DataChanel>* m_chanel_plans;
 
+    void startAtNextSecond();
+
     PlanFactory* m_plan_factory;
     PlanStorage* m_plan_storage;
 

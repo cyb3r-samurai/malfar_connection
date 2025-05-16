@@ -8,7 +8,8 @@ AC::AC(PlanStorage *p_s, QObject *parent) :
     m_plan_factory =  new PlanFactory(m_chanel_plans, m_sector_plans);
 
     m_timer = new QTimer;
-    m_timer->start(1000);
+    m_timer->setTimerType(Qt::PreciseTimer);
+    startAtNextSecond();
     connect(m_timer, &QTimer::timeout, this, &AC::CheckTime);
 }
 
@@ -40,9 +41,7 @@ void AC::CheckTime()
     auto sector_it =  m_sector_plans->begin();
 
     QDateTime now = QDateTime::currentDateTime();
-    quint64  sec = now.toSecsSinceEpoch();
 
-    double OADAte = double(now.toSecsSinceEpoch()) / double (86400) + 25569;
     while(sector_it != m_sector_plans->end()) {
         auto segment_list = sector_it->second.getSegment_plan();
         auto segment_it = segment_list->begin();
@@ -50,12 +49,12 @@ void AC::CheckTime()
             auto segment_ptr = segment_it->get();
             auto first_time_it = segment_ptr->time_cel->time.begin();
             if (first_time_it != segment_ptr->time_cel->time.end()) {
-                double first_time = *first_time_it;
-                while (first_time <= OADAte) {
-                    qint64 sec2 = (first_time - 25569) * 86400;
-                    QDateTime time = QDateTime::fromSecsSinceEpoch(sec2);
-                    qInfo() << "Целеукозание применено: угол" << segment_ptr->time_cel->angle.front() << ", азимут" << segment_ptr->time_cel->az
-                            << "Запланированное время: " << sec2;
+                QDateTime first_time = *first_time_it;
+                while (first_time <= now) {
+                   // qint64 sec2 = (first_time - 25569) * 86400;
+                   // QDateTime time = QDateTime::fromSecsSinceEpoch(sec2);
+                    qInfo() << "Целеукозание применено: угол" << segment_ptr->time_cel->angle.front() << ", азимут" << segment_ptr->time_cel->az.front()
+                            << "Запланированное время: " << first_time.time();
                     ++first_time_it;
                     segment_ptr->time_cel->time.pop_front();
                     segment_ptr->time_cel->angle.pop_front();
@@ -85,5 +84,14 @@ void AC::CheckTime()
             ++sector_it;
         }
     }
+}
+
+void AC::startAtNextSecond()
+{
+    QDateTime now = QDateTime::currentDateTime();
+    int msecToNextSecond = 1000 - now.time().msec();
+    QTimer::singleShot(msecToNextSecond, [this](){
+        m_timer->start(500);
+    });
 }
 

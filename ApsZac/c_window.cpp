@@ -76,7 +76,7 @@ void C_window::on_pushButton_3_clicked()
     }
     for(quint16 i = 0; i < cel_.m; i++) {
         cel_.cel[i][0] = ui->tableWidget->item(i,0)->text().toUInt();
-        cel_.cel[i][1] = ui->tableWidget->item(i,0)->text().toUInt();
+        cel_.cel[i][1] = ui->tableWidget->item(i,1)->text().toUInt();
     }
     emit cel_created(cel_);
     C_window::close();

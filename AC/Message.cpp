@@ -97,7 +97,8 @@ QDataStream &operator>>(QDataStream &stream, Cel &cel) {
     }
     for (quint16 i = 0; i < cel.m; i++) {
         for(qsizetype j = 0; j < 2; j++) {
-            stream >> cel.cel[i][j];        }
+            stream >> cel.cel[i][j];
+        }
     }
     return stream;
 }

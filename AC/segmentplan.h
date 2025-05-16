@@ -7,12 +7,13 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <QDateTime>
 
 struct TimeCelDistribution
 {
     std::list<int16_t> az;
     std::list<int16_t> angle;
-    std::list<double> time;
+    std::list<QDateTime> time;
 };
 
 class SegmentPlan
@@ -39,6 +40,8 @@ public:
     TimeCelDistribution* time_cel;
     uint16_t current_index = 0;
     double delta;
+    uint64_t msec_delta;
+    QDateTime delta_dt;
 
     void initCel(std::shared_ptr<Cel> cel, uint8_t sector_number);
     void appendCel(std::shared_ptr<Cel> cel);

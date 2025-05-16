@@ -1,5 +1,6 @@
 #include "Message.h"
 
+
 QDataStream &operator  >>(QDataStream &stream, SessionInfo &sI) {
     stream >> sI.a >> sI.b >> sI.c >> sI.d[0] >> sI.d[1];
     return stream;
