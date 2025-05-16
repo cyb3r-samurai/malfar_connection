@@ -42,8 +42,9 @@ public:
     double delta;
     uint64_t msec_delta;
     QDateTime delta_dt;
+    QDateTime dt_time;
 
-    void initCel(std::shared_ptr<Cel> cel, uint8_t sector_number);
+    void initCel(std::shared_ptr<Cel> cel, uint8_t sector_number, int index);
     void appendCel(std::shared_ptr<Cel> cel);
     MessageSegmentPlan toMessage();
 };

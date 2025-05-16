@@ -30,8 +30,8 @@ public:
 private:
     std::map<int, DataChanel>* m_data_plans;
     std::map<int, SectorPlan>* m_sector_plans;
-    std::vector<Sector> m_sector_vector;
-    uint8_t calculate_sector(int16_t vec, const std::vector<Sector>& sector_vector);
+    std::vector<Sector>* m_sector_vector;
+    uint8_t calculate_sector(int16_t* vec, const std::vector<Sector>& sector_vector);
 
 };
 

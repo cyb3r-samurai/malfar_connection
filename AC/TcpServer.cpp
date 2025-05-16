@@ -5,6 +5,7 @@
 TcpServer::TcpServer(QObject* parent) :
     QObject{parent}
 {
+    loadSettings();
     server_ = new QTcpServer(this);
     started_ = server_->listen(QHostAddress::Any, 5555);
     if (!started_) {
@@ -15,7 +16,6 @@ TcpServer::TcpServer(QObject* parent) :
     }
 
 
-    loadSettings();
     thread_message_processor = new QThread();
     thread_ac = new QThread();
 
@@ -107,7 +107,7 @@ Header TcpServer::DeserializeHeader(QByteArray &data)
 void TcpServer::loadSettings()
 {
     QSettings settings;
-    qDebug() << settings.fileName();
+    qDebug()<<"Путь к конфигурационному файлу:"<< settings.fileName();
     m_preferences.port = settings.value("port", 5555).toInt();
 }
 

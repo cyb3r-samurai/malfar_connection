@@ -17,9 +17,11 @@ bool DataChanel::validateSegment(std::shared_ptr<SegmentPlan> new_plan)
 
 bool DataChanel::pop()
 {
-    if(m_segments.size() == 1 ) {
+    if(m_segments.size() > 0) {
+        if(m_segments.size() == 1) {
+            empty  = true;
+        }
         m_segments.pop_front();
-        empty = true;
     }
     return true;
 }
@@ -27,6 +29,12 @@ bool DataChanel::pop()
 bool DataChanel::is_empty()
 {
     return empty;
+}
+
+void DataChanel::clear()
+{
+    empty = true;
+    m_segments.clear();
 }
 
 

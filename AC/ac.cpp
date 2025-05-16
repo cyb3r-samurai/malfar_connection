@@ -16,7 +16,7 @@ AC::AC(PlanStorage *p_s, QObject *parent) :
 void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
 {
     if(m_plan_factory->createPlan(cel)) {
-        qInfo() << "Планы созданы в канале данных:" << cel->chanel_number;
+        qInfo() << "Планы созданы";
         m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
         emit messageHandled(packet_id, 0);
     }
@@ -43,9 +43,11 @@ void AC::CheckTime()
     QDateTime now = QDateTime::currentDateTime();
 
     while(sector_it != m_sector_plans->end()) {
+        bool sector_erased = false;
         auto segment_list = sector_it->second.getSegment_plan();
         auto segment_it = segment_list->begin();
         while (segment_it != segment_list->end()) {
+            bool segment_erased = false;
             auto segment_ptr = segment_it->get();
             auto first_time_it = segment_ptr->time_cel->time.begin();
             if (first_time_it != segment_ptr->time_cel->time.end()) {
@@ -53,7 +55,8 @@ void AC::CheckTime()
                 while (first_time <= now) {
                    // qint64 sec2 = (first_time - 25569) * 86400;
                    // QDateTime time = QDateTime::fromSecsSinceEpoch(sec2);
-                    qInfo() << "Целеукозание применено: угол" << segment_ptr->time_cel->angle.front() << ", азимут" << segment_ptr->time_cel->az.front()
+                    qInfo() << "Целеукозание применено: канал данных"<< segment_ptr->data_chanel_number << ", сектор приема" << sector_it->first
+                            << ", азимут" << segment_ptr->time_cel->az.front() << "угол" << segment_ptr->time_cel->angle.front()
                             << "Запланированное время: " << first_time.time();
                     ++first_time_it;
                     segment_ptr->time_cel->time.pop_front();
@@ -62,25 +65,27 @@ void AC::CheckTime()
                     if(first_time_it == segment_ptr->time_cel->time.end()) {
                         m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
-                            m_chanel_plans->extract(segment_ptr->data_chanel_number);
-                            qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены";
+                            qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
                         }
                         segment_list->erase(segment_it++);
+                        segment_erased = true;
                         if (segment_it == segment_list->end()) {
+                            qInfo() << "Планы слежения в секторе" << sector_it->first << "выполнены.";
                             m_sector_plans->erase(sector_it++);
+                            sector_erased = true;
                         }
                         m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
                         break;
                     }
                     first_time = *first_time_it;
+                }
+            }
+
+            if (!segment_erased) {
+                ++segment_it;
             }
         }
-
-            if (first_time_it != segment_ptr->time_cel->time.end()) {
-                ++segment_it;
-                }
-        }
-        if( sector_it != m_sector_plans->end()) {
+        if(!sector_erased) {
             ++sector_it;
         }
     }

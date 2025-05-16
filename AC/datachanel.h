@@ -15,6 +15,7 @@ public:
     bool validateSegment(std::shared_ptr<SegmentPlan> new_plan);
     bool pop();
     bool is_empty();
+    void clear();
 
     std::list<std::shared_ptr<SegmentPlan> > segments() const;
 
