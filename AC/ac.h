@@ -22,7 +22,9 @@ class AC : public QObject
 {
     Q_OBJECT
 public:
-    explicit AC(PlanStorage* p_s, QObject* parent = nullptr);
+    explicit AC(QObject* parent = nullptr);
+
+    PlanStorage *plan_storage() const;
 
 signals:
     void SessionStarted(int , int);
@@ -47,6 +49,8 @@ private:
     std::map<int, DataChanel>* m_chanel_plans;
 
     void startAtNextSecond();
+
+    QThread* m_plan_factory_thread;
 
     PlanFactory* m_plan_factory;
     PlanStorage* m_plan_storage;

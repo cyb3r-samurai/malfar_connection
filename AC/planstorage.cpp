@@ -36,3 +36,14 @@ std::map<int, DataChanel> *PlanStorage::data_chanels_plans() const
 {
     return m_data_chanels_plans;
 }
+
+std::map<int, DataChanel> PlanStorage::get_data_chanel_copy() const
+{
+    return *m_data_chanels_plans;
+}
+
+bool PlanStorage::lockWrite()
+{
+    m_lock.lockForWrite();
+    return true;
+}

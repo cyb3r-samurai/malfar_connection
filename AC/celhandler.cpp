@@ -12,6 +12,7 @@ bool CelHandler::handleMessage(Packet &packet)
         Cel cel;
         stream >> cel;
         qInfo() << "Получено целеуказание";
+        qDebug() << cel.m;
         emit celCreated(std::make_shared<Cel>(std::move(cel)), packet.id);
         return true;
     }

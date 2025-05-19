@@ -1,10 +1,14 @@
 #include "planfactory.h"
 #include <QDebug>
 
-PlanFactory::PlanFactory(std::map<int, DataChanel> *data_plans,
-                         std::map<int, SectorPlan> *sector_plans) :
-    m_data_plans{data_plans}, m_sector_plans{sector_plans}
+
+
+PlanFactory::PlanFactory(PlanStorage *p_s, QObject *parent) :
+    QObject{parent}, m_plan_storage{p_s}
 {
+    m_data_plans = p_s->data_chanels_plans();
+    m_sector_plans = p_s->sector_plans();
+
     m_sector_vector = new std::vector<Sector>(4);
     m_sector_vector->at(0).set(1, 0, 900, 0, 900);
     m_sector_vector->at(1).set(2, 900, 1800, 0, 900);
@@ -14,8 +18,9 @@ PlanFactory::PlanFactory(std::map<int, DataChanel> *data_plans,
 
 bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
 {
+    m_plan_storage->lockWrite();
     if(cel_plan->m == 0) {
-        m_data_plans->at(cel_plan->chanel_number).clear();
+        m_data_plans->extract(cel_plan->chanel_number);
         auto sector_it = m_sector_plans->begin();
         while(sector_it != m_sector_plans->end()) {
             bool sector_erased = false;
@@ -42,15 +47,19 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
             }
         }
         qInfo() << "Очищены планы канала данных" << cel_plan->chanel_number;
+        qDebug() << "size" << m_data_plans->size();
+        m_plan_storage->unloock();
         return 0;
     }
+
+
     int16_t a[2] = {cel_plan->cel[0][0], cel_plan->cel[0][1]};
     uint8_t sector_number = calculate_sector(a, *m_sector_vector);
-    int16_t lastCelIndex = cel_plan->m - 1;
+    uint16_t lastCelIndex = cel_plan->m - 1;
 
     std::shared_ptr<SegmentPlan> segment_ptr = std::make_shared<SegmentPlan>();
     segment_ptr->initCel(cel_plan, sector_number, 0);
-    for(int16_t i = 0;  i < cel_plan->m; ++i) {
+    for(uint16_t i = 0;  i < cel_plan->m; ++i) {
         int16_t a[2] = {cel_plan->cel[i][0], cel_plan->cel[i][1]};
         uint8_t current_sector_number = calculate_sector(a, *m_sector_vector);
 
@@ -64,6 +73,7 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                     (*m_sector_plans)[sector_number].validateSegment(segment_ptr);
                 if (sector_status == 0) {
                     segment_ptr->data_chanel_number = cel_plan->chanel_number;
+                    segment_ptr->sector_number = sector_number;
                     (*m_sector_plans)[sector_number].append(segment_ptr);
                     (*m_data_plans)[cel_plan->chanel_number].append(segment_ptr);
 
@@ -83,6 +93,7 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                     int sector_status =
                         (*m_sector_plans)[sector_number].validateSegment(segment_ptr);
                     if (sector_status == 0) {
+                        segment_ptr->sector_number = sector_number;
                         segment_ptr->data_chanel_number = cel_plan->chanel_number;
                         (*m_sector_plans)[sector_number].append(segment_ptr);
                         (*m_data_plans)[cel_plan->chanel_number].append(segment_ptr);
@@ -93,6 +104,7 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
 
         segment_ptr->appendCel(cel_plan);
     }
+    m_plan_storage->unloock();
     return true;
 }
 
@@ -101,6 +113,11 @@ void PlanFactory::clearPlans()
     qDebug() << "Clear data in plan factory";
     m_sector_plans->clear();
     m_data_plans->clear();
+
+}
+
+PlanFactory::~PlanFactory()
+{
 
 }
 

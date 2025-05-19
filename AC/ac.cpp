@@ -1,11 +1,19 @@
 #include "ac.h"
 
-AC::AC(PlanStorage *p_s, QObject *parent) :
-    QObject{parent}, m_plan_storage{p_s}
+AC::AC(QObject *parent) :
+    QObject{parent}
 {
-    m_chanel_plans = new std::map<int, DataChanel>;
-    m_sector_plans = new std::map<int, SectorPlan> ;
-    m_plan_factory =  new PlanFactory(m_chanel_plans, m_sector_plans);
+    m_plan_storage = new PlanStorage;
+    m_chanel_plans = m_plan_storage->data_chanels_plans();
+    m_sector_plans = m_plan_storage->sector_plans();
+
+    m_plan_factory =  new PlanFactory(m_plan_storage);
+
+    m_plan_factory_thread = new QThread;
+
+    m_plan_factory->moveToThread(m_plan_factory_thread);
+
+    m_plan_factory_thread->start();
 
     m_timer = new QTimer;
     m_timer->setTimerType(Qt::PreciseTimer);
@@ -17,7 +25,6 @@ void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
 {
     if(m_plan_factory->createPlan(cel)) {
         qInfo() << "Планы созданы";
-        m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
         emit messageHandled(packet_id, 0);
     }
     else {
@@ -28,16 +35,17 @@ void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
 
 void AC::onStopRecieve(long long packet_id)
 {
+    m_plan_storage->lockWrite();
     m_chanel_plans->clear();
     m_sector_plans->clear();
-    m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
+    m_plan_storage->unloock();
     emit messageHandled(packet_id, 0);
 }
 
 
 void AC::CheckTime()
 {
-    int size = m_sector_plans->size();
+    m_plan_storage->lockWrite();
     auto sector_it =  m_sector_plans->begin();
 
     QDateTime now = QDateTime::currentDateTime();
@@ -66,6 +74,7 @@ void AC::CheckTime()
                         m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
                             qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
+                            m_chanel_plans->extract(segment_ptr->data_chanel_number);
                         }
                         segment_list->erase(segment_it++);
                         segment_erased = true;
@@ -74,7 +83,6 @@ void AC::CheckTime()
                             m_sector_plans->erase(sector_it++);
                             sector_erased = true;
                         }
-                        m_plan_storage->changePlans(*m_sector_plans, *m_chanel_plans);
                         break;
                     }
                     first_time = *first_time_it;
@@ -89,6 +97,7 @@ void AC::CheckTime()
             ++sector_it;
         }
     }
+    m_plan_storage->unloock();
 }
 
 void AC::startAtNextSecond()
@@ -98,5 +107,10 @@ void AC::startAtNextSecond()
     QTimer::singleShot(msecToNextSecond, [this](){
         m_timer->start(500);
     });
+}
+
+PlanStorage *AC::plan_storage() const
+{
+    return m_plan_storage;
 }
 

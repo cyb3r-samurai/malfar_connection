@@ -79,11 +79,12 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
     //qDebug() << "Recive state recieved in MessageProcessor";
    // qDebug() << "Number of segments in ReciveState";
     //qDebug() << r_s->n;
-    for(int i = 0; i < r_s->n; ++i) {
-        //qDebug() << "segment data";
-        //qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
-        //         <<r_s->chanel_mas[i].signal_level;
-    }
+//     for(int i = 0; i < r_s->n; ++i) {
+//         qDebug() << r_s->chanel_mas[i].sector_number;
+//         qDebug() << "segment data";
+//         qDebug() << r_s->chanel_mas[i].real_chanel_number<< r_s->chanel_mas[i].ka_number
+//                  <<r_s->chanel_mas[i].signal_level;
+//     }
     if (m_connected) {
          Header header;
          header.msg_type  = 0x81;

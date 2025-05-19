@@ -20,13 +20,15 @@ public:
 
     std::map<int, SectorPlan> *sector_plans() const;
     std::map<int, DataChanel> *data_chanels_plans() const;
+    std::map<int, DataChanel> get_data_chanel_copy() const;
 
+    bool lockWrite();
     bool lockRead();
     bool unloock();
 private:
     std::map<int, SectorPlan>* m_sector_plans;
     std::map<int, DataChanel>* m_data_chanels_plans;
-    QReadWriteLock m_lock;
+    mutable QReadWriteLock m_lock;
 };
 
 #endif // PLANSTORAGE_H

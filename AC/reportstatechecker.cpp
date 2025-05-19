@@ -10,11 +10,10 @@ ReportStateChecker::ReportStateChecker(PlanStorage *p_s, QObject *parent)
 void ReportStateChecker::onTimer()
 {
     m_plan_storage->lockRead();
-    m_data_chanel_plans = m_plan_storage->data_chanels_plans();
+    m_data_chanel_plans = m_plan_storage->get_data_chanel_copy();
     m_plan_storage->unloock();
-
     //TODO:: получить телеметрию
-    if(m_data_chanel_plans) {
+    if(!m_data_chanel_plans.empty()) {
         create_recieve_state();
     }
 }
@@ -23,10 +22,10 @@ void ReportStateChecker::onRequest(long long)
 {
     //update data in class
     m_plan_storage->lockRead();
-    m_data_chanel_plans = m_plan_storage->data_chanels_plans();
+    m_data_chanel_plans = m_plan_storage->get_data_chanel_copy();
     m_plan_storage->unloock();
 
-    if(m_data_chanel_plans) {
+    if(!m_data_chanel_plans.empty()) {
         create_session_info();
     }
 }
@@ -45,22 +44,22 @@ void ReportStateChecker::create_ac_state()
 void ReportStateChecker::create_session_info()
 {
 
-    quint8 active_chanels_count = m_data_chanel_plans->size();
+    quint8 active_chanels_count = m_data_chanel_plans.size();
 
     auto sessionInfoPtr = std::make_shared<SessionInfo>();
     sessionInfoPtr->active_data_chanel_count = active_chanels_count;
     sessionInfoPtr->m_chanel_data = new ChanelData[active_chanels_count];
 
     int chanel_mas_count = 0;
-    auto plans_it = m_data_chanel_plans->begin();
-    while (plans_it != m_data_chanel_plans->end()) {
+    auto plans_it = m_data_chanel_plans.begin();
+    while (plans_it != m_data_chanel_plans.end()) {
         int chanel_number = plans_it->first;
         int segment_mas_count = 0;
 
         ChanelData *current_chanel =
             &(sessionInfoPtr->m_chanel_data[chanel_mas_count]);
         std::list<std::shared_ptr<SegmentPlan>> segments =
-            (*m_data_chanel_plans)[chanel_number].segments();
+            m_data_chanel_plans[chanel_number].segments();
 
         current_chanel->chanel_number = chanel_number;
         current_chanel->segment_count = segments.size();
@@ -82,7 +81,7 @@ void ReportStateChecker::create_session_info()
 void ReportStateChecker::create_recieve_state()
 {
     auto recievedStatePtr = std::make_shared<RecieveState>();
-    quint8 active_chanels_count = m_data_chanel_plans->size();
+    quint8 active_chanels_count = m_data_chanel_plans.size();
 
     //initializing recivestate
     recievedStatePtr->initializeChanelMas(active_chanels_count);
@@ -91,14 +90,14 @@ void ReportStateChecker::create_recieve_state()
     int chanel_mas_count = 0;
 
     //iterate over chanel plans and segments to form recivestate message
-    auto plans_it = m_data_chanel_plans->begin();
-    while(plans_it != m_data_chanel_plans->end()){
+    auto plans_it = m_data_chanel_plans.begin();
+    while(plans_it != m_data_chanel_plans.end()){
         int chanel_number = plans_it->first;
         ChanelInfo *current_chanel =
             &(recievedStatePtr->chanel_mas[chanel_mas_count]);
 
         std::list<std::shared_ptr<SegmentPlan>> segments =
-            (*m_data_chanel_plans)[chanel_number].segments();
+            m_data_chanel_plans[chanel_number].segments();
 
         auto segments_it = segments.begin();
         while(segments_it != segments.end()) {
@@ -114,7 +113,7 @@ void ReportStateChecker::create_recieve_state()
             current_chanel->sector_state = 0; // must be calculated
             current_chanel->sector_start = 0; // must be taken from sector plan
             current_chanel->sector_end = 0; // must be taken from sector plan
-            ++segments_it;
+            break;
         }
 
         ++plans_it;

@@ -20,10 +20,10 @@ TcpServer::TcpServer(QObject* parent) :
     thread_ac = new QThread();
 
 
-    m_plan_storage = new PlanStorage();
-    m_ac = new AC(m_plan_storage);
-    m_report_state_checker = new ReportStateChecker(m_plan_storage);
-    message_processor_ = new MessageProcessor(m_plan_storage, m_report_state_checker, m_ac);
+  //  m_plan_storage = new PlanStorage();
+    m_ac = new AC();
+    m_report_state_checker = new ReportStateChecker(m_ac->plan_storage());
+    message_processor_ = new MessageProcessor(m_ac->plan_storage(), m_report_state_checker, m_ac);
 
     message_processor_->moveToThread(thread_message_processor);
     m_ac->moveToThread(thread_ac);
@@ -58,6 +58,7 @@ void TcpServer::on_client_connecting()
 {
     qInfo() << "П1 connected to server";
     socket_ = server_->nextPendingConnection();
+    socket_->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,64*1024*1024);
     connect(socket_, &QTcpSocket::readyRead, this, &TcpServer::client_data_ready);
     connect(socket_, &QTcpSocket::disconnected, this, &TcpServer::client_disconnected);
     socketList_.append(socket_);
@@ -80,9 +81,19 @@ void TcpServer::client_data_ready()
     while(socket->bytesAvailable() >= HEADER_SIZE) {
         header_bytes = socket->read(HEADER_SIZE);
         header = DeserializeHeader(header_bytes);
-        msg_bytes = socket->read(header.n);
-        emit client_msg_received(header, msg_bytes);
-    }
+        qint64 data_size = header.n;
+        while(data_size){
+            msg_bytes = socket->read(header.n);
+            data_size -= msg_bytes.size();
+
+            if(data_size ) {
+                if(socket->waitForReadyRead(100) == false) {
+                    qDebug()<< "missing data";
+                    qDebug()<< data_size;
+                }
+            }
+        }
+        emit client_msg_received(header, msg_bytes); }
 }
 
 void TcpServer::on_message_ready(Header header, QByteArray data)

@@ -8,6 +8,7 @@
 #include "datachanel.h"
 
 #include <QTimer>
+#include <QThread>
 #include <QObject>
 
 #include <map>
@@ -33,7 +34,7 @@ private:
 //    QTimer* m_timer;
     PlanStorage *m_plan_storage;
 
-    std::map<int, DataChanel> *m_data_chanel_plans;
+    std::map<int, DataChanel> m_data_chanel_plans;
 
     void create_ac_state();
     void create_session_info();
