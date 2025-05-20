@@ -23,7 +23,6 @@ void ReportStateChecker::onRequest(long long)
     //update data in class
     m_plan_storage->lockRead();
     m_data_chanel_plans = m_plan_storage->get_data_chanel_copy();
-    m_plan_storage->unloock();
 
     if(!m_data_chanel_plans.empty()) {
         create_session_info();

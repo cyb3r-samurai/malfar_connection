@@ -20,7 +20,7 @@ class SegmentPlan
 {
 public:
     SegmentPlan();
-
+    ~SegmentPlan();
     uint8_t sector_number; // 1, 2, 3, 4
     uint8_t chanel_number; // номер физического канала приема
     uint8_t pol; // 1 - правая круговая

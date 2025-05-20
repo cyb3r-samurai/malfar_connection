@@ -124,6 +124,8 @@ public:
 
 class Cel {
 public:
+
+    ~Cel();
     quint8 chanel_number;
     qint8 polarization;
     quint16 ka_number;

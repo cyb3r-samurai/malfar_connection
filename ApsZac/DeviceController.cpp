@@ -40,7 +40,7 @@ bool DeviceController::is_connected()
     return socket_.state() == QAbstractSocket::ConnectedState;
 }
 
-void DeviceController::send(QByteArray header, QByteArray msg)
+void DeviceController::send(QByteArray& header, QByteArray& msg)
 {
     socket_.write(header);
     socket_.write(msg);

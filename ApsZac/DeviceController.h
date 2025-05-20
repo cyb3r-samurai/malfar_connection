@@ -28,7 +28,7 @@ signals:
     void data_ready(Packet);
 
 public slots:
-    void send(QByteArray header, QByteArray msg);
+    void send(QByteArray& header, QByteArray& msg);
 private slots:
     void socket_state_changed(QAbstractSocket::SocketState);
     void socket_ready_read();

@@ -9,11 +9,10 @@ bool CelHandler::handleMessage(Packet &packet)
     if (packet.header.msg_type == 0x01) {
         QDataStream stream(&packet.data, QIODevice::ReadOnly);
         stream.setByteOrder(QDataStream::LittleEndian);
-        Cel cel;
-        stream >> cel;
+        auto ptr1 = std::make_shared<Cel>();
+        stream >> *(ptr1.get());
         qInfo() << "Получено целеуказание";
-        qDebug() << cel.m;
-        emit celCreated(std::make_shared<Cel>(std::move(cel)), packet.id);
+        emit celCreated(ptr1, packet.id);
         return true;
     }
     else {

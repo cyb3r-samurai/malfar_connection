@@ -12,6 +12,7 @@ class SectorPlan
 {
 public:
     SectorPlan();
+    ~SectorPlan();
     void append(std::shared_ptr<SegmentPlan> planPtr);
     int validateSegment(std::shared_ptr<SegmentPlan>);
     void display_info();

@@ -36,7 +36,7 @@ MessageProcessor::MessageProcessor(PlanStorage* p_s, ReportStateChecker* r_s, AC
     connect(&broker, &MessageBroker::MessagePublished, this, &MessageProcessor::savePacket);
 }
 
-void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data)
+void MessageProcessor::on_client_msg_recieved(Header header, const QByteArray& msg_data)
 {
     auto &provider = SequentialIdProvider::get();
     long long id = provider.next();
@@ -44,7 +44,6 @@ void MessageProcessor::on_client_msg_recieved(Header header, QByteArray msg_data
 
     auto &broker = MessageBroker::get();
     broker.publish(packet);
-    //qDebug() << QThread::currentThreadId();
 }
 
 void MessageProcessor::keep_alive()
@@ -113,14 +112,15 @@ void MessageProcessor::statusResponse(long long id, quint8 status)
         if(it->id == id) {
             time = it->header.time;
             msg_type = it->header.msg_type;
+            m_packet_storage->erase(it);
             break;
         }
         ++it;
     }
-    if (it == m_packet_storage->end()) {
-        qWarning() << "Missing id";
-        return;
-    }
+//    if (it == m_packet_storage->end()) {
+//        qWarning() << "Missing id";
+//        return;
+//    }
 
     Status s(time, msg_type, status);
     Header header;

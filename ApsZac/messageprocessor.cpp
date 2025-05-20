@@ -49,7 +49,7 @@ void MessageProcessor::set_request(Request_Type r_t)
     emit message_ready(header_bytes, message_bytes);
 }
 
-void MessageProcessor::set_cel(Cel cel)
+void MessageProcessor::set_cel(Cel& cel)
 {
     Header header;
     header.msg_type = 0x01;

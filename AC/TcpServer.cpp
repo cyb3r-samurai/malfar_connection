@@ -82,14 +82,13 @@ void TcpServer::client_data_ready()
         header_bytes = socket->read(HEADER_SIZE);
         header = DeserializeHeader(header_bytes);
         qint64 data_size = header.n;
-        while(data_size){
-            msg_bytes = socket->read(header.n);
+        while(data_size > 0){
+            msg_bytes += socket->read(header.n);
             data_size -= msg_bytes.size();
 
+            qDebug() << data_size;
             if(data_size ) {
-                if(socket->waitForReadyRead(100) == false) {
-                    qDebug()<< "missing data";
-                    qDebug()<< data_size;
+                if(socket->waitForReadyRead(300) == false) {
                 }
             }
         }

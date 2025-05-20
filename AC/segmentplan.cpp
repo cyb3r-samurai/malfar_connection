@@ -4,6 +4,11 @@ SegmentPlan::SegmentPlan() {
     time_cel = new TimeCelDistribution;
 }
 
+SegmentPlan::~SegmentPlan()
+{
+    delete time_cel;
+}
+
 void SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb, int index)
 {
     sector_number = sectorNumb;

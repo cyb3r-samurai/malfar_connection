@@ -6,6 +6,11 @@ SectorPlan::SectorPlan() {
  segment_plan  =new std::list<std::shared_ptr<SegmentPlan>>;
 }
 
+SectorPlan::~SectorPlan()
+{
+    delete	segment_plan;
+}
+
 void SectorPlan::append(std::shared_ptr<SegmentPlan> planPtr)
 {
     segment_plan->push_back(planPtr);

@@ -26,7 +26,7 @@ private slots:
     void on_pushButton_3_clicked();
 
 signals:
-    void cel_created(Cel cel);
+    void cel_created(Cel& cel);
 private:
     Ui::C_window *ui;
     QString &number;

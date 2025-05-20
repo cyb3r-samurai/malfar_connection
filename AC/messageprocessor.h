@@ -33,7 +33,7 @@ signals:
     void cel_recieved(std::shared_ptr<Cel> m_cel);
 
 public slots:
-    void on_client_msg_recieved(Header, QByteArray);
+    void on_client_msg_recieved(Header, const QByteArray&);
     void handlePacket(Packet& packet);
     void savePacket(Packet& packet);
     void on_connected();

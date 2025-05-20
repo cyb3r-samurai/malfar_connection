@@ -18,10 +18,10 @@ public:
 public slots:
     void device_data_ready(Packet);
     void set_request(Request_Type);
-    void set_cel(Cel);
+    void set_cel(Cel&);
 
 signals:
-    void message_ready(QByteArray, QByteArray);
+    void message_ready(QByteArray&, QByteArray&);
 private:
     SimpleTableData* model;
     QList<MessageHandler *> handlers_;

@@ -30,7 +30,7 @@ struct qt_meta_stringdata_C_window_t {
     char stringdata0[9];
     char stringdata1[12];
     char stringdata2[1];
-    char stringdata3[4];
+    char stringdata3[5];
     char stringdata4[4];
     char stringdata5[22];
     char stringdata6[24];
@@ -43,16 +43,16 @@ Q_CONSTINIT static const qt_meta_stringdata_C_window_t qt_meta_stringdata_C_wind
         QT_MOC_LITERAL(0, 8),  // "C_window"
         QT_MOC_LITERAL(9, 11),  // "cel_created"
         QT_MOC_LITERAL(21, 0),  // ""
-        QT_MOC_LITERAL(22, 3),  // "Cel"
-        QT_MOC_LITERAL(26, 3),  // "cel"
-        QT_MOC_LITERAL(30, 21),  // "on_pushButton_clicked"
-        QT_MOC_LITERAL(52, 23),  // "on_pushButton_2_clicked"
-        QT_MOC_LITERAL(76, 23)   // "on_pushButton_3_clicked"
+        QT_MOC_LITERAL(22, 4),  // "Cel&"
+        QT_MOC_LITERAL(27, 3),  // "cel"
+        QT_MOC_LITERAL(31, 21),  // "on_pushButton_clicked"
+        QT_MOC_LITERAL(53, 23),  // "on_pushButton_2_clicked"
+        QT_MOC_LITERAL(77, 23)   // "on_pushButton_3_clicked"
     },
     "C_window",
     "cel_created",
     "",
-    "Cel",
+    "Cel&",
     "cel",
     "on_pushButton_clicked",
     "on_pushButton_2_clicked",
@@ -104,7 +104,7 @@ Q_CONSTINIT const QMetaObject C_window::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<C_window, std::true_type>,
         // method 'cel_created'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<Cel, std::false_type>,
+        QtPrivate::TypeAndForceComplete<Cel &, std::false_type>,
         // method 'on_pushButton_clicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'on_pushButton_2_clicked'
@@ -121,7 +121,7 @@ void C_window::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         auto *_t = static_cast<C_window *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->cel_created((*reinterpret_cast< std::add_pointer_t<Cel>>(_a[1]))); break;
+        case 0: _t->cel_created((*reinterpret_cast< std::add_pointer_t<Cel&>>(_a[1]))); break;
         case 1: _t->on_pushButton_clicked(); break;
         case 2: _t->on_pushButton_2_clicked(); break;
         case 3: _t->on_pushButton_3_clicked(); break;
@@ -130,7 +130,7 @@ void C_window::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _t = void (C_window::*)(Cel );
+            using _t = void (C_window::*)(Cel & );
             if (_t _q_method = &C_window::cel_created; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
@@ -170,7 +170,7 @@ int C_window::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void C_window::cel_created(Cel _t1)
+void C_window::cel_created(Cel & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

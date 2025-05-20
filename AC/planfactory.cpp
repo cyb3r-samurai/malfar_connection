@@ -124,7 +124,7 @@ PlanFactory::~PlanFactory()
 uint8_t PlanFactory::calculate_sector(int16_t* vec, const std::vector<Sector> &sector_vector)
 {
     for(int i = 0; i < 4; i++) {
-        if ((vec[0] > sector_vector[i].az_start)&&(vec[0] < sector_vector[i].az_end)) {
+        if ((vec[0] >= sector_vector[i].az_start)&&(vec[0] < sector_vector[i].az_end)) {
             return i+1;
             break;
         }

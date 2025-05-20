@@ -18,7 +18,7 @@ public:
 class Packet {
 public:
     Packet();
-    Packet(Header header_, QByteArray data_, long long id_);
+    Packet(Header& header_, const QByteArray& data_, long long id_);
 
     Header header;
     QByteArray data;

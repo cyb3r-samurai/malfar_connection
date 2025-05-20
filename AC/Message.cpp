@@ -186,3 +186,11 @@ CDO_state::CDO_state()
 {
     cam_info = new CAM_state[cam_count];
 }
+
+Cel::~Cel()
+{
+    for (uint16_t i = 0; i < m; ++i) {
+        delete[] cel[i];
+    }
+    delete[] cel;
+}
