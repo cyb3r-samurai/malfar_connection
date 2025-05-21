@@ -29,12 +29,11 @@ public:
     explicit TcpServer(QObject *parent = nullptr);
     bool isStarted() const;
     void StartSending();
-    void Terminate();
 
     signals:
     void ClientConnected();
     void DataRecieved(QByteArray);
-    void client_msg_received(Header, const QByteArray&);
+    void client_msg_received(const Header&, const QByteArray&);
     void connected();
     void finish();
 
@@ -47,11 +46,10 @@ private slots:
 
     void client_data_ready();
 
-    void on_message_ready(Header, QByteArray);
+    void on_message_ready(const Header&, const QByteArray&);
 
 private:
     QTcpServer* server_;
-    QList<QTcpSocket *> socketList_;
     QTcpSocket* socket_;
     MessageProcessor *message_processor_;
     AC* m_ac;

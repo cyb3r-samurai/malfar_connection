@@ -9,7 +9,7 @@ class AcStateHandler : public MessageHandler
     Q_OBJECT
 public:
     explicit AcStateHandler(QObject *parent = nullptr);
-    virtual bool handleMessage(Packet& packet) override;
+    virtual bool handleMessage(const Packet& packet) override;
 
 signals:
     void requestCreated(long long);

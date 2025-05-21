@@ -9,7 +9,7 @@ class SessionRequestHandler : public MessageHandler
     Q_OBJECT
 public:
     explicit SessionRequestHandler(QObject *parent = nullptr);
-    virtual bool handleMessage(Packet &) override;
+    virtual bool handleMessage(const Packet &) override;
 
 signals:
     void requestRecieved(long long);

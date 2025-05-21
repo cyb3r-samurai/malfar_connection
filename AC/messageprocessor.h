@@ -9,6 +9,7 @@
 #include <QList>
 
 #include "ac.h"
+#include "acstatehandler.h"
 #include "Message.h"
 #include "messagebroker.h"
 #include "packet.h"
@@ -33,13 +34,12 @@ signals:
     void cel_recieved(std::shared_ptr<Cel> m_cel);
 
 public slots:
-    void on_client_msg_recieved(Header, const QByteArray&);
-    void handlePacket(Packet& packet);
-    void savePacket(Packet& packet);
+    void on_client_msg_recieved(const Header&, const QByteArray&);
+    void handlePacket(const Packet& packet);
+    void savePacket(const Packet& packet);
     void on_connected();
 
 private slots:
-    void keep_alive();
     void onReciveStateCreated(std::shared_ptr<RecieveState>);
     void onSessionStateCreated(std::shared_ptr<SessionInfo>);
     void onAcStateCreated(std::shared_ptr<AcState>);
@@ -58,7 +58,13 @@ private:
 
     AC* m_ac;
     std::map<int, SectorPlan>* m_test_data;
+
     void print_current_state() const;
+    void initHandlers();
+    void initResponceMessageCreation();
+    void initMessageBroker();
+    void initPacketStorage();
+    void startTimer();
 };
 
 #endif // MESSAGEPROCESSOR_H

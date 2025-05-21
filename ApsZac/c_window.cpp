@@ -20,7 +20,7 @@ C_window::C_window(QString& number, QWidget *parent)
 
     for(quint64 i = 0; i < number.toInt(); ++i) {
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QString::number(i%3600)));
+        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QString::number(3600 - (i%3600))));
         ui->tableWidget->setItem(i, 1, new QTableWidgetItem("200"));
     }
 

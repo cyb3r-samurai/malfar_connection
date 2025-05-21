@@ -15,12 +15,9 @@ TcpServer::TcpServer(QObject* parent) :
         qInfo() <<"Server started";
     }
 
-
     thread_message_processor = new QThread();
     thread_ac = new QThread();
 
-
-  //  m_plan_storage = new PlanStorage();
     m_ac = new AC();
     m_report_state_checker = new ReportStateChecker(m_ac->plan_storage());
     message_processor_ = new MessageProcessor(m_ac->plan_storage(), m_report_state_checker, m_ac);
@@ -42,13 +39,6 @@ bool TcpServer::isStarted() const
     return started_;
 }
 
-void TcpServer::Terminate()
-{
-    thread_ac->quit();
-    thread_message_processor->quit();
-
-}
-
 void TcpServer::Timequit()
 {
     QCoreApplication::quit();
@@ -58,44 +48,43 @@ void TcpServer::on_client_connecting()
 {
     qInfo() << "П1 connected to server";
     socket_ = server_->nextPendingConnection();
-    socket_->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,64*1024*1024);
+ //   socket_->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,64*1024*1024);
     connect(socket_, &QTcpSocket::readyRead, this, &TcpServer::client_data_ready);
     connect(socket_, &QTcpSocket::disconnected, this, &TcpServer::client_disconnected);
-    socketList_.append(socket_);
 
     emit connected();
 }
 
 void TcpServer::client_disconnected()
 {
+    started_ = false;
     qInfo() << "Client Disconected";
 }
 
 void TcpServer::client_data_ready()
 {
-    auto socket = qobject_cast<QTcpSocket *>(sender());
+//    auto socket = qobject_cast<QTcpSocket *>(sender());
     Header header;
     QByteArray header_bytes;
     QByteArray msg_bytes;
 
-    while(socket->bytesAvailable() >= HEADER_SIZE) {
-        header_bytes = socket->read(HEADER_SIZE);
+    while(socket_->bytesAvailable() >= HEADER_SIZE) {
+        header_bytes = socket_->read(HEADER_SIZE);
         header = DeserializeHeader(header_bytes);
         qint64 data_size = header.n;
         while(data_size > 0){
-            msg_bytes += socket->read(header.n);
+            msg_bytes += socket_->read(data_size);
             data_size -= msg_bytes.size();
 
-            qDebug() << data_size;
-            if(data_size ) {
-                if(socket->waitForReadyRead(300) == false) {
+            if(data_size > 0) {
+                if(socket_->waitForReadyRead(300) == false) {
                 }
             }
         }
-        emit client_msg_received(header, msg_bytes); }
+    emit client_msg_received(header, msg_bytes); }
 }
 
-void TcpServer::on_message_ready(Header header, QByteArray data)
+void TcpServer::on_message_ready(const Header& header, const QByteArray& data)
 {
     QByteArray header_bytes = header.serializeStruct();
     socket_->write(header_bytes);
@@ -107,7 +96,7 @@ Header TcpServer::DeserializeHeader(QByteArray &data)
 {
     Header header;
     QDataStream stream(data);
-    stream.setByteOrder(QDataStream::BigEndian);
+    stream.setByteOrder(QDataStream::LittleEndian);
 
     stream >> header.version >> header.msg_type >>header.zero >> header.time >> header.n;
 

@@ -16,9 +16,19 @@ PlanFactory::PlanFactory(PlanStorage *p_s, QObject *parent) :
     m_sector_vector->at(3).set(4, 2700, 3600, 0, 900);
 }
 
-bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
+int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
 {
+    struct PlanToAppend {
+    public:
+        std::shared_ptr<SegmentPlan> seg;
+        int sector_number;
+        int chanel_number;
+    };
+    std::list<PlanToAppend> plansToAppend;
+
     m_plan_storage->lockWrite();
+
+    //clear data chanel
     if(cel_plan->m == 0) {
         m_data_plans->extract(cel_plan->chanel_number);
         auto sector_it = m_sector_plans->begin();
@@ -47,18 +57,18 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
             }
         }
         qInfo() << "Очищены планы канала данных" << cel_plan->chanel_number;
-        qDebug() << "size" << m_data_plans->size();
         m_plan_storage->unloock();
         return 0;
     }
 
-
     int16_t a[2] = {cel_plan->cel[0][0], cel_plan->cel[0][1]};
     uint8_t sector_number = calculate_sector(a, *m_sector_vector);
     uint16_t lastCelIndex = cel_plan->m - 1;
-
     std::shared_ptr<SegmentPlan> segment_ptr = std::make_shared<SegmentPlan>();
-    segment_ptr->initCel(cel_plan, sector_number, 0);
+    if(!(segment_ptr->initCel(cel_plan, sector_number, 0))) {
+        return 255;
+    }
+
     for(uint16_t i = 0;  i < cel_plan->m; ++i) {
         int16_t a[2] = {cel_plan->cel[i][0], cel_plan->cel[i][1]};
         uint8_t current_sector_number = calculate_sector(a, *m_sector_vector);
@@ -68,44 +78,68 @@ bool PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         if(current_sector_number != sector_number) {
             bool chanel_status =
                 (*m_data_plans)[cel_plan->chanel_number].validateSegment(segment_ptr);
-            if(chanel_status) {
-                int sector_status =
+            if (chanel_status) {
+                bool sector_status =
                     (*m_sector_plans)[sector_number].validateSegment(segment_ptr);
-                if (sector_status == 0) {
+                if (sector_status) {
                     segment_ptr->data_chanel_number = cel_plan->chanel_number;
                     segment_ptr->sector_number = sector_number;
-                    (*m_sector_plans)[sector_number].append(segment_ptr);
-                    (*m_data_plans)[cel_plan->chanel_number].append(segment_ptr);
 
-                   // qDebug() << "Sector changed in plan" << sector_number << current_sector_number;
+                    PlanToAppend plan;
+                    plan.seg = segment_ptr;
+                    plan.sector_number = sector_number;
+                    plan.chanel_number = cel_plan->chanel_number;
+                    plansToAppend.push_back(plan);
                     auto new_ptr = std::make_shared<SegmentPlan>();
-                    segment_ptr.swap(new_ptr);
+                    segment_ptr.reset();
+                    segment_ptr = new_ptr;
                     segment_ptr->initCel(cel_plan, current_sector_number, i);
                     sector_number = current_sector_number;
                 }
+                else {
+                    m_plan_storage->unloock();
+                    return sector_number;
+                }
             }
         }
-        else {
+        segment_ptr->appendCel(cel_plan);
+  //      else {
             if(i == lastCelIndex) {
                 bool chanel_status =
                     (*m_data_plans)[cel_plan->chanel_number].validateSegment(segment_ptr);
                 if(chanel_status) {
-                    int sector_status =
+                    bool sector_status =
                         (*m_sector_plans)[sector_number].validateSegment(segment_ptr);
-                    if (sector_status == 0) {
+                    if (sector_status) {
                         segment_ptr->sector_number = sector_number;
                         segment_ptr->data_chanel_number = cel_plan->chanel_number;
-                        (*m_sector_plans)[sector_number].append(segment_ptr);
-                        (*m_data_plans)[cel_plan->chanel_number].append(segment_ptr);
+
+                        PlanToAppend plan;
+                        plan.seg = segment_ptr;
+                        plan.sector_number = sector_number;
+                        plan.chanel_number = cel_plan->chanel_number;
+                        plansToAppend.push_back(plan);
+
+                        auto plans_to_append_it = plansToAppend.begin();
+                        while(plans_to_append_it != plansToAppend.end()) {
+                            (*m_sector_plans)[plans_to_append_it->sector_number].append(plans_to_append_it->seg);
+                            (*m_data_plans)[plans_to_append_it->chanel_number].append(plans_to_append_it->seg);
+                            ++plans_to_append_it;
+                        }
+                    }
+                    else {
+                        m_plan_storage->unloock();
+                        return sector_number;
                     }
                 }
             }
-        }
+   //     }
 
-        segment_ptr->appendCel(cel_plan);
+       // segment_ptr->appendCel(cel_plan);
     }
+
     m_plan_storage->unloock();
-    return true;
+    return 0;
 }
 
 void PlanFactory::clearPlans()
@@ -124,7 +158,7 @@ PlanFactory::~PlanFactory()
 uint8_t PlanFactory::calculate_sector(int16_t* vec, const std::vector<Sector> &sector_vector)
 {
     for(int i = 0; i < 4; i++) {
-        if ((vec[0] >= sector_vector[i].az_start)&&(vec[0] < sector_vector[i].az_end)) {
+        if ((vec[0] >= sector_vector[i].az_start)&&(vec[0] <= sector_vector[i].az_end)) {
             return i+1;
             break;
         }

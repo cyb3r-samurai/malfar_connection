@@ -4,10 +4,10 @@ CelHandler::CelHandler(QObject *parent)
     : MessageHandler{parent}
 {}
 
-bool CelHandler::handleMessage(Packet &packet)
+bool CelHandler::handleMessage(const Packet &packet)
 {
     if (packet.header.msg_type == 0x01) {
-        QDataStream stream(&packet.data, QIODevice::ReadOnly);
+        QDataStream stream(packet.data);
         stream.setByteOrder(QDataStream::LittleEndian);
         auto ptr1 = std::make_shared<Cel>();
         stream >> *(ptr1.get());

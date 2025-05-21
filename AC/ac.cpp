@@ -23,12 +23,17 @@ AC::AC(QObject *parent) :
 
 void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
 {
-    if(m_plan_factory->createPlan(cel)) {
+    int ret = m_plan_factory->createPlan(cel);
+    if(ret == 0) {
         qInfo() << "Планы созданы";
         emit messageHandled(packet_id, 0);
     }
     else {
-
+        if(ret == 255) {
+            qInfo() << "deltas should be > 1 sec";
+        }
+        qInfo() << "Планы пересекаются в сеторе" <<  ret;
+        emit messageHandled(packet_id, ret);
     }
 }
 
@@ -72,6 +77,7 @@ void AC::CheckTime()
                     segment_ptr->time_cel->az.pop_front();
                     if(first_time_it == segment_ptr->time_cel->time.end()) {
                         m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
+                        qInfo() << m_chanel_plans->size() << m_sector_plans->size();
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
                             qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
                             m_chanel_plans->extract(segment_ptr->data_chanel_number);
@@ -83,6 +89,7 @@ void AC::CheckTime()
                             m_sector_plans->erase(sector_it++);
                             sector_erased = true;
                         }
+                        qInfo() << m_chanel_plans->size()<< m_sector_plans->size();
                         break;
                     }
                     first_time = *first_time_it;

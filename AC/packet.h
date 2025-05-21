@@ -12,13 +12,13 @@ public:
     double time;
     uint32_t n;
 
-    QByteArray serializeStruct();
+    QByteArray serializeStruct() const;
 };
 
 class Packet {
 public:
     Packet();
-    Packet(Header& header_, const QByteArray& data_, long long id_);
+    Packet(const Header& header_, const QByteArray& data_, long long id_);
 
     Header header;
     QByteArray data;

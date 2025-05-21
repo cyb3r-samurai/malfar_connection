@@ -10,7 +10,7 @@ QByteArray Header::serializeStruct()
 {
     QByteArray data;
     QDataStream stream(&data, QDataStream::WriteOnly);
-    stream.setByteOrder(QDataStream::BigEndian);
+    stream.setByteOrder(QDataStream::LittleEndian);
 
     stream << version << msg_type << zero << time << n;
    // qDebug() << "Check header";

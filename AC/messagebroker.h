@@ -20,12 +20,12 @@ public:
         connect(this, &MessageBroker::MessagePublished, handler, slot);
     }
 
-    void publish( Packet& packet) {
+    void publish(const Packet& packet) {
         emit MessagePublished(packet);
     }
 
 signals:
-    void MessagePublished(Packet& packet);
+    void MessagePublished(const Packet& packet);
 
 private:
     MessageBroker() = default;

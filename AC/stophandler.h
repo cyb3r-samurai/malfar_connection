@@ -9,7 +9,7 @@ class StopHandler : public MessageHandler
     Q_OBJECT
 public:
     explicit StopHandler(QObject *parent = nullptr);
-    virtual bool handleMessage(Packet &) override;
+    virtual bool handleMessage(const Packet &) override;
 signals:
     void stopRecieve(long long);
 };

@@ -14,7 +14,7 @@ public:
     SectorPlan();
     ~SectorPlan();
     void append(std::shared_ptr<SegmentPlan> planPtr);
-    int validateSegment(std::shared_ptr<SegmentPlan>);
+    bool validateSegment(std::shared_ptr<SegmentPlan> planPtr);
     void display_info();
 
     std::list<std::shared_ptr<SegmentPlan> > *getSegment_plan() ;

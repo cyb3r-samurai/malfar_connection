@@ -28,7 +28,7 @@ class PlanFactory : public QObject
 public:
     explicit PlanFactory(PlanStorage* p_s, QObject* parent = nullptr);
 
-    bool createPlan(std::shared_ptr<Cel> cel);
+    int createPlan(std::shared_ptr<Cel> cel);
 
     void clearPlans();
 

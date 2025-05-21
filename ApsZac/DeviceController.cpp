@@ -73,7 +73,7 @@ Header DeviceController::DeserializeHeader(QByteArray& data)
 {
     Header header;
     QDataStream stream(data);
-    stream.setByteOrder(QDataStream::BigEndian);
+    stream.setByteOrder(QDataStream::LittleEndian);
 
     stream >> header.version >> header.msg_type >> header.zero >> header.time >> header.n;
 

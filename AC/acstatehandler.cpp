@@ -4,7 +4,7 @@ AcStateHandler::AcStateHandler(QObject *parent)
     : MessageHandler{parent}
 {}
 
-bool AcStateHandler::handleMessage(Packet &packet)
+bool AcStateHandler::handleMessage(const Packet &packet)
 {
     if (packet.header.msg_type == 0x03) {
         emit requestCreated(packet.id);
