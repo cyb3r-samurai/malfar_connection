@@ -5,12 +5,18 @@
 #include <QDebug>
 #include <QTcpSocket>
 #include <QUdpSocket>
+#include <QNetworkDatagram>
+#include <QtEndian>
 
 class DataServer : public QObject
 {
     Q_OBJECT
 public:
     explicit DataServer(QObject *parent = nullptr);
+
+public slots:
+    void onStartCel(int dataChanelNumber);
+    void onEndCel(int dataChanelNumber);
 
 
 signals:
@@ -40,6 +46,9 @@ private:
 
     bool reset_flag;
     bool recording;
+
+    const int chanel_count = 6;
+    const int report_size = 4;
 
     QTcpSocket *tcp_socket;
     QUdpSocket *udp_socket;

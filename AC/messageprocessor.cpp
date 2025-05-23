@@ -118,7 +118,7 @@ void MessageProcessor::initHandlers()
     m_msg_handlers = new QList<std::shared_ptr<MessageHandler>>;
 
     auto m_cel_handler_ptr = std::make_shared<CelHandler>();
-    connect(m_cel_handler_ptr.get(), &CelHandler::celCreated, m_ac, &AC::OnCelRecieved);
+    connect(m_cel_handler_ptr.get(), &CelHandler::celCreated, m_ac->plan_factory(), &PlanFactory::onPlanRecieved);
     m_msg_handlers->append(m_cel_handler_ptr);
 
     auto  stop_handler_ptr = std::make_shared<StopHandler>();
@@ -142,6 +142,7 @@ void MessageProcessor::initResponceMessageCreation()
     connect(m_state_checker, &ReportStateChecker::sessionInfoCreated, this, &MessageProcessor::onSessionStateCreated);
     connect(m_state_checker, &ReportStateChecker::acStateCreated, this, &MessageProcessor::onAcStateCreated);
     connect(m_ac, &AC::messageHandled, this, &MessageProcessor::statusResponse);
+    connect(m_ac->plan_factory(), &PlanFactory::messageHandled, this, &MessageProcessor::statusResponse);
 }
 
 void MessageProcessor::initMessageBroker()

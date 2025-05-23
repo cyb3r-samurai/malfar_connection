@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "messagehandler.h"
+#include "sequentialidprovider.h"
 
 class CelHandler : public MessageHandler
 {

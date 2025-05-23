@@ -15,9 +15,17 @@ SectorPlan::~SectorPlan()
 void SectorPlan::append(std::shared_ptr<SegmentPlan> planPtr)
 {
     segment_plan->push_back(planPtr);
+    empty = false;
 }
 
-bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr)
+void SectorPlan::remove(std::shared_ptr<SegmentPlan> planPtr)
+{
+    segment_plan->remove(planPtr);
+    empty = segment_plan->empty();
+}
+
+bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr,
+                                 const std::optional<std::list<std::shared_ptr<SegmentPlan>>>& dataToDelete)
 {
     QDateTime start = planPtr->time_cel->time.front();
     QDateTime end = planPtr->time_cel->time.back();
@@ -28,9 +36,25 @@ bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr)
         auto current_plan = it->get();
         QDateTime cur_start = current_plan->time_cel->time.front();
         QDateTime cur_end = current_plan->time_cel->time.back();
+        qDebug() << cur_start << cur_end;
         if (((start >= cur_start) && (start <= cur_end)) ||
-            ((end <= cur_end) && (end >= cur_start))       ) {
-            intersec_count.insert(current_plan->data_chanel_number);
+            ((end <= cur_end) && (end >= cur_start))     ||
+            ((cur_start >= start) && (cur_start <= end)) ||
+            ((cur_end <= end) && (cur_end >= cur_start))) {
+
+            bool willBeDeleted = false;
+            if(dataToDelete.has_value()) {
+                auto dataToDeleteIt = dataToDelete.value().begin();
+                while(dataToDeleteIt != dataToDelete.value().end()){
+                    if (*dataToDeleteIt == *it) {
+                        willBeDeleted = true;
+                    }
+                    ++dataToDeleteIt;
+                }
+            }
+            if(!willBeDeleted) {
+                intersec_count.insert(current_plan->data_chanel_number);
+            }
         }
         ++it;
     }

@@ -92,6 +92,37 @@ void DataServer::readyReadTcp()
 
 void DataServer::readyReadUdp()
 {
+    while (udp_socket ->hasPendingDatagrams()) {
+        QNetworkDatagram datagram = udp_socket->receiveDatagram();
+
+        struct packet_header *packet_header =
+            reinterpret_cast<struct packet_header *>(datagram.data().data());
+
+        if(checkHeader(packet_header)!= true)
+        {
+            qDebug() << "error header";
+            return;
+        }
+
+        const char *payload_data = datagram.data().data() + sizeof(struct packet_header);
+
+        int total_reports = packet_header->data_size / report_size;
+        if (total_reports % chanel_count != 0) {
+            qDebug() << "missing data";
+        }
+
+        int total_sets = total_reports / chanel_count;
+
+        for(int i = 0; i < total_sets; ++i) {
+            for(int ch = 0; ch < chanel_count; ++ch) {
+                int offset = (i* chanel_count +ch) * report_size;
+                const int16_t* report = reinterpret_cast<const int16_t *>(payload_data + offset);
+                int16_t i_data = qFromLittleEndian<qint16>(report[0]);
+                int16_t q_data = qFromLittleEndian<qint16>(report[1]);
+
+            }
+        }
+    }
 
 }
 

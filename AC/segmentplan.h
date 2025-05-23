@@ -36,6 +36,7 @@ public:
     uint16_t m;
     int16_t** cel;
     uint8_t data_chanel_number;
+    long long id;
 
     TimeCelDistribution* time_cel;
     uint16_t current_index = 0;
@@ -44,7 +45,7 @@ public:
     QDateTime delta_dt;
     QDateTime dt_time;
 
-    bool initCel(std::shared_ptr<Cel> cel, uint8_t sector_number, int index);
+    bool initCel(std::shared_ptr<Cel> cel, uint8_t sector_number, uint8_t chanel_number, int index);
     void appendCel(std::shared_ptr<Cel> cel);
     MessageSegmentPlan toMessage();
 };

@@ -15,6 +15,7 @@
 #include <vector>
 #include <optional>
 #include <map>
+#include <set>
 
 #include <QThread>
 #include <QObject>
@@ -27,14 +28,17 @@ class PlanFactory : public QObject
     Q_OBJECT
 public:
     explicit PlanFactory(PlanStorage* p_s, QObject* parent = nullptr);
-
     int createPlan(std::shared_ptr<Cel> cel);
 
     void clearPlans();
 
     virtual ~PlanFactory();
 
+public slots:
+    void onPlanRecieved(std::shared_ptr<Cel>, long long);
+
 signals:
+    void messageHandled(long long, quint8);
 private:
     PlanStorage * m_plan_storage;
     std::map<int, DataChanel>* m_data_plans;

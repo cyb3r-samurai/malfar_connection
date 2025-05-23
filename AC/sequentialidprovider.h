@@ -7,10 +7,11 @@
 class SequentialIdProvider
 {
     static SequentialIdProvider singleton;
-    SequentialIdProvider() : cur{ 0 } {
+    SequentialIdProvider() : cur{ 0 }, cur_cel{ 0 } {
     }
 
     std::atomic<long long> cur;
+    std::atomic<long long> cur_cel;
     std::mutex m_mutex;
 public:
     SequentialIdProvider(const SequentialIdProvider&)
@@ -20,6 +21,7 @@ public:
 
     static SequentialIdProvider& get();
     std::atomic<long long> next();
+    std::atomic<long long> next_cel();
 };
 
 #endif // SEQUENTIALIDPROVIDER_H

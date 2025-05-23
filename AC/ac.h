@@ -26,6 +26,8 @@ public:
 
     PlanStorage *plan_storage() const;
 
+    PlanFactory *plan_factory() const;
+
 signals:
     void SessionStarted(int , int);
     void SessionEnd(int, int);
@@ -35,7 +37,6 @@ signals:
     void messageHandled(long long, quint8);
 
 public slots:
-    void OnCelRecieved(std::shared_ptr<Cel> cel, long long);
     void onStopRecieve(long long);
 
 private slots:

@@ -21,22 +21,6 @@ AC::AC(QObject *parent) :
     connect(m_timer, &QTimer::timeout, this, &AC::CheckTime);
 }
 
-void AC::OnCelRecieved(std::shared_ptr<Cel> cel, long long packet_id)
-{
-    int ret = m_plan_factory->createPlan(cel);
-    if(ret == 0) {
-        qInfo() << "Планы созданы";
-        emit messageHandled(packet_id, 0);
-    }
-    else {
-        if(ret == 255) {
-            qInfo() << "deltas should be > 1 sec";
-        }
-        qInfo() << "Планы пересекаются в сеторе" <<  ret;
-        emit messageHandled(packet_id, ret);
-    }
-}
-
 
 void AC::onStopRecieve(long long packet_id)
 {
@@ -77,6 +61,7 @@ void AC::CheckTime()
                     segment_ptr->time_cel->az.pop_front();
                     if(first_time_it == segment_ptr->time_cel->time.end()) {
                         m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
+                        qDebug() << "Chanel" << segment_ptr->data_chanel_number << "pop" << m_chanel_plans->at(segment_ptr->data_chanel_number).segments().size();
                         qInfo() << m_chanel_plans->size() << m_sector_plans->size();
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
                             qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
@@ -84,7 +69,7 @@ void AC::CheckTime()
                         }
                         segment_list->erase(segment_it++);
                         segment_erased = true;
-                        if (segment_it == segment_list->end()) {
+                        if (segment_list->empty()) {
                             qInfo() << "Планы слежения в секторе" << sector_it->first << "выполнены.";
                             m_sector_plans->erase(sector_it++);
                             sector_erased = true;
@@ -114,6 +99,11 @@ void AC::startAtNextSecond()
     QTimer::singleShot(msecToNextSecond, [this](){
         m_timer->start(500);
     });
+}
+
+PlanFactory *AC::plan_factory() const
+{
+    return m_plan_factory;
 }
 
 PlanStorage *AC::plan_storage() const
