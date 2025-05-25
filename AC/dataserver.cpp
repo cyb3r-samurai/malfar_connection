@@ -59,6 +59,16 @@ DataServer::DataServer(QObject *parent)
 
 }
 
+void DataServer::onStartCel(int dataChanelNumber)
+{
+
+}
+
+void DataServer::onEndCel(int dataChanelNumber)
+{
+
+}
+
 void DataServer::readyReadTcp()
 {
     struct packet_header packet_header;

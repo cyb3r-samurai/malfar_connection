@@ -49,6 +49,13 @@ private slots:
     void on_message_ready(const Header&, const QByteArray&);
 
 private:
+
+    Header header_;
+    QByteArray  header_bytes;
+    QByteArray msg_bytes;
+    bool header_readed;
+    qint64 data_size;
+
     QTcpServer* server_;
     QTcpSocket* socket_;
     MessageProcessor *message_processor_;

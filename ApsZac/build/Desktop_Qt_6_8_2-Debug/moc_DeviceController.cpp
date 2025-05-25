@@ -48,6 +48,7 @@ static constexpr auto qt_meta_stringdata_ZN16DeviceControllerE = QtMocHelpers::s
     "data_ready",
     "Packet",
     "send",
+    "QByteArray&",
     "header",
     "msg",
     "socket_state_changed",
@@ -79,8 +80,8 @@ Q_CONSTINIT static const uint qt_meta_data_ZN16DeviceControllerE[] = {
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
       10,    2,   73,    2, 0x0a,    9 /* Public */,
-      13,    1,   78,    2, 0x08,   12 /* Private */,
-      14,    0,   81,    2, 0x08,   14 /* Private */,
+      14,    1,   78,    2, 0x08,   12 /* Private */,
+      15,    0,   81,    2, 0x08,   14 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
@@ -90,7 +91,7 @@ Q_CONSTINIT static const uint qt_meta_data_ZN16DeviceControllerE[] = {
     QMetaType::Void, 0x80000000 | 9,    2,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::QByteArray, QMetaType::QByteArray,   11,   12,
+    QMetaType::Void, 0x80000000 | 11, 0x80000000 | 11,   12,   13,
     QMetaType::Void, 0x80000000 | 5,    2,
     QMetaType::Void,
 
@@ -121,8 +122,8 @@ Q_CONSTINIT const QMetaObject DeviceController::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<Packet, std::false_type>,
         // method 'send'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QByteArray, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QByteArray, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QByteArray &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QByteArray &, std::false_type>,
         // method 'socket_state_changed'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QAbstractSocket::SocketState, std::false_type>,
@@ -142,7 +143,7 @@ void DeviceController::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         case 2: _t->state_changed((*reinterpret_cast< std::add_pointer_t<QAbstractSocket::SocketState>>(_a[1]))); break;
         case 3: _t->error_occured((*reinterpret_cast< std::add_pointer_t<QAbstractSocket::SocketError>>(_a[1]))); break;
         case 4: _t->data_ready((*reinterpret_cast< std::add_pointer_t<Packet>>(_a[1]))); break;
-        case 5: _t->send((*reinterpret_cast< std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QByteArray>>(_a[2]))); break;
+        case 5: _t->send((*reinterpret_cast< std::add_pointer_t<QByteArray&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QByteArray&>>(_a[2]))); break;
         case 6: _t->socket_state_changed((*reinterpret_cast< std::add_pointer_t<QAbstractSocket::SocketState>>(_a[1]))); break;
         case 7: _t->socket_ready_read(); break;
         default: ;

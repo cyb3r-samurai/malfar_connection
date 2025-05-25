@@ -63,21 +63,42 @@ void TcpServer::client_disconnected()
 
 void TcpServer::client_data_ready()
 {
-//    auto socket = qobject_cast<QTcpSocket *>(sender());
-    Header header;
-    QByteArray header_bytes;
-    QByteArray msg_bytes;
-
-    while(socket_->bytesAvailable() >= HEADER_SIZE) {
-        header_bytes = socket_->read(HEADER_SIZE);
-        header = DeserializeHeader(header_bytes);
-        qint64 data_size = header.n;
-        while(data_size > 0){
-            msg_bytes += socket_->read(data_size);
-            data_size -= msg_bytes.size();
-
+    if(!header_readed) {
+        if(socket_->bytesAvailable() >= HEADER_SIZE){
+            header_bytes = socket_->read(HEADER_SIZE);
+            header_ = DeserializeHeader(header_bytes);
+            data_size = header_.n;
+            header_readed = true;
         }
-    emit client_msg_received(header, msg_bytes); }
+    }
+    if(header_readed && socket_->bytesAvailable() > 0) {
+        if(data_size >0) {
+            QByteArray chunk = socket_->read(qMin(data_size,socket_->bytesAvailable()));
+            msg_bytes += chunk;;
+            qDebug() << msg_bytes.size();
+            data_size -= chunk.size();
+        }
+        if(data_size == 0){
+            emit client_msg_received(header_, msg_bytes);
+            header_readed = false;
+            msg_bytes.clear();
+            header_bytes.clear();
+        }
+    }
+    // while(socket_->bytesAvailable() >= HEADER_SIZE) {
+    //     header_bytes = socket_->read(HEADER_SIZE);
+    //     header = DeserializeHeader(header_bytes);
+    //     qint64 data_size = header.n;
+    //     while(data_size >= 0){
+    //         msg_bytes += socket_->read(data_size);
+    //         qDebug() << msg_bytes.size();
+    //         if(data_size > 0)
+    //             socket_->waitForReadyRead(300);
+    //         data_size -= msg_bytes.size();
+
+    //     }
+    // }
+    // emit client_msg_received(header_, msg_bytes);
 }
 
 void TcpServer::on_message_ready(const Header& header, const QByteArray& data)

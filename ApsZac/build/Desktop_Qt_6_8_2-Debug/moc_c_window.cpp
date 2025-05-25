@@ -40,7 +40,7 @@ static constexpr auto qt_meta_stringdata_ZN8C_windowE = QtMocHelpers::stringData
     "C_window",
     "cel_created",
     "",
-    "Cel",
+    "Cel&",
     "cel",
     "on_pushButton_clicked",
     "on_pushButton_2_clicked",
@@ -93,7 +93,7 @@ Q_CONSTINIT const QMetaObject C_window::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<C_window, std::true_type>,
         // method 'cel_created'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<Cel, std::false_type>,
+        QtPrivate::TypeAndForceComplete<Cel &, std::false_type>,
         // method 'on_pushButton_clicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'on_pushButton_2_clicked'
@@ -109,7 +109,7 @@ void C_window::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
     auto *_t = static_cast<C_window *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->cel_created((*reinterpret_cast< std::add_pointer_t<Cel>>(_a[1]))); break;
+        case 0: _t->cel_created((*reinterpret_cast< std::add_pointer_t<Cel&>>(_a[1]))); break;
         case 1: _t->on_pushButton_clicked(); break;
         case 2: _t->on_pushButton_2_clicked(); break;
         case 3: _t->on_pushButton_3_clicked(); break;
@@ -119,7 +119,7 @@ void C_window::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
     if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _q_method_type = void (C_window::*)(Cel );
+            using _q_method_type = void (C_window::*)(Cel & );
             if (_q_method_type _q_method = &C_window::cel_created; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
@@ -160,7 +160,7 @@ int C_window::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void C_window::cel_created(Cel _t1)
+void C_window::cel_created(Cel & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

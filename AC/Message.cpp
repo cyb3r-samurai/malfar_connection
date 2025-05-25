@@ -153,13 +153,13 @@ QByteArray SessionInfo::SerializeStruct()
     QDataStream stream (&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
 
-    stream << active_data_chanel_count << m_chanel_data;
+    stream << active_data_chanel_count << *m_chanel_data;
 
     return data;
 }
 
 inline QDataStream &operator<< (QDataStream &stream, ChanelData& ch_data) {
-    stream << ch_data.chanel_number << ch_data.segment_count << ch_data.segment_plan;
+    stream << ch_data.chanel_number << ch_data.segment_count << *(ch_data.segment_plan);
 
     return stream;
 }

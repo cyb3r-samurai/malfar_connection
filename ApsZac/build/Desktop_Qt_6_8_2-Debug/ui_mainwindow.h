@@ -25,6 +25,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableView>
+#include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 #include <qcustomplot.h>
@@ -69,12 +70,14 @@ public:
     QTableView *tableView_2;
     QMenuBar *menubar;
     QStatusBar *statusbar;
+    QToolBar *toolBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
         MainWindow->resize(924, 768);
+        MainWindow->setStyleSheet(QString::fromUtf8(""));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         verticalLayout_3 = new QVBoxLayout(centralwidget);
@@ -248,7 +251,7 @@ public:
         verticalLayout_2->setObjectName("verticalLayout_2");
         tableView = new QTableView(groupBox_3);
         tableView->setObjectName("tableView");
-        tableView->setSizeAdjustPolicy(QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored);
+        tableView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
         tableView->horizontalHeader()->setCascadingSectionResizes(false);
 
         verticalLayout_2->addWidget(tableView);
@@ -277,6 +280,9 @@ public:
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
         MainWindow->setStatusBar(statusbar);
+        toolBar = new QToolBar(MainWindow);
+        toolBar->setObjectName("toolBar");
+        MainWindow->addToolBar(Qt::ToolBarArea::TopToolBarArea, toolBar);
 
         retranslateUi(MainWindow);
 
@@ -298,6 +304,7 @@ public:
         grpSendData->setTitle(QCoreApplication::translate("MainWindow", "\320\227\320\260\320\277\321\200\320\276\321\201 \320\264\320\260\320\275\320\275\321\213\321\205", nullptr));
         btnSend->setText(QCoreApplication::translate("MainWindow", "\320\227\320\260\320\277\321\200\320\276\321\201\320\270\321\202\321\214", nullptr));
         groupBox_3->setTitle(QString());
+        toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi
 
 };

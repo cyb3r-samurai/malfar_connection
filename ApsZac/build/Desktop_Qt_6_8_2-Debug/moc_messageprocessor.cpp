@@ -40,12 +40,13 @@ static constexpr auto qt_meta_stringdata_ZN16MessageProcessorE = QtMocHelpers::s
     "MessageProcessor",
     "message_ready",
     "",
+    "QByteArray&",
     "device_data_ready",
     "Packet",
     "set_request",
     "Request_Type",
     "set_cel",
-    "Cel"
+    "Cel&"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -68,17 +69,17 @@ Q_CONSTINIT static const uint qt_meta_data_ZN16MessageProcessorE[] = {
        1,    2,   38,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       3,    1,   43,    2, 0x0a,    4 /* Public */,
-       5,    1,   46,    2, 0x0a,    6 /* Public */,
-       7,    1,   49,    2, 0x0a,    8 /* Public */,
+       4,    1,   43,    2, 0x0a,    4 /* Public */,
+       6,    1,   46,    2, 0x0a,    6 /* Public */,
+       8,    1,   49,    2, 0x0a,    8 /* Public */,
 
  // signals: parameters
-    QMetaType::Void, QMetaType::QByteArray, QMetaType::QByteArray,    2,    2,
+    QMetaType::Void, 0x80000000 | 3, 0x80000000 | 3,    2,    2,
 
  // slots: parameters
-    QMetaType::Void, 0x80000000 | 4,    2,
-    QMetaType::Void, 0x80000000 | 6,    2,
-    QMetaType::Void, 0x80000000 | 8,    2,
+    QMetaType::Void, 0x80000000 | 5,    2,
+    QMetaType::Void, 0x80000000 | 7,    2,
+    QMetaType::Void, 0x80000000 | 9,    2,
 
        0        // eod
 };
@@ -94,8 +95,8 @@ Q_CONSTINIT const QMetaObject MessageProcessor::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<MessageProcessor, std::true_type>,
         // method 'message_ready'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QByteArray, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QByteArray, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QByteArray &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QByteArray &, std::false_type>,
         // method 'device_data_ready'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<Packet, std::false_type>,
@@ -104,7 +105,7 @@ Q_CONSTINIT const QMetaObject MessageProcessor::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<Request_Type, std::false_type>,
         // method 'set_cel'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<Cel, std::false_type>
+        QtPrivate::TypeAndForceComplete<Cel &, std::false_type>
     >,
     nullptr
 } };
@@ -114,17 +115,17 @@ void MessageProcessor::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
     auto *_t = static_cast<MessageProcessor *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->message_ready((*reinterpret_cast< std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QByteArray>>(_a[2]))); break;
+        case 0: _t->message_ready((*reinterpret_cast< std::add_pointer_t<QByteArray&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QByteArray&>>(_a[2]))); break;
         case 1: _t->device_data_ready((*reinterpret_cast< std::add_pointer_t<Packet>>(_a[1]))); break;
         case 2: _t->set_request((*reinterpret_cast< std::add_pointer_t<Request_Type>>(_a[1]))); break;
-        case 3: _t->set_cel((*reinterpret_cast< std::add_pointer_t<Cel>>(_a[1]))); break;
+        case 3: _t->set_cel((*reinterpret_cast< std::add_pointer_t<Cel&>>(_a[1]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _q_method_type = void (MessageProcessor::*)(QByteArray , QByteArray );
+            using _q_method_type = void (MessageProcessor::*)(QByteArray & , QByteArray & );
             if (_q_method_type _q_method = &MessageProcessor::message_ready; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
@@ -165,7 +166,7 @@ int MessageProcessor::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void MessageProcessor::message_ready(QByteArray _t1, QByteArray _t2)
+void MessageProcessor::message_ready(QByteArray & _t1, QByteArray & _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
