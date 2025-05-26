@@ -54,8 +54,8 @@ void AC::CheckTime()
                    // qint64 sec2 = (first_time - 25569) * 86400;
                    // QDateTime time = QDateTime::fromSecsSinceEpoch(sec2);
                     qInfo() << "Целеукозание применено: канал данных"<< segment_ptr->data_chanel_number << ", сектор приема" << sector_it->first
-                            << ", азимут" << segment_ptr->time_cel->az.front() << "угол" << segment_ptr->time_cel->angle.front()
-                            << "Запланированное время: " << first_time.time();
+                            << ", азимут" << segment_ptr->time_cel->az.front() << "угол" << segment_ptr->time_cel->angle.front() << '\n'
+                            << "номер физического канала данных:"<<segment_ptr->chanel_number <<"Запланированное время: " << first_time.time();
                     ++first_time_it;
                     segment_ptr->time_cel->time.pop_front();
                     segment_ptr->time_cel->angle.pop_front();

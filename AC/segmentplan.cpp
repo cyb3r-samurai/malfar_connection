@@ -12,7 +12,7 @@ SegmentPlan::~SegmentPlan()
 bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_t chanelNumber ,int index)
 {
     sector_number = sectorNumb;
-    chanel_number = chanelNumber;
+    data_chanel_number = chanelNumber;
     pol =	celPtr->polarization;
     ka_number = celPtr->ka_number;
     start_time = celPtr->start_time;
@@ -46,5 +46,36 @@ void SegmentPlan::appendCel(std::shared_ptr<Cel> celPtr)
 
 MessageSegmentPlan SegmentPlan::toMessage()
 {
+    MessageSegmentPlan msg;
+    msg.sector_number = chanel_number;
+    msg.pol = pol;
+    msg.ka_number = ka_number;
+    msg.freq = freq;
+    msg.m = time_cel->time.size();
+
+    quint64  sec = time_cel->time.front().toSecsSinceEpoch();
+    msg.start_time =double(sec) / double (86400) + 25569;
+    quint64  sec2 = time_cel->time.back().toSecsSinceEpoch();
+    msg.end_time = double(sec2) / double (86400) + 25569;
+
+    msg.cel = new int16_t *[time_cel->time.size()];
+    for (int i = 0; i < msg.m; ++i) {
+        msg.cel[i] = new int16_t[2];
+    }
+    auto angle_it = time_cel->angle.begin();
+    auto az_it = time_cel->az.begin();
+
+
+    int i = 0;
+    while(angle_it != time_cel->angle.end()) {
+        msg.cel[i][0] = *az_it;
+        msg.cel[i][1] = *angle_it;
+        ++i;
+        ++az_it;
+        ++angle_it;
+    }
+
+
+    return msg;
 
 }

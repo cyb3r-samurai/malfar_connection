@@ -71,6 +71,7 @@ public:
 
 class Emmiter_state{
 public:
+    quint8 number = 1;
     quint8 pol = 1;
     quint8 state = 1;
     float signal_level = 1; //Среднеквадратический урдвень сигнала на входу АЦП
@@ -85,7 +86,7 @@ public:
     quint8 cam_state = 1;
     float amperage = 1;
     float temperature = 1;
-    quint8 emmiter_count = 24;
+    quint8 emmiter_count = 16;
     Emmiter_state* emm_state ;
 
     friend QDataStream &operator << (QDataStream &stream, CAM_state &emmiter);
@@ -110,10 +111,11 @@ public:
 class AcState {
 public:
     AcState();
-    quint8 state_ac = 12;
-    quint8 state_sch = 42;
-    quint8 comm_state = 4;
-    quint8 comm_state2 = 5;
+    quint8 state_ac = 0;
+    quint8 state_sch = 0;
+    quint8 comm_state = 0;
+    quint8 comm_state2 = 0;
+    quint8 pc_state = 0;
 
     quint8 sector_count = 4;
 
@@ -150,6 +152,8 @@ public:
 };
 
 struct MessageSegmentPlan {
+    MessageSegmentPlan();
+    void init(uint16_t m);
     uint8_t sector_number; // 1, 2, 3, 4
     uint8_t chanel_number; // номер физического канала приема
     uint8_t pol; // 1 - правая круговая
@@ -159,6 +163,7 @@ struct MessageSegmentPlan {
         // 5 - линейная + 45 град
         // 6 - линейна - 45 град
     uint16_t ka_number;
+    uint32_t freq;
     double start_time;
     double end_time;
     uint16_t m;
@@ -168,6 +173,7 @@ struct MessageSegmentPlan {
 };
 
 struct ChanelData {
+    void init(uint8_t chanel_number);
     uint8_t chanel_number;
     uint8_t segment_count;
     MessageSegmentPlan* segment_plan;
@@ -177,6 +183,9 @@ struct ChanelData {
 
 class SessionInfo {
 public:
+    SessionInfo();
+    SessionInfo(uint8_t n);
+    void init(uint8_t n);
     uint8_t active_data_chanel_count;
     ChanelData * m_chanel_data;
 

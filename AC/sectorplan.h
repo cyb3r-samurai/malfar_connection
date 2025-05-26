@@ -25,6 +25,7 @@ public:
 
 private:
     bool empty = true;
+    std::map<int, int> m_real_chanel_map;
     std::list<std::shared_ptr<SegmentPlan>>* segment_plan;
 };
 

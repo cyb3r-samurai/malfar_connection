@@ -83,9 +83,13 @@ QByteArray AcState::serializeStruct()
     QByteArray data;
     QDataStream stream (&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    stream << state_ac << state_sch << comm_state << comm_state2;
+    stream << state_ac << state_sch << comm_state << comm_state2 << pc_state << sector_count;
 
+    for(int i = 0; i < 4; i++) {
+        stream << cdo_state[i];
+    }
     return data;
 }
 
@@ -105,7 +109,7 @@ QDataStream &operator>>(QDataStream &stream, Cel &cel) {
 }
 
 inline QDataStream &operator<< (QDataStream &stream, Emmiter_state& Em_s ) {
-    stream << Em_s.pol << Em_s.state << Em_s.signal_level;
+    stream << Em_s.number<< Em_s.pol << Em_s.state << Em_s.signal_level;
     return stream;
 }
 
@@ -148,19 +152,37 @@ QByteArray Status::SerialiazeStruct()
     return data;
 }
 
+SessionInfo::SessionInfo()
+{
+
+}
+
+void SessionInfo::init(uint8_t n)
+{
+    m_chanel_data = new ChanelData[n];
+}
+
 QByteArray SessionInfo::SerializeStruct()
 {
     QByteArray data;
     QDataStream stream (&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setFloatingPointPrecision(QDataStream::DoublePrecision);
 
-    stream << active_data_chanel_count << *m_chanel_data;
+    stream << active_data_chanel_count;
+
+    for(int i = 0; i < active_data_chanel_count; i++) {
+        stream << m_chanel_data[i];
+    }
 
     return data;
 }
 
 inline QDataStream &operator<< (QDataStream &stream, ChanelData& ch_data) {
-    stream << ch_data.chanel_number << ch_data.segment_count << *(ch_data.segment_plan);
+    stream << ch_data.chanel_number << ch_data.segment_count;
+    for(int i = 0; i < ch_data.segment_count; i++) {
+        stream << (ch_data.segment_plan[i]);
+    }
 
     return stream;
 }
@@ -168,11 +190,14 @@ inline QDataStream &operator<< (QDataStream &stream, ChanelData& ch_data) {
 
 inline QDataStream &operator<< (QDataStream &stream, MessageSegmentPlan& m_seg_plan) {
     stream << m_seg_plan.sector_number << m_seg_plan.chanel_number << m_seg_plan.pol
-           << m_seg_plan.ka_number << m_seg_plan.start_time << m_seg_plan.end_time
+           << m_seg_plan.ka_number<< m_seg_plan.freq << m_seg_plan.start_time << m_seg_plan.end_time
            << m_seg_plan.m;
 
+    qDebug() << "serialize cell";
     for( int i = 0; i < m_seg_plan.m; ++i) {
         stream << m_seg_plan.cel[i][0] << m_seg_plan.cel[i][1];
+
+        qDebug() << m_seg_plan.cel[i][0] << m_seg_plan.cel[i][1];
     }
 
     return stream;
@@ -194,4 +219,22 @@ Cel::~Cel()
         delete[] cel[i];
     }
     delete[] cel;
+}
+
+MessageSegmentPlan::MessageSegmentPlan()
+{
+
+}
+
+void MessageSegmentPlan::init(uint16_t m)
+{
+    cel = new int16_t *[m];
+    for (size_t i = 0; i < m; ++i) {
+        cel[i] = new int16_t[2];
+    }
+}
+
+void ChanelData::init(uint8_t chanel_number)
+{
+   // segment_plan = new MessageSegmentPlan[chanel_number];
 }

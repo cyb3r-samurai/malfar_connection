@@ -6,7 +6,7 @@ SessionRequestHandler::SessionRequestHandler(QObject *parent)
 
 bool SessionRequestHandler::handleMessage(const Packet & packet)
 {
-    if (packet.header.msg_type == 0x03) {
+    if (packet.header.msg_type == 0x04) {
         emit requestRecieved(packet.id);
         return true;
     }

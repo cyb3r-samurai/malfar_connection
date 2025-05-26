@@ -27,6 +27,7 @@ void SectorPlan::remove(std::shared_ptr<SegmentPlan> planPtr)
 bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr,
                                  const std::optional<std::list<std::shared_ptr<SegmentPlan>>>& dataToDelete)
 {
+    std::set<int> real_chanel_number_taken;
     QDateTime start = planPtr->time_cel->time.front();
     QDateTime end = planPtr->time_cel->time.back();
     qDebug() << start<< end;
@@ -54,12 +55,26 @@ bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr,
             }
             if(!willBeDeleted) {
                 intersec_count.insert(current_plan->data_chanel_number);
+                real_chanel_number_taken.insert(current_plan->chanel_number);
             }
         }
         ++it;
     }
     qDebug() << "Intersection count" << intersec_count.size();
+    qDebug() <<"real_chanle_number_taken"<< real_chanel_number_taken.size();
     if (intersec_count.size() >= 6) {
+        return false;
+    }
+    int i = 1;
+    for(i = 1; i <= 6; i++) {
+        auto it = real_chanel_number_taken.find(i);
+        if (it == real_chanel_number_taken.end()) {
+            planPtr->chanel_number = i;
+            break;
+        }
+    }
+    if(i > 6) {
+        qWarning() << "wrong real chanel calculation";
         return false;
     }
 

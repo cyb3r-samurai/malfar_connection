@@ -59,7 +59,7 @@ DataServer::DataServer(QObject *parent)
 
 }
 
-void DataServer::onStartCel(int dataChanelNumber)
+void DataServer::onCel(int dataChanelNumber)
 {
 
 }

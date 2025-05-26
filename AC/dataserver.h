@@ -1,6 +1,8 @@
 #ifndef DATASERVER_H
 #define DATASERVER_H
 
+#include "Message.h"
+
 #include <QObject>
 #include <QDebug>
 #include <QTcpSocket>
@@ -15,7 +17,7 @@ public:
     explicit DataServer(QObject *parent = nullptr);
 
 public slots:
-    void onStartCel(int dataChanelNumber);
+    void onCel(int dataChanelNumber);
     void onEndCel(int dataChanelNumber);
 
 

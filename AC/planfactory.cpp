@@ -127,7 +127,7 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                     dataToDelete->insert(dataToDelete->end(),toDelete->begin(), toDelete->end());
                 first_assign = false;
 
-                qDebug() << "To delete size" << dataToDelete->size();
+                //qDebug() << "To delete size" << dataToDelete->size();
             }
 
             bool sector_status =
@@ -162,8 +162,8 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                     std::for_each(dataToDelete->begin(), dataToDelete->end(),
                                   [this](std::shared_ptr<SegmentPlan> plan) {
                         (*m_sector_plans)[plan->sector_number].remove(plan);
-                        qDebug() << "Chanel number" << plan->chanel_number;
-                        (*m_data_plans)[plan->chanel_number].remove(plan);
+                        qDebug() << "Chanel number" << plan->data_chanel_number;
+                        (*m_data_plans)[plan->data_chanel_number].remove(plan);
                         if((*m_sector_plans)[plan->sector_number].is_empty()) {
                             m_sector_plans->extract(plan->sector_number);
                             qDebug() << "Планы сектора" << plan->sector_number << "выполнены.";

@@ -28,6 +28,7 @@ public:
 private:
     std::map<int, SectorPlan>* m_sector_plans;
     std::map<int, DataChanel>* m_data_chanels_plans;
+    std::map<int, int>* m_real_chanel_map;
     mutable QReadWriteLock m_lock;
 };
 
