@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QIODevice>
 
+#include <QFloat16>
 
 namespace No_alignmet_size {
     const quint8 session_info = 8;

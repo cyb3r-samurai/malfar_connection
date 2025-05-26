@@ -45,7 +45,8 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
          Header header;
          header.msg_type  = 0x81;
          header.n = No_alignmet_size::recieve_state + r_s->n * No_alignmet_size::chanel_info;
-         emit message_created(header, r_s->serializeStruct());
+         QByteArray bytes = r_s->serializeStruct();
+         emit message_created(header, bytes);
     }
 }
 

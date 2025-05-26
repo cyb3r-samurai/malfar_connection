@@ -43,7 +43,6 @@ std::optional<std::list<std::shared_ptr<SegmentPlan> > > DataChanel::validateSeg
             ((current_start >= start) && (current_start <= end)) ||
             ((current_end <= end) && (current_end >= current_start))) {
 
-            qDebug() << "We there";
             dataToDelete.push_back(*it);
         }
         ++it;

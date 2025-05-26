@@ -24,6 +24,7 @@ QByteArray RecieveState::serializeStruct()
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     stream << n;
     for (quint8 i = 0; i < n; i++) {

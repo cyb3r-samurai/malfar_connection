@@ -1,4 +1,5 @@
 #include "stophandler.h"
+#include <QDebug>
 
 StopHandler::StopHandler(QObject *parent)
     : MessageHandler{parent}

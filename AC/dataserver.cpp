@@ -129,7 +129,6 @@ void DataServer::readyReadUdp()
                 const int16_t* report = reinterpret_cast<const int16_t *>(payload_data + offset);
                 int16_t i_data = qFromLittleEndian<qint16>(report[0]);
                 int16_t q_data = qFromLittleEndian<qint16>(report[1]);
-
             }
         }
     }

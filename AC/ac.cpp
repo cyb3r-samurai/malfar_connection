@@ -28,6 +28,7 @@ void AC::onStopRecieve(long long packet_id)
     m_chanel_plans->clear();
     m_sector_plans->clear();
     m_plan_storage->unloock();
+    qDebug() << "recive stoped";
     emit messageHandled(packet_id, 0);
 }
 

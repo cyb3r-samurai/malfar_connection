@@ -108,11 +108,11 @@ void ReportStateChecker::create_recieve_state()
             current_chanel->vec[1] = 123; // must be calculated
             current_chanel->real_chanel_number = current_segment->chanel_number;
             current_chanel->pol = current_segment->pol;
-            current_chanel->signal_level = 0; // must be calculated
+            current_chanel->signal_level = 1.125; // must be calculated
             current_chanel->sector_number = current_segment->sector_number;
-            current_chanel->sector_state = 0; // must be calculated
+            current_chanel->sector_state = 1; // must be calculated
             current_chanel->sector_start = 0; // must be taken from sector plan
-            current_chanel->sector_end = 0; // must be taken from sector plan
+            current_chanel->sector_end = 90; // must be taken from sector plan
             break;
         }
 

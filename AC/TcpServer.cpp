@@ -71,11 +71,10 @@ void TcpServer::client_data_ready()
             header_readed = true;
         }
     }
-    if(header_readed && socket_->bytesAvailable() > 0) {
+    if(header_readed) {
         if(data_size >0) {
             QByteArray chunk = socket_->read(qMin(data_size,socket_->bytesAvailable()));
             msg_bytes += chunk;;
-            qDebug() << msg_bytes.size();
             data_size -= chunk.size();
         }
         if(data_size == 0){

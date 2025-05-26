@@ -1,6 +1,7 @@
 QT += core network gui testlib
 
 CONFIG += c++17 cmdline
+CONFIG += -qreal float
 
 QT += widgets
 # You can make your code fail to compile if it uses deprecated APIs.

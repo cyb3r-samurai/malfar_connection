@@ -28,7 +28,6 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
     std::optional<std::list<std::shared_ptr<SegmentPlan>>> dataToDelete;
     bool first_assign = true;
 
-    qDebug() << "lock";
     m_plan_storage->lockWrite();
 
     //clear data chanel
@@ -60,7 +59,6 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
             }
         }
         qInfo() << "Очищены планы канала данных" << cel_plan->chanel_number;
-        qDebug() << "unlock";
         m_plan_storage->unloock();
         return 0;
     }
@@ -181,14 +179,12 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
             }
             else {
                 m_plan_storage->unloock();
-                qDebug() << "unlock";
                 return sector_number;
             }
         }
     }
 
     m_plan_storage->unloock();
-    qDebug() << "unlock";
     return 0;
 }
 
