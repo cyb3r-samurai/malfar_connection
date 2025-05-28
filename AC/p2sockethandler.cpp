@@ -13,11 +13,10 @@ P2SocketHandler::~P2SocketHandler()
 void P2SocketHandler::start()
 {
     loadSettings();
-    m_socket = new QTcpSocket(this);
-    m_socket->connectToHost(m_ip, m_port);
 
     m_socket = new QTcpSocket(this);
     m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+    m_socket->connectToHost(m_ip, m_port);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     connect(m_socket, &QTcpSocket::errorOccurred, this, [this](QAbstractSocket::SocketError)
@@ -43,6 +42,11 @@ void P2SocketHandler::start()
 
 }
 
+void P2SocketHandler::stop()
+{
+
+}
+
 void P2SocketHandler::Send(Report & report)
 {
     QByteArray data = report.serializeStruct();
@@ -61,5 +65,5 @@ void P2SocketHandler::loadSettings()
 {
     QSettings settings;
     m_port = settings.value("p2/port", 4444).toInt();
-    m_ip = settings.value("p2/ip" "127.0.0.1").toString();
+    m_ip = settings.value("p2/ip", "127.0.0.1").toString();
 }

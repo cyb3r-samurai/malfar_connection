@@ -179,10 +179,20 @@ void DataServer::connect_server()
             });
     connect(udp_socket, &QUdpSocket::readyRead, this, &DataServer::readyReadUdp);
 
-    QTimer::singleShot(1000, [this](){
         tcp_socket->connectToHost("127.0.0.1:502", 9999);
         udp_socket->bind(QHostAddress::Any, 9999);
 
-    });
+
+    m_p2SocketHandler = new P2SocketHandler;
+    thread_p2 = new QThread;
+    connect(thread_p2, &QThread::started, m_p2SocketHandler, &P2SocketHandler::start);
+    m_p2SocketHandler->moveToThread(thread_p2);
+    thread_p2->start();
+
+    for(int i = 1; i <= 24; ++i) {
+        m_cell_storage.emplace(std::make_pair(i, new CellStorage));
+        connect(&m_cell_storage[i],&CellStorage::ready_to_write, m_p2SocketHandler,&P2SocketHandler::Send);
+    }
+
 }
 

@@ -15,10 +15,11 @@ class P2SocketHandler : public QObject
 public:
     explicit P2SocketHandler(QObject *parent = nullptr);
     ~P2SocketHandler();
-    void start();
 
 public slots:
     void Send(Report &);
+    void start();
+    void stop();
 
 signals:
 

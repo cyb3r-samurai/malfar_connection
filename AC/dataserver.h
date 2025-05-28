@@ -3,6 +3,7 @@
 
 #include "cellstorage.h"
 #include "Message.h"
+#include "p2sockethandler.h"
 
 #include <QObject>
 #include <QDebug>
@@ -63,6 +64,9 @@ private:
 
     bool checkHeader(struct packet_header *packet_header);
     std::map<int, CellStorage> m_cell_storage;
+    QThread *thread_p2;
+    P2SocketHandler * m_p2SocketHandler;
+
 };
 
 #endif // DATASERVER_H

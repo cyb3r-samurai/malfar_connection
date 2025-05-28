@@ -40,7 +40,7 @@ TcpServer::TcpServer(QObject* parent) :
 
     thread_ac->start();
     thread_message_processor->start();
-    //thread_data_server->start();
+    thread_data_server->start();
 }
 
 bool TcpServer::isStarted() const
