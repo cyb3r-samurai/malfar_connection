@@ -14,6 +14,7 @@ SOURCES += \
         ac.cpp \
         acstatehandler.cpp \
         celhandler.cpp \
+        cellstorage.cpp \
         datachanel.cpp \
         dataserver.cpp \
         logger.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
         main.cpp \
         messagehandler.cpp \
         messageprocessor.cpp \
+        p2sockethandler.cpp \
         packet.cpp \
         planfactory.cpp \
         planstorage.cpp \
@@ -43,6 +45,7 @@ HEADERS += \
     ac.h \
     acstatehandler.h \
     celhandler.h \
+    cellstorage.h \
     datachanel.h \
     dataserver.h \
     logger.h \
@@ -50,6 +53,7 @@ HEADERS += \
     messagebroker.h \
     messagehandler.h \
     messageprocessor.h \
+    p2sockethandler.h \
     packet.h \
     planfactory.h \
     planstorage.h \

@@ -32,6 +32,7 @@ public slots:
 private slots:
     void socket_state_changed(QAbstractSocket::SocketState);
     void socket_ready_read();
+
 private:
     QTcpSocket socket_;
     QString ip_;

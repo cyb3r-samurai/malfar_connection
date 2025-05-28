@@ -56,6 +56,9 @@ void AC::CheckTime()
                     qInfo() << "Целеукозание применено: канал данных"<< segment_ptr->data_chanel_number << ", сектор приема" << sector_it->first
                             << ", азимут" << segment_ptr->time_cel->az.front() << "угол" << segment_ptr->time_cel->angle.front() << '\n'
                             << "номер физического канала данных:"<<segment_ptr->chanel_number <<"Запланированное время: " << first_time.time();
+                    emit accept_cell(segment_ptr->data_chanel_number,segment_ptr->chanel_number,
+                                     segment_ptr->sector_number, QDateTime::currentDateTime(),segment_ptr->ka_number,
+                                     segment_ptr->time_cel->az.front(),segment_ptr->time_cel->angle.front());
                     ++first_time_it;
                     segment_ptr->time_cel->time.pop_front();
                     segment_ptr->time_cel->angle.pop_front();
@@ -67,6 +70,7 @@ void AC::CheckTime()
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
                             qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
                             m_chanel_plans->extract(segment_ptr->data_chanel_number);
+                            emit finish_data_chanel(segment_ptr->data_chanel_number, segment_ptr->chanel_number, segment_ptr->sector_number);
                         }
                         segment_list->erase(segment_it++);
                         segment_erased = true;

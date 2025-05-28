@@ -5,6 +5,128 @@ DataServer::DataServer(QObject *parent)
 {
     reset_flag = false;
 
+
+}
+
+
+void DataServer::readyReadTcp()
+{
+    struct packet_header packet_header;
+    tcp_socket->read((char *)&packet_header, sizeof(packet_header));
+
+    if (checkHeader(&packet_header) != true)
+    {
+        tcp_socket->readAll(); // clear buffer
+        return;
+    }
+
+    // приём данных пакета
+
+    qint64 data_size = packet_header.data_size;
+    while (data_size)
+    {
+        QByteArray data = tcp_socket->read(data_size);
+        data_size -= data.size();
+
+        if (data_size)
+        {
+            if (tcp_socket->waitForReadyRead(100) == false)
+            {
+                qDebug() << "missing data";
+                return;
+            }
+        }
+    }
+}
+
+
+void DataServer::readyReadUdp()
+{
+    if (udp_socket ->hasPendingDatagrams()) {
+        QNetworkDatagram datagram = udp_socket->receiveDatagram();
+
+        struct packet_header *packet_header =
+            reinterpret_cast<struct packet_header *>(datagram.data().data());
+
+        if(checkHeader(packet_header)!= true)
+        {
+            qDebug() << "error header";
+            return;
+        }
+
+        const char *payload_data = datagram.data().data() + sizeof(struct packet_header);
+
+        int total_reports = packet_header->data_size / report_size;
+        if (total_reports % chanel_count != 0) {
+            qDebug() << "missing data";
+        }
+
+        int total_sets = total_reports / chanel_count;
+
+        for(int i = 0; i < total_sets; ++i) {
+            for(int ch = 0; ch < chanel_count; ++ch) {
+                int offset = (i* chanel_count +ch) * report_size;
+                const int16_t* report = reinterpret_cast<const int16_t *>(payload_data + offset);
+                int16_t i_data = qFromLittleEndian<qint16>(report[0]);
+                int16_t q_data = qFromLittleEndian<qint16>(report[1]);
+
+                for(int i = 1; i <=4; i++) {
+                    if(m_cell_storage[ch*i].started()) {
+                        if(m_cell_storage[ch*i].size() == 0) {
+                            m_cell_storage[ch*i].setTime();
+                        }
+                        m_cell_storage[ch*i].append(i_data, q_data);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void DataServer::onAcceptCel(int data_chanel, int real_data_chanel, int sector,const QDateTime& start_time,int ka_number, int az, int angle)
+{
+        qint16 az_[2];
+        az_[0]= az;
+        az_[1] = angle;
+    if(!m_cell_storage[real_data_chanel * sector].started()) {
+        m_cell_storage[real_data_chanel * sector].set(data_chanel,0,ka_number,start_time,az_);
+    }
+    else {
+        m_cell_storage[real_data_chanel * sector].sendAll();
+        m_cell_storage[real_data_chanel * sector].set(data_chanel,0,ka_number,start_time,az_);
+
+    }
+
+}
+
+void DataServer::onStop(int data_chanel, int real_data_chanel, int sector)
+{
+    Q_ASSERT(m_cell_storage[real_data_chanel* sector].started());
+
+    m_cell_storage[real_data_chanel * sector].sendAll();
+
+    m_cell_storage[real_data_chanel * sector].finish();
+}
+
+bool DataServer::checkHeader(packet_header *packet_header)
+{
+    if (packet_header->protocol_version != protocol_version)
+    {
+        qDebug() << "version";
+        return false;
+    }
+
+    if (packet_header->flasgs.overflow)
+    {
+        qDebug() << "Packet loss";
+    }
+
+    return true;
+}
+
+
+void DataServer::connect_server()
+{
     tcp_socket = new QTcpSocket(this);
     tcp_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
@@ -57,97 +179,10 @@ DataServer::DataServer(QObject *parent)
             });
     connect(udp_socket, &QUdpSocket::readyRead, this, &DataServer::readyReadUdp);
 
+    QTimer::singleShot(1000, [this](){
+        tcp_socket->connectToHost("127.0.0.1:502", 9999);
+        udp_socket->bind(QHostAddress::Any, 9999);
+
+    });
 }
 
-void DataServer::onCel(int dataChanelNumber)
-{
-
-}
-
-void DataServer::onEndCel(int dataChanelNumber)
-{
-
-}
-
-void DataServer::readyReadTcp()
-{
-    struct packet_header packet_header;
-    tcp_socket->read((char *)&packet_header, sizeof(packet_header));
-
-    if (checkHeader(&packet_header) != true)
-    {
-        tcp_socket->readAll(); // clear buffer
-        return;
-    }
-
-    // приём данных пакета
-
-    qint64 data_size = packet_header.data_size;
-    while (data_size)
-    {
-        QByteArray data = tcp_socket->read(data_size);
-        data_size -= data.size();
-
-        if (data_size)
-        {
-            if (tcp_socket->waitForReadyRead(100) == false)
-            {
-                qDebug() << "missing data";
-                return;
-            }
-        }
-    }
-}
-
-
-void DataServer::readyReadUdp()
-{
-    while (udp_socket ->hasPendingDatagrams()) {
-        QNetworkDatagram datagram = udp_socket->receiveDatagram();
-
-        struct packet_header *packet_header =
-            reinterpret_cast<struct packet_header *>(datagram.data().data());
-
-        if(checkHeader(packet_header)!= true)
-        {
-            qDebug() << "error header";
-            return;
-        }
-
-        const char *payload_data = datagram.data().data() + sizeof(struct packet_header);
-
-        int total_reports = packet_header->data_size / report_size;
-        if (total_reports % chanel_count != 0) {
-            qDebug() << "missing data";
-        }
-
-        int total_sets = total_reports / chanel_count;
-
-        for(int i = 0; i < total_sets; ++i) {
-            for(int ch = 0; ch < chanel_count; ++ch) {
-                int offset = (i* chanel_count +ch) * report_size;
-                const int16_t* report = reinterpret_cast<const int16_t *>(payload_data + offset);
-                int16_t i_data = qFromLittleEndian<qint16>(report[0]);
-                int16_t q_data = qFromLittleEndian<qint16>(report[1]);
-            }
-        }
-    }
-
-}
-
-bool DataServer::checkHeader(packet_header *packet_header)
-{
-    if (packet_header->protocol_version != protocol_version)
-    {
-        qDebug() << "version";
-        return false;
-    }
-
-
-    if (packet_header->flasgs.overflow)
-    {
-        qDebug() << "Packet loss";
-    }
-
-    return true;
-}

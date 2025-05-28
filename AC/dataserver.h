@@ -1,6 +1,7 @@
 #ifndef DATASERVER_H
 #define DATASERVER_H
 
+#include "cellstorage.h"
 #include "Message.h"
 
 #include <QObject>
@@ -9,6 +10,10 @@
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QtEndian>
+#include <QDateTime>
+#include <QTimer>
+#include <QThread>
+
 
 class DataServer : public QObject
 {
@@ -16,16 +21,17 @@ class DataServer : public QObject
 public:
     explicit DataServer(QObject *parent = nullptr);
 
-public slots:
-    void onCel(int dataChanelNumber);
-    void onEndCel(int dataChanelNumber);
-
-
 signals:
+
 
 private slots:
     void readyReadTcp();
     void readyReadUdp();
+
+public slots:
+    void onAcceptCel(int, int, int, const QDateTime&,int,  int, int);
+    void onStop(int, int, int);
+    void connect_server();
 
 private:
     const uint8_t protocol_version = 2;
@@ -56,6 +62,7 @@ private:
     QUdpSocket *udp_socket;
 
     bool checkHeader(struct packet_header *packet_header);
+    std::map<int, CellStorage> m_cell_storage;
 };
 
 #endif // DATASERVER_H

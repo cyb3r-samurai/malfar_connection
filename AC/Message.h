@@ -57,13 +57,13 @@ public:
 
 class Report {
 public:
-    Report(quint16 m);
-    quint8 chanel_number = 13;
+    Report(quint32 m);
+    quint8 data_chanel_number = 13;
     quint8 ac_state = 3;
     quint16 ka_number = 5;
     double time = 4;
     qint16 az[2] = {1,2};
-    quint16 m;
+    quint32 m;
     qint8** info;
 
     QByteArray serializeStruct();

@@ -7,6 +7,7 @@
 #include "packet.h"
 #include "planstorage.h"
 #include "reportstatechecker.h"
+#include "dataserver.h"
 
 #include <QObject>
 #include <QCoreApplication>
@@ -36,6 +37,7 @@ public:
     void client_msg_received(const Header&, const QByteArray&);
     void connected();
     void finish();
+    void connect_data_server();
 
 public slots:
     void Timequit();
@@ -58,13 +60,16 @@ private:
 
     QTcpServer* server_;
     QTcpSocket* socket_;
+
     MessageProcessor *message_processor_;
     AC* m_ac;
     PlanStorage* m_plan_storage;
     ReportStateChecker * m_report_state_checker;
+    DataServer * m_data_server;
 
     QThread * thread_message_processor;
     QThread * thread_ac;
+    QThread * thread_data_server;
 
     bool started_;
 

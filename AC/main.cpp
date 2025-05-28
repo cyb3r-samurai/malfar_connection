@@ -1,6 +1,5 @@
 #include "logger.h"
 #include <TcpServer.h>
-#include <dataserver.h>
 
 #include <QCoreApplication>
 #include <QObject>
@@ -19,7 +18,10 @@ int main(int argc, char *argv[])
     logger->installMsgHandler();
 
     TcpServer* server = new TcpServer(QCoreApplication::instance());
+
     int ret  = a->exec();
-    return ret;
+
+    delete server;
     qDebug() << "closing app";
+    return ret;
 }

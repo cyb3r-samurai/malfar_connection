@@ -42,7 +42,7 @@ inline QDataStream &operator<< (QDataStream &stream, ChanelInfo &ch_i) {
     return stream;
 }
 
-Report::Report(quint16 m)
+Report::Report(quint32 m)
     : m{m}
 {
     info  = new qint8*[m];
@@ -62,7 +62,7 @@ QByteArray Report::serializeStruct()
     QDataStream stream (&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
 
-    stream << chanel_number << ac_state << ka_number << time <<
+    stream << data_chanel_number << ac_state << ka_number << time <<
         az[0] << az[1];
     stream << m;
 

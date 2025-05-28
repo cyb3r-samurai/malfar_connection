@@ -29,12 +29,14 @@ public:
     PlanFactory *plan_factory() const;
 
 signals:
-    void SessionStarted(int , int);
-    void SessionEnd(int, int);
     void plans_changed();
     void sector_plan_chanhed(const std::map<int, SectorPlan>&);
     void chanel_plan_chnaged(const std::map<int, DataChanel>&);
     void messageHandled(long long, quint8);
+
+    void accept_cell(int data_chanel_number, int real_chanel_number, int sector,
+                     const QDateTime& current_time, int ka_number, int az, int angle);
+    void finish_data_chanel(int data_chanel_number, int real_chanal_number, int sector);
 
 public slots:
     void onStopRecieve(long long);

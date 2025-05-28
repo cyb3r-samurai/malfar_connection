@@ -25,8 +25,8 @@ bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_
     qint64 sec2 = (start_time - 25569) * 86400 * 1000;
      dt_time = QDateTime::fromMSecsSinceEpoch(sec2);
 
-    delta = (end_time - start_time)/ double(m - 1);
-    msec_delta = (sec1 - sec2)/ double(m-1);
+    delta = (end_time - start_time)/ double(m);
+    msec_delta = (sec1 - sec2)/ double(m);
     delta_dt = QDateTime::fromMSecsSinceEpoch(msec_delta);
     if (msec_delta < 1000) {
         return false;
@@ -42,6 +42,12 @@ void SegmentPlan::appendCel(std::shared_ptr<Cel> celPtr)
     time_cel->angle.push_back(celPtr->cel[current_index][1]);
 
     current_index++;
+    if(current_index == m){
+
+        time_cel->time.push_back(dt_time.addMSecs(msec_delta * current_index));
+        time_cel->az.push_back(celPtr->cel[current_index-1][0]);
+        time_cel->angle.push_back(celPtr->cel[current_index-1][1]);
+    }
 }
 
 MessageSegmentPlan SegmentPlan::toMessage()

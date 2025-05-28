@@ -17,21 +17,30 @@ TcpServer::TcpServer(QObject* parent) :
 
     thread_message_processor = new QThread();
     thread_ac = new QThread();
+    thread_data_server = new QThread();
 
     m_ac = new AC();
     m_report_state_checker = new ReportStateChecker(m_ac->plan_storage());
     message_processor_ = new MessageProcessor(m_ac->plan_storage(), m_report_state_checker, m_ac);
+    m_data_server = new DataServer();
 
     message_processor_->moveToThread(thread_message_processor);
     m_ac->moveToThread(thread_ac);
+    m_data_server->moveToThread(thread_data_server);
 
-    thread_ac->start();
-    thread_message_processor->start();
+
     connect(server_, &QTcpServer::newConnection, this, &TcpServer::on_client_connecting);
     connect(this, &TcpServer::client_msg_received, message_processor_, &MessageProcessor::on_client_msg_recieved);
     connect(message_processor_, &MessageProcessor::message_created, this, &TcpServer::on_message_ready);
     connect(this, &TcpServer::connected, message_processor_, &MessageProcessor::on_connected);
+    connect(m_ac, &AC::accept_cell, m_data_server, &DataServer::onAcceptCel);
+    connect(m_ac, &AC::finish_data_chanel, m_data_server, &DataServer::onStop);
+    connect(this, &TcpServer::connect_data_server,m_data_server,&DataServer::connect_server );
+    connect(thread_data_server,&QThread::started, m_data_server,&DataServer::connect_server);
 
+    thread_ac->start();
+    thread_message_processor->start();
+    //thread_data_server->start();
 }
 
 bool TcpServer::isStarted() const
@@ -130,5 +139,7 @@ void TcpServer::saveSettings()
 {
     QSettings settings;
     settings.setValue("port", 5555);
+    settings.setValue("p2/port", 4444);
+    settings.setValue("p2/ip", "127.0.0.1");
 }
 
