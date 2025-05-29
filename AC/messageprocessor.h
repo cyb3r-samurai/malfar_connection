@@ -32,6 +32,7 @@ public:
 signals:
     void message_created(Header, QByteArray);
     void cel_recieved(std::shared_ptr<Cel> m_cel);
+    void timeToCreateStartMessage();
 
 public slots:
     void on_client_msg_recieved(const Header&, const QByteArray&);

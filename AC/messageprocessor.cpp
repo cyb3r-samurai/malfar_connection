@@ -37,6 +37,8 @@ void MessageProcessor::savePacket(const Packet &packet)
 void MessageProcessor::on_connected()
 {
     m_connected = true;
+
+    QTimer::singleShot(1000, [this](){ emit timeToCreateStartMessage(); });
 }
 
 void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
@@ -198,5 +200,6 @@ void MessageProcessor::startTimer()
     my_timer = new QTimer();
     my_timer->start(2000);
     connect(my_timer, &QTimer::timeout, m_state_checker, &ReportStateChecker::onTimer);
+    connect(this, &MessageProcessor::timeToCreateStartMessage, m_state_checker, &ReportStateChecker::onStartingServer);
 
 }

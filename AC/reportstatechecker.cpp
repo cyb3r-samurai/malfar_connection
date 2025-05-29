@@ -25,12 +25,17 @@ void ReportStateChecker::onRequest(long long)
     m_data_chanel_plans = m_plan_storage->get_data_chanel_copy();
     m_plan_storage->unloock();
 
-    if(!m_data_chanel_plans.empty()) {
+    //if(!m_data_chanel_plans.empty()) {
         create_session_info();
-    }
+   // }
 }
 
 void ReportStateChecker::onAcStateRequest(long long)
+{
+    create_ac_state();
+}
+
+void ReportStateChecker::onStartingServer()
 {
     create_ac_state();
 }
@@ -48,6 +53,7 @@ void ReportStateChecker::create_session_info()
 
     auto sessionInfoPtr = std::make_shared<SessionInfo>();
     sessionInfoPtr->active_data_chanel_count = active_chanels_count;
+    if (active_chanels_count != 0)
     sessionInfoPtr->m_chanel_data = new ChanelData[active_chanels_count];
 
     int chanel_mas_count = 0;
@@ -110,15 +116,15 @@ void ReportStateChecker::create_recieve_state()
             auto current_segment = segments_it->get();
             current_chanel->freq = current_segment->freq;
             current_chanel->ka_number = current_segment->ka_number;
-            current_chanel->vec[0] = 123; // must be calculated
-            current_chanel->vec[1] = 123; // must be calculated
+            current_chanel->vec[0] = current_segment->time_cel->az.front(); // must be calculated
+            current_chanel->vec[1] = current_segment->time_cel->angle.front(); // must be calculated
             current_chanel->real_chanel_number = current_segment->chanel_number;
             current_chanel->pol = current_segment->pol;
             current_chanel->signal_level = 1.125; // must be calculated
             current_chanel->sector_number = current_segment->sector_number;
             current_chanel->sector_state = 1; // must be calculated
-            current_chanel->sector_start = 0; // must be taken from sector plan
-            current_chanel->sector_end = 90; // must be taken from sector plan
+            current_chanel->sector_start = current_segment->sector_start; // must be taken from sector plan
+            current_chanel->sector_end = current_segment->sector_end; // must be taken from sector plan
             break;
         }
 

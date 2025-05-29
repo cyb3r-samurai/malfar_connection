@@ -40,7 +40,7 @@ TcpServer::TcpServer(QObject* parent) :
 
     thread_ac->start();
     thread_message_processor->start();
-    thread_data_server->start();
+   // thread_data_server->start();
 }
 
 bool TcpServer::isStarted() const
@@ -60,14 +60,15 @@ void TcpServer::on_client_connecting()
  //   socket_->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,64*1024*1024);
     connect(socket_, &QTcpSocket::readyRead, this, &TcpServer::client_data_ready);
     connect(socket_, &QTcpSocket::disconnected, this, &TcpServer::client_disconnected);
+    client_connected = true;
 
     emit connected();
 }
 
 void TcpServer::client_disconnected()
 {
-    started_ = false;
     qInfo() << "Client Disconected";
+    client_connected = false;
 }
 
 void TcpServer::client_data_ready()
@@ -114,6 +115,11 @@ void TcpServer::on_message_ready(const Header& header, const QByteArray& data)
     QByteArray header_bytes = header.serializeStruct();
     socket_->write(header_bytes);
     socket_->write(data);
+}
+
+bool TcpServer::getClient_connected() const
+{
+    return client_connected;
 }
 
 

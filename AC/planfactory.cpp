@@ -67,7 +67,8 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
     uint8_t sector_number = calculate_sector(a, *m_sector_vector);
     uint16_t lastCelIndex = cel_plan->m - 1;
     std::shared_ptr<SegmentPlan> segment_ptr = std::make_shared<SegmentPlan>();
-    if(!(segment_ptr->initCel(cel_plan, sector_number,cel_plan->chanel_number, 0))) {
+    if(!(segment_ptr->initCel(cel_plan, sector_number,cel_plan->chanel_number, 0
+                               ,m_sector_vector->at(sector_number-1).az_start, m_sector_vector->at(sector_number-1).az_end))) {
         qDebug() << "unlock";
         m_plan_storage->unloock();
         return 255;
@@ -105,7 +106,8 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 auto new_ptr = std::make_shared<SegmentPlan>();
                 segment_ptr.reset();
                 segment_ptr = new_ptr;
-                segment_ptr->initCel(cel_plan, current_sector_number,cel_plan->chanel_number, i);
+                segment_ptr->initCel(cel_plan, current_sector_number,cel_plan->chanel_number, i,
+                                    m_sector_vector->at(sector_number-1).az_start, m_sector_vector->at(sector_number-1).az_end);
                 sector_number = current_sector_number;
             }
             else {

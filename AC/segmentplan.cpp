@@ -9,7 +9,7 @@ SegmentPlan::~SegmentPlan()
     delete time_cel;
 }
 
-bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_t chanelNumber ,int index)
+bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_t chanelNumber ,int index, int16_t sector_s, int16_t sector_e)
 {
     sector_number = sectorNumb;
     data_chanel_number = chanelNumber;
@@ -20,6 +20,9 @@ bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_
     m = celPtr->m;
     current_index = index;
     id = celPtr->id;
+
+    sector_start = sector_s;
+    sector_end = sector_e;
 
     qint64 sec1 = (end_time - 25569) * 86400 * 1000;
     qint64 sec2 = (start_time - 25569) * 86400 * 1000;

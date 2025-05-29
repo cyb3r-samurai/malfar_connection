@@ -31,7 +31,9 @@ public:
     bool isStarted() const;
     void StartSending();
 
-    signals:
+    bool getClient_connected() const;
+
+signals:
     void ClientConnected();
     void DataRecieved(QByteArray);
     void client_msg_received(const Header&, const QByteArray&);
@@ -71,7 +73,8 @@ private:
     QThread * thread_ac;
     QThread * thread_data_server;
 
-    bool started_;
+    bool started_ = false;
+    bool client_connected = false;
 
     Header DeserializeHeader(QByteArray& data);
 

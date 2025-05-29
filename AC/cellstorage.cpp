@@ -32,6 +32,7 @@ void CellStorage::set(quint8 data_chanel_number, quint8 ac_state, quint8 ka_numb
 
 void CellStorage::sendAll()
 {
+   // if ()
     Report data = toMessage();
     emit ready_to_write(data);
     m_count = 0;
