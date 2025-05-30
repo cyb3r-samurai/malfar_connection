@@ -154,7 +154,7 @@ QByteArray Status::SerialiazeStruct()
 
 SessionInfo::SessionInfo()
 {
-
+    active_data_chanel_count = 0;
 }
 
 void SessionInfo::init(uint8_t n)

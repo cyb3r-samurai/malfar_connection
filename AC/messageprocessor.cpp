@@ -69,10 +69,6 @@ void MessageProcessor::onSessionStateCreated(std::shared_ptr<SessionInfo> s_i)
         qDebug() << bytes.size();
         qDebug() << header.n;
 
-        qDebug() << s_i->m_chanel_data[0].segment_plan[0].cel[10][0];
-
-        qDebug() << s_i->m_chanel_data[0].segment_plan[1].cel[10][1];
-
         Q_ASSERT(bytes.size() == header.n);
         emit message_created(header, bytes);
     }
