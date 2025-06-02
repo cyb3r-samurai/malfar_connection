@@ -14,7 +14,7 @@ Packet::Packet(const Header& header_,  const QByteArray& data_, long long id_) :
 QByteArray Header::serializeStruct() const
 {
     QByteArray data;
-    QDataStream stream(&data, QDataStream::WriteOnly);
+    QDataStream stream(&data, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
     stream << version << msg_type << zero << time << n;
 

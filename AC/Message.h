@@ -6,6 +6,7 @@
 
 #include <QVector>
 #include <QIODevice>
+#include <QDataStream>
 
 #include <QFloat16>
 

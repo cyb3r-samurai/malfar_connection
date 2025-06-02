@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QThread>
 #include <QObject>
+#include <QDebug>
 
 #include <map>
 #include <memory>

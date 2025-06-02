@@ -19,6 +19,7 @@ public:
 
     static void msgHandler(const QtMsgType, const QMessageLogContext &context,
                     const QString& messgae);
+
 private:
     static QString msgFormat;
     static QString timestampFormat;

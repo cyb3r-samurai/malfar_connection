@@ -3,6 +3,7 @@
 
 #include <QDataStream>
 #include <QByteArray>
+#include <QIODevice>
 
 class Header {
 public:

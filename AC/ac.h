@@ -14,6 +14,8 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QThread>
+#include <QDebug>
+
 
 #include <map>
 
