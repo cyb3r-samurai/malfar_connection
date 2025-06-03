@@ -17,6 +17,7 @@ bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_
     ka_number = celPtr->ka_number;
     start_time = celPtr->start_time;
     end_time = celPtr->end_time;
+    freq = celPtr->frequency;
     m = celPtr->m;
     current_index = index;
     id = celPtr->id;
@@ -30,6 +31,11 @@ bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_
 
     delta = (end_time - start_time)/ double(m);
     msec_delta = (sec1 - sec2)/ double(m);
+
+    if (current_index) {
+        start_time = celPtr->start_time + (delta*current_index);
+    }
+
     delta_dt = QDateTime::fromMSecsSinceEpoch(msec_delta);
     if (msec_delta < 1000) {
         return false;
@@ -56,16 +62,19 @@ void SegmentPlan::appendCel(std::shared_ptr<Cel> celPtr)
 MessageSegmentPlan SegmentPlan::toMessage()
 {
     MessageSegmentPlan msg;
-    msg.sector_number = chanel_number;
+    msg.sector_number = sector_number;
     msg.pol = pol;
     msg.ka_number = ka_number;
     msg.freq = freq;
     msg.m = time_cel->time.size();
 
-    quint64  sec = time_cel->time.front().toSecsSinceEpoch();
-    msg.start_time =double(sec) / double (86400) + 25569;
+   // quint64  sec = time_cel->time.front().toSecsSinceEpoch();
+   // msg.start_time =double(sec) / double (86400) + 25569;
+    msg.start_time = start_time;
     quint64  sec2 = time_cel->time.back().toSecsSinceEpoch();
     msg.end_time = double(sec2) / double (86400) + 25569;
+    //msg.end_time = end_time;
+    msg.chanel_number = chanel_number;
 
     msg.cel = new int16_t *[time_cel->time.size()];
     for (int i = 0; i < msg.m; ++i) {
