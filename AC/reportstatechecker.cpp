@@ -93,7 +93,12 @@ void ReportStateChecker::create_session_info()
 void ReportStateChecker::create_recieve_state()
 {
     auto recievedStatePtr = std::make_shared<RecieveState>();
-    quint8 active_chanels_count = m_data_chanel_plans.size();
+    quint8 active_chanels_count = 0;
+    std::for_each(m_data_chanel_plans.begin(), m_data_chanel_plans.end(), [&active_chanels_count](auto pair) {
+        if(pair.second.active) {
+            active_chanels_count++;
+        }
+    });
 
     //initializing recivestate
     recievedStatePtr->initializeChanelMas(active_chanels_count);
@@ -104,6 +109,7 @@ void ReportStateChecker::create_recieve_state()
     //iterate over chanel plans and segments to form recivestate message
     auto plans_it = m_data_chanel_plans.begin();
     while(plans_it != m_data_chanel_plans.end()){
+        if(plans_it->second.active){
         int chanel_number = plans_it->first;
         ChanelInfo *current_chanel =
             &(recievedStatePtr->chanel_mas[chanel_mas_count]);
@@ -116,8 +122,8 @@ void ReportStateChecker::create_recieve_state()
             auto current_segment = segments_it->get();
             current_chanel->freq = current_segment->freq;
             current_chanel->ka_number = current_segment->ka_number;
-            current_chanel->vec[0] = current_segment->time_cel->az.front(); // must be calculated
-            current_chanel->vec[1] = current_segment->time_cel->angle.front(); // must be calculated
+            current_chanel->vec[0] = current_segment->current_az; // must be calculated
+            current_chanel->vec[1] = current_segment->current_angle; // must be calculated
             current_chanel->real_chanel_number = current_segment->chanel_number;
             current_chanel->pol = current_segment->pol;
             current_chanel->signal_level = 1.125; // must be calculated
@@ -126,6 +132,7 @@ void ReportStateChecker::create_recieve_state()
             current_chanel->sector_start = current_segment->sector_start; // must be taken from sector plan
             current_chanel->sector_end = current_segment->sector_end; // must be taken from sector plan
             break;
+        }
         }
 
         ++plans_it;

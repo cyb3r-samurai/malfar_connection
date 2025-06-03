@@ -19,8 +19,10 @@ public:
         ->std::optional<std::list<std::shared_ptr<SegmentPlan>>>;
     bool pop();
     bool is_empty();
+    int size();
     void clear();
     void remove(std::shared_ptr<SegmentPlan>);
+    bool active = false;
 
     std::list<std::shared_ptr<SegmentPlan> > segments() const;
 

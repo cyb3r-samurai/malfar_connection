@@ -72,6 +72,11 @@ bool DataChanel::is_empty()
     return empty;
 }
 
+int DataChanel::size()
+{
+    return m_segments.front()->size();
+}
+
 void DataChanel::clear()
 {
     empty = true;

@@ -59,6 +59,11 @@ void SegmentPlan::appendCel(std::shared_ptr<Cel> celPtr)
     }
 }
 
+int SegmentPlan::size()
+{
+    return time_cel->time.size();
+}
+
 MessageSegmentPlan SegmentPlan::toMessage()
 {
     MessageSegmentPlan msg;
@@ -66,7 +71,13 @@ MessageSegmentPlan SegmentPlan::toMessage()
     msg.pol = pol;
     msg.ka_number = ka_number;
     msg.freq = freq;
-    msg.m = time_cel->time.size();
+    if (time_cel->time.size() > 1) {
+    msg.m = time_cel->time.size()-1;
+    }
+    else
+    {
+        msg.m = 1;
+    }
 
    // quint64  sec = time_cel->time.front().toSecsSinceEpoch();
    // msg.start_time =double(sec) / double (86400) + 25569;
@@ -76,7 +87,7 @@ MessageSegmentPlan SegmentPlan::toMessage()
     //msg.end_time = end_time;
     msg.chanel_number = chanel_number;
 
-    msg.cel = new int16_t *[time_cel->time.size()];
+    msg.cel = new int16_t *[msg.m];
     for (int i = 0; i < msg.m; ++i) {
         msg.cel[i] = new int16_t[2];
     }
@@ -85,7 +96,12 @@ MessageSegmentPlan SegmentPlan::toMessage()
 
 
     int i = 0;
-    while(angle_it != time_cel->angle.end()) {
+
+    auto it_end = --time_cel->angle.end();
+
+    if(time_cel->time.size() == 1)  {it_end = time_cel->angle.end();}
+
+    while(angle_it != it_end) {
         msg.cel[i][0] = *az_it;
         msg.cel[i][1] = *angle_it;
         ++i;
@@ -93,7 +109,5 @@ MessageSegmentPlan SegmentPlan::toMessage()
         ++angle_it;
     }
 
-
     return msg;
-
 }

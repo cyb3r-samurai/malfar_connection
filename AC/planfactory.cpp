@@ -77,10 +77,18 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
     for(uint16_t i = 0;  i < cel_plan->m; ++i) {
         int16_t a[2] = {cel_plan->cel[i][0], cel_plan->cel[i][1]};
         uint8_t current_sector_number = calculate_sector(a, *m_sector_vector);
-
         //Если изменился сектор приема в плане, либо обрабатывется последние целеукозание, то
         //валидируется  полученный отрезок плана и добавляется в планы сектора и планы каналов данных.
         if(current_sector_number != sector_number) {
+            if(segment_ptr->time_cel->time.size() == 1) {
+                    QDateTime time = segment_ptr->time_cel->time.front();
+                    qint16 az =segment_ptr->time_cel->az.front();
+                    qint16 angle = segment_ptr->time_cel->angle.front();
+                    segment_ptr->time_cel->time.push_back(time.addMSecs(segment_ptr->msec_delta));
+                    segment_ptr->time_cel->az.push_back(az);
+                    segment_ptr->time_cel->angle.push_back(angle);
+            }
+
             std::optional<std::list<std::shared_ptr<SegmentPlan>>> toDelete =
                 (*m_data_plans)[cel_plan->chanel_number].validateSegment(segment_ptr);
 
@@ -98,6 +106,7 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 segment_ptr->data_chanel_number = cel_plan->chanel_number;
                 segment_ptr->sector_number = sector_number;
 
+
                 PlanToAppend plan;
                 plan.seg = segment_ptr;
                 plan.sector_number = sector_number;
@@ -107,7 +116,7 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 segment_ptr.reset();
                 segment_ptr = new_ptr;
                 segment_ptr->initCel(cel_plan, current_sector_number,cel_plan->chanel_number, i,
-                                    m_sector_vector->at(sector_number-1).az_start, m_sector_vector->at(sector_number-1).az_end);
+                                    m_sector_vector->at(current_sector_number-1).az_start, m_sector_vector->at(current_sector_number-1).az_end);
                 sector_number = current_sector_number;
             }
             else {

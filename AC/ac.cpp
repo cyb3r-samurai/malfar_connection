@@ -53,20 +53,26 @@ void AC::CheckTime()
                 while (first_time <= now) {
                    // qint64 sec2 = (first_time - 25569) * 86400;
                    // QDateTime time = QDateTime::fromSecsSinceEpoch(sec2);
+                    segment_ptr->current_angle = segment_ptr->time_cel->angle.front();
+                    segment_ptr->current_az = segment_ptr->time_cel->az.front();
+                    if(m_chanel_plans->at(segment_ptr->data_chanel_number).size() != 1){
+                        m_chanel_plans->at(segment_ptr->data_chanel_number).active = true;
                     qInfo() << "Целеукозание применено: канал данных"<< segment_ptr->data_chanel_number << ", сектор приема" << sector_it->first
                             << ", азимут" << segment_ptr->time_cel->az.front() << "угол" << segment_ptr->time_cel->angle.front() << '\n'
                             << "номер физического канала данных:"<<segment_ptr->chanel_number <<"Запланированное время: " << first_time.time();
                     emit accept_cell(segment_ptr->data_chanel_number,segment_ptr->chanel_number,
                                      segment_ptr->sector_number, QDateTime::currentDateTime(),segment_ptr->ka_number,
                                      segment_ptr->time_cel->az.front(),segment_ptr->time_cel->angle.front());
+                    }
                     ++first_time_it;
                     segment_ptr->time_cel->time.pop_front();
                     segment_ptr->time_cel->angle.pop_front();
                     segment_ptr->time_cel->az.pop_front();
                     if(first_time_it == segment_ptr->time_cel->time.end()) {
                         m_chanel_plans->at(segment_ptr->data_chanel_number).pop();
-                        qDebug() << "Chanel" << segment_ptr->data_chanel_number << "pop" << m_chanel_plans->at(segment_ptr->data_chanel_number).segments().size();
-                        qInfo() << m_chanel_plans->size() << m_sector_plans->size();
+                        m_chanel_plans->at(segment_ptr->data_chanel_number).active = false;
+                            qDebug() << "Chanel" << segment_ptr->data_chanel_number << "pop" << m_chanel_plans->at(segment_ptr->data_chanel_number).segments().size();
+                            qInfo() << m_chanel_plans->size() << m_sector_plans->size();
                         if(m_chanel_plans->at(segment_ptr->data_chanel_number).is_empty()) {
                             qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
                             m_chanel_plans->extract(segment_ptr->data_chanel_number);
