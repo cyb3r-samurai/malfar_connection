@@ -43,8 +43,10 @@ void DataServer::readyReadTcp()
 void DataServer::readyReadUdp()
 {
     if (udp_socket ->hasPendingDatagrams()) {
+        if(udp_socket->pendingDatagramSize() < 900){
+            return;
+        }
         QNetworkDatagram datagram = udp_socket->receiveDatagram();
-
         struct packet_header *packet_header =
             reinterpret_cast<struct packet_header *>(datagram.data().data());
 
@@ -59,6 +61,7 @@ void DataServer::readyReadUdp()
         int total_reports = packet_header->data_size / report_size;
         if (total_reports % chanel_count != 0) {
             qDebug() << "missing data";
+            return;
         }
 
         int total_sets = total_reports / chanel_count;
@@ -124,9 +127,22 @@ bool DataServer::checkHeader(packet_header *packet_header)
     return true;
 }
 
+bool DataServer::setAffinity(int cpuCore)
+{
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(cpuCore, &cpuset);
+
+    pthread_t current_thread = pthread_self();
+    return (pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset) == 0);
+
+}
+
 
 void DataServer::connect_server()
 {
+    qDebug() << "affinity"<< setAffinity(0);
+
     tcp_socket = new QTcpSocket(this);
     tcp_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
@@ -148,14 +164,14 @@ void DataServer::connect_server()
                 }
                 else if (state == QAbstractSocket::ConnectedState)
                 {
-                    qDebug() << "UdpSocket disconected";
+                    qDebug() << "TcpSocket connected";
                 }
             });
 
     connect(tcp_socket, &QTcpSocket::readyRead, this, &DataServer::readyReadTcp);
 
     udp_socket = new QUdpSocket(this);
-
+    udp_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     connect(udp_socket, &QUdpSocket::errorOccurred, this, [this](QAbstractSocket::SocketError)
 #else
@@ -179,7 +195,7 @@ void DataServer::connect_server()
             });
     connect(udp_socket, &QUdpSocket::readyRead, this, &DataServer::readyReadUdp);
 
-        tcp_socket->connectToHost("127.0.0.1:502", 9999);
+        tcp_socket->connectToHost("192.168.220.213", 9999);
         udp_socket->bind(QHostAddress::Any, 9999);
 
 

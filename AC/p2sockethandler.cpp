@@ -47,7 +47,7 @@ void P2SocketHandler::stop()
 
 }
 
-void P2SocketHandler::Send(Report & report)
+void P2SocketHandler::Send(const Report & report)
 {
     QByteArray data = report.serializeStruct();
     Header header;
@@ -58,7 +58,6 @@ void P2SocketHandler::Send(Report & report)
 
     m_socket->write(header.serializeStruct());
     m_socket->write(data);
-    qDebug() << "data sended";
 }
 
 void P2SocketHandler::loadSettings()

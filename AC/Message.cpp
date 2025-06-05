@@ -56,7 +56,7 @@ Report::Report(quint32 m)
 
 }
 
-QByteArray Report::serializeStruct()
+QByteArray Report::serializeStruct() const
 {
     QByteArray data;
     QDataStream stream (&data, QIODevice::WriteOnly);

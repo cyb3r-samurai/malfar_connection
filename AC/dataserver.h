@@ -5,6 +5,10 @@
 #include "Message.h"
 #include "p2sockethandler.h"
 
+#include "pthread.h"
+#include "sched.h"
+#include "unistd.h"
+
 #include <QObject>
 #include <QDebug>
 #include <QTcpSocket>
@@ -67,6 +71,7 @@ private:
     QThread *thread_p2;
     P2SocketHandler * m_p2SocketHandler;
 
+    bool setAffinity(int cpuCore);
 };
 
 #endif // DATASERVER_H

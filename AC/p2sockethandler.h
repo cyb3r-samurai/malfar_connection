@@ -17,7 +17,7 @@ public:
     ~P2SocketHandler();
 
 public slots:
-    void Send(Report &);
+    void Send(const Report &);
     void start();
     void stop();
 

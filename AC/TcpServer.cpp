@@ -1,5 +1,7 @@
 #include "TcpServer.h"
 #include <QTimer>
+#include <qnativeinterface.h>
+
 #define HEADER_SIZE 16
 
 TcpServer::TcpServer(QObject* parent) :
@@ -19,6 +21,8 @@ TcpServer::TcpServer(QObject* parent) :
     thread_ac = new QThread();
     thread_data_server = new QThread();
 
+
+
     m_ac = new AC();
     m_report_state_checker = new ReportStateChecker(m_ac->plan_storage());
     message_processor_ = new MessageProcessor(m_ac->plan_storage(), m_report_state_checker, m_ac);
@@ -37,10 +41,12 @@ TcpServer::TcpServer(QObject* parent) :
     connect(m_ac, &AC::finish_data_chanel, m_data_server, &DataServer::onStop);
     connect(this, &TcpServer::connect_data_server,m_data_server,&DataServer::connect_server );
     connect(thread_data_server,&QThread::started, m_data_server,&DataServer::connect_server);
+    connect(thread_ac, &QThread::started, m_ac, &AC::start);
 
     thread_ac->start();
     thread_message_processor->start();
-   // thread_data_server->start();
+    thread_data_server->start();
+
 }
 
 bool TcpServer::isStarted() const
@@ -51,6 +57,11 @@ bool TcpServer::isStarted() const
 void TcpServer::Timequit()
 {
     QCoreApplication::quit();
+}
+
+void TcpServer::setAffinity(int cpuCore)
+{
+
 }
 
 void TcpServer::on_client_connecting()

@@ -15,7 +15,9 @@
 #include <QDateTime>
 #include <QThread>
 #include <QDebug>
-
+#include "pthread.h"
+#include "sched.h"
+#include "unistd.h"
 
 #include <map>
 
@@ -42,6 +44,7 @@ signals:
 
 public slots:
     void onStopRecieve(long long);
+    void start();
 
 private slots:
     void CheckTime();
@@ -54,6 +57,7 @@ private:
     std::map<int, DataChanel>* m_chanel_plans;
 
     void startAtNextSecond();
+    bool setAffinity(int cpuCore);
 
     QThread* m_plan_factory_thread;
 

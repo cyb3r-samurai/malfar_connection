@@ -26,7 +26,7 @@ public:
     void finish();
 
 signals:
-    void ready_to_write(Report&);
+    void ready_to_write(const Report&);
 
 private:
     quint8 m_data_chanel_number;

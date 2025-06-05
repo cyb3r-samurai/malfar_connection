@@ -32,6 +32,11 @@ void AC::onStopRecieve(long long packet_id)
     emit messageHandled(packet_id, 0);
 }
 
+void AC::start()
+{
+    qDebug() << "AC affinity" << setAffinity(5);
+}
+
 
 void AC::CheckTime()
 {
@@ -110,6 +115,16 @@ void AC::startAtNextSecond()
     QTimer::singleShot(msecToNextSecond, [this](){
         m_timer->start(500);
     });
+}
+
+bool AC::setAffinity(int cpuCore)
+{
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(cpuCore, &cpuset);
+
+    pthread_t current_thread = pthread_self();
+    return (pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset) == 0);
 }
 
 PlanFactory *AC::plan_factory() const

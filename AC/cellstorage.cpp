@@ -11,10 +11,12 @@ void CellStorage::append(int16_t i_data, int16_t q_data)
     m_q_data.push_back(q_data);
     if(m_count > 700) {
         Report data = toMessage();
-        emit ready_to_write(data);
+
         m_count = 0;
         m_i_data.clear();
         m_q_data.clear();
+
+        emit ready_to_write(data);
     }
 }
 
@@ -52,7 +54,7 @@ Report CellStorage::toMessage() const
     int min = 32000;
     int max = -32000;
 
-    Q_ASSERT(m_i_data.size() == m_q_data.size() == m_count);
+    Q_ASSERT(m_i_data.size() == m_count);
 
     auto i_it = m_i_data.begin();
     auto q_it = m_q_data.begin();
@@ -68,9 +70,11 @@ Report CellStorage::toMessage() const
 
     i_it = m_i_data.begin();
     q_it = m_q_data.begin();
+    if (range != 0){
     for(quint32 i = 0; i < m_count; ++i, ++i_it, ++q_it ) {
         report.info[i][0] = *i_it / range * 256;
         report.info[i][1] = *q_it / range * 256;
+    }
     }
     report.ac_state = m_ac_state;
     report.az[0] = m_az[0];

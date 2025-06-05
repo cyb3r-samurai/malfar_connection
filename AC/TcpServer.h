@@ -9,6 +9,8 @@
 #include "reportstatechecker.h"
 #include "dataserver.h"
 
+#include "sched.h"
+
 #include <QObject>
 #include <QCoreApplication>
 #include <QTcpServer>
@@ -48,11 +50,14 @@ private slots:
     void on_client_connecting();
     void client_disconnected();
 
+
     void client_data_ready();
 
     void on_message_ready(const Header&, const QByteArray&);
 
 private:
+
+    void setAffinity(int cpuCore);
 
     Header header_;
     QByteArray  header_bytes;
@@ -80,6 +85,8 @@ private:
 
     void loadSettings();
     void saveSettings();
+
+
 
 
     struct SPreferences {

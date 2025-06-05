@@ -67,7 +67,7 @@ public:
     quint32 m;
     qint8** info;
 
-    QByteArray serializeStruct();
+    QByteArray serializeStruct() const;
 };
 
 class Emmiter_state{

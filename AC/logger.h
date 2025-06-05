@@ -10,7 +10,7 @@ class Logger : public QObject
 {
     Q_OBJECT
 public:
-    explicit Logger(const QString& msgFormat = "{timestamp} {type}: {msg}",
+    explicit Logger(const QString& msgFormat = "{timestamp} {thread} {type}: {msg}",
                     const QString& timestampForamt = "dd.MM.yyyy hh::mm::ss.zzz",
                     QObject *parent = nullptr);
 
