@@ -41,7 +41,7 @@ bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr,
         if (((start >= cur_start) && (start <= cur_end)) ||
             ((end <= cur_end) && (end >= cur_start))     ||
             ((cur_start >= start) && (cur_start <= end)) ||
-            ((cur_end <= end) && (cur_end >= cur_start))) {
+            ((cur_end <= end) && (cur_end >= start))) {
 
             bool willBeDeleted = false;
             if(dataToDelete.has_value()) {

@@ -36,7 +36,12 @@ private slots:
 public slots:
     void onAcceptCel(int, int, int, const QDateTime&,int,  int, int);
     void onStop(int, int, int);
+    void onStopDataChanel(quint8);
     void connect_server();
+    void onTotalStop();
+    void onFinishSegment(int data_chanel_number, int real_chanel_number, int sector);
+
+    void onStopSegment(quint8 data_chanel_number, quint8 real_chenel_number, quint8 sector);
 
 private:
     const uint8_t protocol_version = 2;
@@ -63,12 +68,15 @@ private:
     const int chanel_count = 6;
     const int report_size = 4;
 
+    long long errors = 0;
+
     QTcpSocket *tcp_socket;
     QUdpSocket *udp_socket;
 
-    bool checkHeader(struct packet_header *packet_header);
+    bool checkHeader(const struct packet_header *packet_header);
     std::map<int, CellStorage> m_cell_storage;
     QThread *thread_p2;
+    QThread *storage_thread;
     P2SocketHandler * m_p2SocketHandler;
 
     bool setAffinity(int cpuCore);

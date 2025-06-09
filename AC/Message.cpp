@@ -56,6 +56,15 @@ Report::Report(quint32 m)
 
 }
 
+Report::~Report()
+{
+   // qDebug() << "destructor called";
+    for(int i =0; i < m; ++i) {
+        delete[] info[i];
+    }
+        delete[] info;
+}
+
 QByteArray Report::serializeStruct() const
 {
     QByteArray data;

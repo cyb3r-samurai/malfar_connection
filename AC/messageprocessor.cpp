@@ -47,6 +47,7 @@ void MessageProcessor::onReciveStateCreated(std::shared_ptr<RecieveState> r_s)
          Header header;
          header.msg_type  = 0x81;
          header.n = No_alignmet_size::recieve_state + r_s->n * No_alignmet_size::chanel_info;
+         header.time = getTime();
          QByteArray bytes = r_s->serializeStruct();
          emit message_created(header, bytes);
     }
@@ -65,6 +66,7 @@ void MessageProcessor::onSessionStateCreated(std::shared_ptr<SessionInfo> s_i)
                 header.n += s_i->m_chanel_data[i].segment_plan[j].m * 4;
             }
         }
+        header.time = getTime();
         QByteArray bytes = s_i->SerializeStruct();
         qDebug() << bytes.size();
         qDebug() << header.n;
@@ -81,7 +83,7 @@ void MessageProcessor::onAcStateCreated(std::shared_ptr<AcState> a_s)
         Header header;
         header.msg_type = 0x83;
         header.n = 7168 + 640 + 60 + 6;
-
+        header.time = getTime();
         AcState acState;
         QByteArray data = acState.serializeStruct();
         qDebug() <<  data.size();
@@ -118,6 +120,7 @@ void MessageProcessor::statusResponse(long long id, quint8 status)
     Header header;
     header.msg_type = 0x80;
     header.n = No_alignmet_size::status;
+    header.time = getTime();
 
     emit message_created(header, s.SerialiazeStruct());
 }
@@ -198,4 +201,12 @@ void MessageProcessor::startTimer()
     connect(my_timer, &QTimer::timeout, m_state_checker, &ReportStateChecker::onTimer);
     connect(this, &MessageProcessor::timeToCreateStartMessage, m_state_checker, &ReportStateChecker::onStartingServer);
 
+}
+
+double MessageProcessor::getTime() const
+{
+    auto now = QDateTime::currentDateTime();
+    double OADate2 = (now.toMSecsSinceEpoch() /86400000.0) + 25569.0;
+
+    return OADate2;
 }

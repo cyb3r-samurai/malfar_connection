@@ -42,21 +42,21 @@ void DataServer::readyReadTcp()
 
 void DataServer::readyReadUdp()
 {
-    if (udp_socket ->hasPendingDatagrams()) {
+    if(udp_socket ->hasPendingDatagrams()) {
         if(udp_socket->pendingDatagramSize() < 900){
             return;
         }
         QNetworkDatagram datagram = udp_socket->receiveDatagram();
-        struct packet_header *packet_header =
-            reinterpret_cast<struct packet_header *>(datagram.data().data());
+        const struct packet_header *packet_header =
+            reinterpret_cast<const struct packet_header *>(datagram.data().constData());
 
         if(checkHeader(packet_header)!= true)
         {
-            qDebug() << "error header";
+            qDebug() << errors++;
             return;
         }
 
-        const char *payload_data = datagram.data().data() + sizeof(struct packet_header);
+        const char *payload_data = datagram.data().constData() + sizeof(struct packet_header);
 
         int total_reports = packet_header->data_size / report_size;
         if (total_reports % chanel_count != 0) {
@@ -76,7 +76,7 @@ void DataServer::readyReadUdp()
                 for(int i = 1; i <=4; i++) {
                     if(m_cell_storage[ch*i].started()) {
                         if(m_cell_storage[ch*i].size() == 0) {
-                            m_cell_storage[ch*i].setTime();
+                            m_cell_storage[ch*i].setTime(getTime());
                         }
                         m_cell_storage[ch*i].append(i_data, q_data);
                     }
@@ -95,7 +95,9 @@ void DataServer::onAcceptCel(int data_chanel, int real_data_chanel, int sector,c
         m_cell_storage[real_data_chanel * sector].set(data_chanel,0,ka_number,start_time,az_);
     }
     else {
-        m_cell_storage[real_data_chanel * sector].sendAll();
+        if(m_cell_storage[real_data_chanel * sector].size() != 0) {
+            m_cell_storage[real_data_chanel * sector].sendAll();
+        }
         m_cell_storage[real_data_chanel * sector].set(data_chanel,0,ka_number,start_time,az_);
 
     }
@@ -104,14 +106,30 @@ void DataServer::onAcceptCel(int data_chanel, int real_data_chanel, int sector,c
 
 void DataServer::onStop(int data_chanel, int real_data_chanel, int sector)
 {
+    qDebug() << "on Stop called" << data_chanel << real_data_chanel << sector;
     Q_ASSERT(m_cell_storage[real_data_chanel* sector].started());
-
-    m_cell_storage[real_data_chanel * sector].sendAll();
-
+    if(m_cell_storage[real_data_chanel * sector].size() > 0) {
+        m_cell_storage[real_data_chanel * sector].sendAll();
+    }
     m_cell_storage[real_data_chanel * sector].finish();
 }
 
-bool DataServer::checkHeader(packet_header *packet_header)
+void DataServer::onStopDataChanel(quint8 dataChanelNumber)
+{
+    qDebug() << "on Stop data chanel called" << dataChanelNumber;
+    auto stopFunc = [dataChanelNumber](auto& it) {
+        if((&it)->second.getDataChanel() == dataChanelNumber) {
+            if((&it)->second.size() != 0){
+                (&it)->second.sendAll();
+                (&it)->second.finish();
+            }
+        }
+    };
+
+    std::for_each(m_cell_storage.begin(), m_cell_storage.end(), stopFunc);
+}
+
+bool DataServer::checkHeader(const packet_header *packet_header)
 {
     if (packet_header->protocol_version != protocol_version)
     {
@@ -138,10 +156,18 @@ bool DataServer::setAffinity(int cpuCore)
 
 }
 
+double DataServer::getTime() const
+{
+    auto now = QDateTime::currentDateTime();
+    double OADate2 = (now.toMSecsSinceEpoch() /86400000.0) + 25569.0;
+
+    return OADate2;
+}
+
 
 void DataServer::connect_server()
 {
-    qDebug() << "affinity"<< setAffinity(0);
+    //qDebug() << "affinity"<< setAffinity(0);
 
     tcp_socket = new QTcpSocket(this);
     tcp_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
@@ -153,18 +179,18 @@ void DataServer::connect_server()
             this, [this](QAbstractSocket::SocketError)
 #endif
             {
-                qDebug() <<  "TCP"  << QString(tcp_socket->errorString());
+                qWarning() <<  "modbus TCP"  << QString(tcp_socket->errorString());
             });
 
     connect(tcp_socket, &QTcpSocket::stateChanged, this, [](int state)
             {
                 if (state == QAbstractSocket::UnconnectedState)
                 {
-                    qDebug() << "TcpSocket disconected";
+                    qWarning() << "modbus TcpSocket disconected";
                 }
                 else if (state == QAbstractSocket::ConnectedState)
                 {
-                    qDebug() << "TcpSocket connected";
+                    qWarning() << "modbus TcpSocket connected";
                 }
             });
 
@@ -179,18 +205,18 @@ void DataServer::connect_server()
             this, [this](QAbstractSocket::SocketError)
 #endif
             {
-                qDebug() << "UDP" << udp_socket->errorString();
+                qDebug() << "modbus UDP" << udp_socket->errorString();
             });
     connect(udp_socket, &QUdpSocket::stateChanged, this, [this](int state)
             {
                 if (state == QAbstractSocket::UnconnectedState)
                 {
-                    qDebug() << "Udp Socket unconnected";
+                    qDebug() << "modbus Udp Socket unconnected";
                     //recieve_timer->stop();                                  // Stop polling
                 }
                 else if (state == QAbstractSocket::ConnectedState)
                 {
-                    qDebug() << "TCP Connection established";                    // Start polling
+                    qDebug() << "modbus TCP Connection established";                    // Start polling
                 }
             });
     connect(udp_socket, &QUdpSocket::readyRead, this, &DataServer::readyReadUdp);
@@ -203,12 +229,49 @@ void DataServer::connect_server()
     thread_p2 = new QThread;
     connect(thread_p2, &QThread::started, m_p2SocketHandler, &P2SocketHandler::start);
     m_p2SocketHandler->moveToThread(thread_p2);
-    thread_p2->start();
+    thread_p2->start(QThread::TimeCriticalPriority);
 
+    storage_thread = new QThread();
     for(int i = 1; i <= 24; ++i) {
-        m_cell_storage.emplace(std::make_pair(i, new CellStorage));
+        m_cell_storage.emplace(std::make_pair(i, new CellStorage()));
+        m_cell_storage[i].setParent(nullptr);
+        m_cell_storage[i].moveToThread(storage_thread);
         connect(&m_cell_storage[i],&CellStorage::ready_to_write, m_p2SocketHandler,&P2SocketHandler::Send);
     }
+    storage_thread->start(QThread::TimeCriticalPriority);
+}
 
+void DataServer::onTotalStop()
+{
+    qDebug() << "onTotalStop called";
+    auto stopFunc = [](auto& it) {
+        if((&it)->second.size() != 0) {
+            (&it)->second.sendAll();
+        }
+        (&it)->second.finish();
+    };
+
+    std::for_each(m_cell_storage.begin(), m_cell_storage.end(), stopFunc);
+}
+
+void DataServer::onFinishSegment(int data_chanel, int real_data_chanel, int sector)
+{
+    qDebug() << "on Stop called" << data_chanel << real_data_chanel << sector;
+    Q_ASSERT(m_cell_storage[real_data_chanel* sector].started());
+    if(m_cell_storage[real_data_chanel * sector].size() > 0) {
+        m_cell_storage[real_data_chanel * sector].sendAll();
+    }
+    m_cell_storage[real_data_chanel * sector].finish();
+}
+
+void DataServer::onStopSegment(quint8 data_chanel_number, quint8 real_chanel_number, quint8 sector)
+{
+    if(m_cell_storage[real_chanel_number * sector].started()) {
+        qDebug() << "onStopSegment called" << data_chanel_number << real_chanel_number, sector;
+        if(m_cell_storage[real_chanel_number * sector].size() > 0){
+            m_cell_storage[real_chanel_number * sector].sendAll();
+        }
+        m_cell_storage[real_chanel_number* sector].finish();
+    }
 }
 

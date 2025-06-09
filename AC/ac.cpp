@@ -28,13 +28,14 @@ void AC::onStopRecieve(long long packet_id)
     m_chanel_plans->clear();
     m_sector_plans->clear();
     m_plan_storage->unloock();
+    emit stopSending();
     qDebug() << "recive stoped";
     emit messageHandled(packet_id, 0);
 }
 
 void AC::start()
 {
-    qDebug() << "AC affinity" << setAffinity(5);
+    //qDebug() << "AC affinity" << setAffinity(5);
 }
 
 
@@ -65,7 +66,7 @@ void AC::CheckTime()
                     qInfo() << "Целеукозание применено: канал данных"<< segment_ptr->data_chanel_number << ", сектор приема" << sector_it->first
                             << ", азимут" << segment_ptr->time_cel->az.front() << "угол" << segment_ptr->time_cel->angle.front() << '\n'
                             << "номер физического канала данных:"<<segment_ptr->chanel_number <<"Запланированное время: " << first_time.time();
-                    emit accept_cell(segment_ptr->data_chanel_number,segment_ptr->chanel_number,
+                    emit accept_cell(segment_ptr->data_chanel_number, segment_ptr->chanel_number,
                                      segment_ptr->sector_number, QDateTime::currentDateTime(),segment_ptr->ka_number,
                                      segment_ptr->time_cel->az.front(),segment_ptr->time_cel->angle.front());
                     }
@@ -82,6 +83,9 @@ void AC::CheckTime()
                             qInfo() << "Планы слежения в канале данных:"<< segment_ptr->data_chanel_number << "выполнены.";
                             m_chanel_plans->extract(segment_ptr->data_chanel_number);
                             emit finish_data_chanel(segment_ptr->data_chanel_number, segment_ptr->chanel_number, segment_ptr->sector_number);
+                        }
+                        else {
+                            emit finish_segment(segment_ptr->data_chanel_number, segment_ptr->chanel_number, segment_ptr->sector_number);
                         }
                         segment_list->erase(segment_it++);
                         segment_erased = true;

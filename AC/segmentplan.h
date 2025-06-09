@@ -51,7 +51,9 @@ public:
     int16_t current_az = 0;
     int16_t current_angle = 0;
 
-    bool initCel(std::shared_ptr<Cel> cel, uint8_t sector_number, uint8_t chanel_number, int index, int16_t sector_start,int16_t sector_end);
+    bool initCel(std::shared_ptr<Cel> cel, uint8_t sector_number,
+                 uint8_t chanel_number, int index,
+                 int16_t sector_start,int16_t sector_end);
     void appendCel(std::shared_ptr<Cel> cel);
     int size();
     MessageSegmentPlan toMessage();

@@ -59,6 +59,7 @@ public:
 class Report {
 public:
     Report(quint32 m);
+    ~Report();
     quint8 data_chanel_number = 13;
     quint8 ac_state = 3;
     quint16 ka_number = 5;

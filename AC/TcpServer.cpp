@@ -8,6 +8,7 @@ TcpServer::TcpServer(QObject* parent) :
     QObject{parent}
 {
     loadSettings();
+  //  saveSettings();
     server_ = new QTcpServer(this);
     started_ = server_->listen(QHostAddress::Any, 5555);
     if (!started_) {
@@ -39,13 +40,16 @@ TcpServer::TcpServer(QObject* parent) :
     connect(this, &TcpServer::connected, message_processor_, &MessageProcessor::on_connected);
     connect(m_ac, &AC::accept_cell, m_data_server, &DataServer::onAcceptCel);
     connect(m_ac, &AC::finish_data_chanel, m_data_server, &DataServer::onStop);
-    connect(this, &TcpServer::connect_data_server,m_data_server,&DataServer::connect_server );
     connect(thread_data_server,&QThread::started, m_data_server,&DataServer::connect_server);
     connect(thread_ac, &QThread::started, m_ac, &AC::start);
+    connect(m_ac->plan_factory(), &PlanFactory::stopDataChanel, m_data_server, &DataServer::onStopDataChanel);
+    connect(m_ac->plan_factory(), &PlanFactory::stopSegment, m_data_server, &DataServer::onStopSegment);
+    connect(m_ac, &AC::stopSending, m_data_server, &DataServer::onTotalStop);
+    connect(m_ac, &AC::finish_segment, m_data_server, &DataServer::onFinishSegment);
 
-    thread_ac->start();
-    thread_message_processor->start();
-    thread_data_server->start();
+    thread_ac->start(QThread::NormalPriority);
+    thread_message_processor->start(QThread::NormalPriority);
+    thread_data_server->start(QThread::TimeCriticalPriority);
 
 }
 
@@ -157,6 +161,7 @@ void TcpServer::saveSettings()
     QSettings settings;
     settings.setValue("port", 5555);
     settings.setValue("p2/port", 4444);
-    settings.setValue("p2/ip", "127.0.0.1");
+    settings.setValue("p2/ip", "192.168.220.88");
+
 }
 

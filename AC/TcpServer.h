@@ -8,6 +8,7 @@
 #include "planstorage.h"
 #include "reportstatechecker.h"
 #include "dataserver.h"
+#include "cellstorage.h"
 
 #include "sched.h"
 

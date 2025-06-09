@@ -25,9 +25,9 @@ bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_
     sector_start = sector_s;
     sector_end = sector_e;
 
-    qint64 sec1 = (end_time - 25569) * 86400 * 1000;
-    qint64 sec2 = (start_time - 25569) * 86400 * 1000;
-     dt_time = QDateTime::fromMSecsSinceEpoch(sec2);
+    qint64 sec1 = static_cast<qint64>((end_time - 25569.0) * 86400000.0);
+    qint64 sec2 = static_cast<qint64>((start_time - 25569.0) * 86400000.0);
+    dt_time = QDateTime::fromMSecsSinceEpoch(sec2);
 
     delta = (end_time - start_time)/ double(m);
     msec_delta = (sec1 - sec2)/ double(m);

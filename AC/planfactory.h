@@ -39,6 +39,9 @@ public slots:
 
 signals:
     void messageHandled(long long, quint8);
+    void stopDataChanel(quint8);
+    void stopSegment(quint8 chanel_number, quint8 real_chanel_number, quint8 sector);
+
 private:
     PlanStorage * m_plan_storage;
     std::map<int, DataChanel>* m_data_plans;

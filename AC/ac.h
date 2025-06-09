@@ -41,6 +41,8 @@ signals:
     void accept_cell(int data_chanel_number, int real_chanel_number, int sector,
                      const QDateTime& current_time, int ka_number, int az, int angle);
     void finish_data_chanel(int data_chanel_number, int real_chanal_number, int sector);
+    void stopSending();
+    void finish_segment(int data_chanel_number, int real_chanel_number, int sector);
 
 public slots:
     void onStopRecieve(long long);

@@ -66,6 +66,7 @@ private:
     void initMessageBroker();
     void initPacketStorage();
     void startTimer();
+    double getTime() const;
 };
 
 #endif // MESSAGEPROCESSOR_H

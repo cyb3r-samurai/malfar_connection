@@ -8,6 +8,8 @@
 #include <QVariant>
 #include <QSettings>
 #include <QTcpSocket>
+#include <QTimer>
+#include <QDateTime>
 
 class P2SocketHandler : public QObject
 {
@@ -17,7 +19,7 @@ public:
     ~P2SocketHandler();
 
 public slots:
-    void Send(const Report &);
+    void Send(std::shared_ptr<Report>);
     void start();
     void stop();
 
@@ -28,6 +30,11 @@ private:
     QTcpSocket* m_socket;
     QString m_ip;
     int m_port;
+    long long count;
+    QTimer* reconnectTimer;
+    bool connected;
+
+    double getTime() const;
 };
 
 #endif // P2SOCKETHANDLER_H

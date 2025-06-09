@@ -59,6 +59,7 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
             }
         }
         qInfo() << "Очищены планы канала данных" << cel_plan->chanel_number;
+        emit stopDataChanel(cel_plan->chanel_number);
         m_plan_storage->unloock();
         return 0;
     }
@@ -68,7 +69,8 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
     uint16_t lastCelIndex = cel_plan->m - 1;
     std::shared_ptr<SegmentPlan> segment_ptr = std::make_shared<SegmentPlan>();
     if(!(segment_ptr->initCel(cel_plan, sector_number,cel_plan->chanel_number, 0
-                               ,m_sector_vector->at(sector_number-1).az_start, m_sector_vector->at(sector_number-1).az_end))) {
+                               ,m_sector_vector->at(sector_number-1).az_start,
+                               m_sector_vector->at(sector_number-1).az_end))) {
         qDebug() << "unlock";
         m_plan_storage->unloock();
         return 255;
@@ -116,10 +118,12 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 segment_ptr.reset();
                 segment_ptr = new_ptr;
                 segment_ptr->initCel(cel_plan, current_sector_number,cel_plan->chanel_number, i,
-                                    m_sector_vector->at(current_sector_number-1).az_start, m_sector_vector->at(current_sector_number-1).az_end);
+                                    m_sector_vector->at(current_sector_number-1).az_start,
+                                     m_sector_vector->at(current_sector_number-1).az_end);
                 sector_number = current_sector_number;
             }
             else {
+                m_data_plans->extract(cel_plan->chanel_number);
                 m_plan_storage->unloock();
                 qDebug() << "unlock";
                 return sector_number;
@@ -179,6 +183,7 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                             m_sector_plans->extract(plan->sector_number);
                             qDebug() << "Планы сектора" << plan->sector_number << "выполнены.";
                         }
+                        emit stopSegment(plan->data_chanel_number, plan->chanel_number, plan->sector_number);
                     });
                 }
                 auto plans_to_append_it = plansToAppend.begin();
@@ -189,6 +194,7 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 }
             }
             else {
+                m_data_plans->extract(cel_plan->chanel_number);
                 m_plan_storage->unloock();
                 return sector_number;
             }
