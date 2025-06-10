@@ -48,6 +48,9 @@ private:
     std::map<int, SectorPlan>* m_sector_plans;
     std::vector<Sector>* m_sector_vector;
     uint8_t calculate_sector(int16_t* vec, const std::vector<Sector>& sector_vector);
+    double getTime() const;
+
+    bool check_data(std::shared_ptr<Cel> cel) const;
 
 };
 

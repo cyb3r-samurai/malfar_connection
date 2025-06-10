@@ -11,6 +11,9 @@ SegmentPlan::~SegmentPlan()
 
 bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_t chanelNumber ,int index, int16_t sector_s, int16_t sector_e)
 {
+    if(sectorNumb == 0) {
+        return false;
+    }
     sector_number = sectorNumb;
     data_chanel_number = chanelNumber;
     pol =	celPtr->polarization;

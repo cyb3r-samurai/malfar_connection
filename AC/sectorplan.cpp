@@ -30,14 +30,14 @@ bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr,
     std::set<int> real_chanel_number_taken;
     QDateTime start = planPtr->time_cel->time.front();
     QDateTime end = planPtr->time_cel->time.back();
-    qDebug() << start<< end;
+ //   qDebug() << start<< end;
     auto it = segment_plan->begin();
     std::set<int>intersec_count;
     while (it != segment_plan->end()) {
         auto current_plan = it->get();
         QDateTime cur_start = current_plan->time_cel->time.front();
         QDateTime cur_end = current_plan->time_cel->time.back();
-        qDebug() << cur_start << cur_end;
+  //      qDebug() << cur_start << cur_end;
         if (((start >= cur_start) && (start <= cur_end)) ||
             ((end <= cur_end) && (end >= cur_start))     ||
             ((cur_start >= start) && (cur_start <= end)) ||
@@ -60,13 +60,13 @@ bool SectorPlan::validateSegment(std::shared_ptr<SegmentPlan> planPtr,
         }
         ++it;
     }
-    qDebug() << "Intersection count" << intersec_count.size();
-    qDebug() <<"real_chanle_number_taken"<< real_chanel_number_taken.size();
+   // qDebug() << "Intersection count" << intersec_count.size();
+   // qDebug() <<"real_chanle_number_taken"<< real_chanel_number_taken.size();
     if (intersec_count.size() >= 6) {
         return false;
     }
-    int i = 1;
-    for(i = 1; i <= 6; i++) {
+    int i = 0;
+    for(i = 0; i < 6; i++) {
         auto it = real_chanel_number_taken.find(i);
         if (it == real_chanel_number_taken.end()) {
             planPtr->chanel_number = i;

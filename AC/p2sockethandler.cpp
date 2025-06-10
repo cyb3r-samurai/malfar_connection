@@ -19,7 +19,7 @@ void P2SocketHandler::start()
     connect(reconnectTimer, &QTimer::timeout, this, [this]() {
 
             m_socket->abort();
-            m_socket->connectToHost("192.168.220.114", 4444);
+            m_socket->connectToHost("192.168.220.88", 4444);
             m_socket->waitForConnected(4000);
             if(m_socket->state() != QAbstractSocket::ConnectedState){
                 reconnectTimer->start(5000);
@@ -28,7 +28,7 @@ void P2SocketHandler::start()
 
     m_socket = new QTcpSocket(this);
     m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
-    m_socket->connectToHost("192.168.220.114", 4444);
+    m_socket->connectToHost("192.168.220.88", 4444);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     connect(m_socket, &QTcpSocket::errorOccurred, this, [this](QAbstractSocket::SocketError)

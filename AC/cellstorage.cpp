@@ -76,10 +76,10 @@ std::shared_ptr<Report> CellStorage::toMessage() const
     for(quint32 i = 0; i < m_count; ++i, ++i_it, ++q_it ) {
             report->info[i][0] = std::round(( double(*i_it)  - min) * 255 / range  - 128);
             report->info[i][1] = std::round(( double(*q_it)  - min) * 255 / range  - 128);
-            // if(i == m_count-1) {
-            //     qDebug()<< i <<*i_it << *q_it<< report->info[i][0] << report->info[i][1] << min << max
-            //              <<    (double(*i_it)  - min) * 255 / range  - 128;
-            // }
+             // if(i == m_count-1) {
+             //     qDebug()<< i <<*i_it << *q_it<< report->info[i][0] << report->info[i][1] << min << max
+             //              <<    (double(*i_it)  - min) * 255 / range  - 128;
+             // }
     }
     }
     else {

@@ -47,6 +47,7 @@ class RecieveState {
 public:
     RecieveState();
     RecieveState(quint8 n_);
+    ~RecieveState();
   //  RecieveState(std::map<int, DataChanel> &&);
     quint8 n;
     ChanelInfo * chanel_mas;
@@ -155,6 +156,7 @@ public:
 
 struct MessageSegmentPlan {
     MessageSegmentPlan();
+    ~MessageSegmentPlan();
     void init(uint16_t m);
     uint8_t sector_number; // 1, 2, 3, 4
     uint8_t chanel_number; // номер физического канала приема
@@ -175,6 +177,7 @@ struct MessageSegmentPlan {
 };
 
 struct ChanelData {
+    ~ChanelData();
     void init(uint8_t chanel_number);
     uint8_t chanel_number;
     uint8_t segment_count;
@@ -187,6 +190,7 @@ class SessionInfo {
 public:
     SessionInfo();
     SessionInfo(uint8_t n);
+    ~SessionInfo();
     void init(uint8_t n);
     uint8_t active_data_chanel_count;
     ChanelData * m_chanel_data;

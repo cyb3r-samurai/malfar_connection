@@ -80,6 +80,7 @@ private:
     P2SocketHandler * m_p2SocketHandler;
 
     bool setAffinity(int cpuCore);
+    double getTime() const;
 };
 
 #endif // DATASERVER_H

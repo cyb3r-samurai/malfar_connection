@@ -30,6 +30,12 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
 
     m_plan_storage->lockWrite();
 
+
+    if(!check_data(cel_plan)) {
+        m_plan_storage->unloock();
+        return 255;
+    }
+
     //clear data chanel
     if(cel_plan->m == 0) {
         m_data_plans->extract(cel_plan->chanel_number);
@@ -66,8 +72,14 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
 
     int16_t a[2] = {cel_plan->cel[0][0], cel_plan->cel[0][1]};
     uint8_t sector_number = calculate_sector(a, *m_sector_vector);
+
     uint16_t lastCelIndex = cel_plan->m - 1;
     std::shared_ptr<SegmentPlan> segment_ptr = std::make_shared<SegmentPlan>();
+    if (sector_number == 0) {
+        qInfo() << "Неверные целеуказания";
+        m_plan_storage->unloock();
+        return 255;
+    }
     if(!(segment_ptr->initCel(cel_plan, sector_number,cel_plan->chanel_number, 0
                                ,m_sector_vector->at(sector_number-1).az_start,
                                m_sector_vector->at(sector_number-1).az_end))) {
@@ -82,6 +94,16 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         //Если изменился сектор приема в плане, либо обрабатывется последние целеукозание, то
         //валидируется  полученный отрезок плана и добавляется в планы сектора и планы каналов данных.
         if(current_sector_number != sector_number) {
+            if(current_sector_number == 0) {
+                //if(m_data_plans->at(cel_plan->chanel_number).is_empty()) {
+                //    m_data_plans->extract(cel_plan->chanel_number);
+                //}
+              //  if(m_sector_plans->at(sector_number).is_empty()){
+              //      m_sector_plans->extract(sector_number);
+              //  }
+                m_plan_storage->unloock();
+                return 255;
+            }
             if(segment_ptr->time_cel->time.size() == 1) {
                     QDateTime time = segment_ptr->time_cel->time.front();
                     qint16 az =segment_ptr->time_cel->az.front();
@@ -123,7 +145,9 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 sector_number = current_sector_number;
             }
             else {
+                if(m_data_plans->at(cel_plan->chanel_number).is_empty()){
                 m_data_plans->extract(cel_plan->chanel_number);
+                }
                 m_plan_storage->unloock();
                 qDebug() << "unlock";
                 return sector_number;
@@ -194,7 +218,9 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 }
             }
             else {
-                m_data_plans->extract(cel_plan->chanel_number);
+                if(m_data_plans->at(cel_plan->chanel_number).size() == 0) {
+                    m_data_plans->extract(cel_plan->chanel_number);
+                }
                 m_plan_storage->unloock();
                 return sector_number;
             }
@@ -227,9 +253,11 @@ void PlanFactory::onPlanRecieved(std::shared_ptr<Cel> cel, long long packet_id)
     }
     else {
         if(ret == 255) {
-            qInfo() << "deltas should be > 1 sec";
+            qInfo() << "Неверные входны данные";
         }
-        qInfo() << "Планы пересекаются в сеторе" <<  ret;
+        else {
+            qInfo() << "Невозможно создать план слеженеия. Планы пересекаются в сеторе" <<  ret;
+        }
         emit messageHandled(packet_id, ret);
     }
 }
@@ -243,4 +271,40 @@ uint8_t PlanFactory::calculate_sector(int16_t* vec, const std::vector<Sector> &s
         }
     }
     return 0;
+}
+
+double PlanFactory::getTime() const
+{
+    auto now = QDateTime::currentDateTime();
+    double OADate2 = (now.toMSecsSinceEpoch() /86400000.0) + 25569.0;
+
+    return OADate2;
+}
+
+bool PlanFactory::check_data(std::shared_ptr<Cel> cel) const
+{
+    if((cel->chanel_number < 0) || (cel->chanel_number > 12)) {
+        qInfo() << "Неверно задан канал данных";
+        return false;
+    }
+
+    if((cel->polarization < 0) || (cel->polarization > 6)) {
+        qInfo() << "Неверно задана поляризация";
+        return false;
+    }
+
+    // if((cel->frequency < 1544000) || (cel->frequency > 1545000)) {
+    //     qInfo() << "Неверно задана частота"
+    //     return false;
+    // }
+    double current_time = getTime();
+    if ((cel->start_time >  (current_time + 1.0)) ||
+        (cel->end_time > (current_time+ 1.0)) ||
+        (cel->start_time > cel->end_time)
+        ) {
+        qInfo() << "Начало и конец отрезка плана не должны превышать суток";
+        return false;
+    }
+
+    return true;
 }

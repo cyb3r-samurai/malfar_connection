@@ -73,12 +73,12 @@ void DataServer::readyReadUdp()
                 int16_t i_data = qFromLittleEndian<qint16>(report[0]);
                 int16_t q_data = qFromLittleEndian<qint16>(report[1]);
 
-                for(int i = 1; i <=4; i++) {
-                    if(m_cell_storage[ch*i].started()) {
-                        if(m_cell_storage[ch*i].size() == 0) {
-                            m_cell_storage[ch*i].setTime(getTime());
+                for(int i = 0; i < 4; i++) {
+                    if(m_cell_storage[i*chanel_count + ch].started()) {
+                        if(m_cell_storage[i*chanel_count + ch].size() == 0) {
+                            m_cell_storage[i*chanel_count + ch].setTime(getTime());
                         }
-                        m_cell_storage[ch*i].append(i_data, q_data);
+                        m_cell_storage[i*chanel_count +ch].append(i_data, q_data);
                     }
                 }
             }
@@ -232,7 +232,7 @@ void DataServer::connect_server()
     thread_p2->start(QThread::TimeCriticalPriority);
 
     storage_thread = new QThread();
-    for(int i = 1; i <= 24; ++i) {
+    for(int i = 0; i <= 24; ++i) {
         m_cell_storage.emplace(std::make_pair(i, new CellStorage()));
         m_cell_storage[i].setParent(nullptr);
         m_cell_storage[i].moveToThread(storage_thread);

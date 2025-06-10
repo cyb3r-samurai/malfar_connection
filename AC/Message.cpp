@@ -13,6 +13,11 @@ RecieveState::RecieveState(quint8 n_)
     chanel_mas = new ChanelInfo[n];
 }
 
+RecieveState::~RecieveState()
+{
+    delete this->chanel_mas;
+}
+
 void RecieveState::initializeChanelMas(quint8 n)
 {
     chanel_mas = new ChanelInfo[n];
@@ -166,6 +171,11 @@ SessionInfo::SessionInfo()
     active_data_chanel_count = 0;
 }
 
+SessionInfo::~SessionInfo()
+{
+   // delete m_chanel_data;
+}
+
 void SessionInfo::init(uint8_t n)
 {
     m_chanel_data = new ChanelData[n];
@@ -202,11 +212,11 @@ inline QDataStream &operator<< (QDataStream &stream, MessageSegmentPlan& m_seg_p
            << m_seg_plan.ka_number<< m_seg_plan.freq << m_seg_plan.start_time << m_seg_plan.end_time
            << m_seg_plan.m;
 
-    qDebug() << "serialize cell";
+   // qDebug() << "serialize cell";
     for( int i = 0; i < m_seg_plan.m; ++i) {
         stream << m_seg_plan.cel[i][0] << m_seg_plan.cel[i][1];
 
-        qDebug() << m_seg_plan.cel[i][0] << m_seg_plan.cel[i][1];
+    //    qDebug() << m_seg_plan.cel[i][0] << m_seg_plan.cel[i][1];
     }
 
     return stream;
@@ -235,12 +245,25 @@ MessageSegmentPlan::MessageSegmentPlan()
 
 }
 
+MessageSegmentPlan::~MessageSegmentPlan()
+{
+   // for (int i = 0; i < m; ++i) {
+   //     delete[] this->cel[i];
+   // }
+   // delete[] cel;
+}
+
 void MessageSegmentPlan::init(uint16_t m)
 {
     cel = new int16_t *[m];
     for (size_t i = 0; i < m; ++i) {
         cel[i] = new int16_t[2];
     }
+}
+
+ChanelData::~ChanelData()
+{
+  //  delete this->segment_plan;
 }
 
 void ChanelData::init(uint8_t chanel_number)
