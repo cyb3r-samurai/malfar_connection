@@ -69,19 +69,25 @@ void ReportStateChecker::create_session_info()
 
         current_chanel->chanel_number = chanel_number;
         current_chanel->segment_count = segments.size();
-        current_chanel->segment_plan = new MessageSegmentPlan[segments.size()];
+        current_chanel->segment_plan = new MessageSegmentPlan *[segments.size()];
     //    for(int i = 0; i < segments.size(); ++i) {
     //        current_chanel->segment_plan[i] = new MessageSegmentPlan;
     //    }
 
         auto segment_it = segments.begin();
         while (segment_it != segments.end()) {
-            auto current_segment = segment_it->get()->toMessage();
-            qDebug() << "current segment debug";
-            for(int i = 0; i < current_segment.m; i++) {
-                qDebug() << i << current_segment.cel[i][0] << current_segment.cel[i][1];
-            }
-            current_chanel->segment_plan[segment_mas_count] = current_segment;
+           // auto current_segment = segment_it->get()->toMessage();
+            // qDebug() << "current segment debug";
+            // for(int i = 0; i < current_segment.m; i++) {
+            //     qDebug() << i << current_segment.cel[i][0] << current_segment.cel[i][1];
+            // }
+            current_chanel->segment_plan[segment_mas_count] = new MessageSegmentPlan;
+
+
+            current_chanel->segment_plan[segment_mas_count] =  segment_it->get()->toMessage();
+            //qDebug()<< current_chanel->segment_plan[segment_mas_count]->m;
+            //qDebug()<< "Report check" << sessionInfoPtr.get()->m_chanel_data[chanel_mas_count].segment_plan[segment_mas_count]->m;
+            //qDebug() << "Report check"<< sessionInfoPtr.get()->m_chanel_data[chanel_mas_count].segment_count;
             ++segment_mas_count;
             ++segment_it;
         }

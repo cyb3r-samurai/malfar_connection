@@ -36,6 +36,7 @@ public:
 
 public slots:
     void onPlanRecieved(std::shared_ptr<Cel>, long long);
+    void onP2SocketStateChanging(bool);
 
 signals:
     void messageHandled(long long, quint8);
@@ -43,6 +44,7 @@ signals:
     void stopSegment(quint8 chanel_number, quint8 real_chanel_number, quint8 sector);
 
 private:
+    bool p2_connected = false;
     PlanStorage * m_plan_storage;
     std::map<int, DataChanel>* m_data_plans;
     std::map<int, SectorPlan>* m_sector_plans;

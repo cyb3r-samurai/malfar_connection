@@ -101,7 +101,7 @@ QByteArray AcState::serializeStruct()
 
     stream << state_ac << state_sch << comm_state << comm_state2 << pc_state << sector_count;
 
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < sector_count; i++) {
         stream << cdo_state[i];
     }
     return data;
@@ -173,7 +173,10 @@ SessionInfo::SessionInfo()
 
 SessionInfo::~SessionInfo()
 {
-   // delete m_chanel_data;
+  //  qDebug() << "SessionInfo destructor called";
+    if(active_data_chanel_count != 0) {
+        delete[] m_chanel_data ;
+    }
 }
 
 void SessionInfo::init(uint8_t n)
@@ -200,7 +203,7 @@ QByteArray SessionInfo::SerializeStruct()
 inline QDataStream &operator<< (QDataStream &stream, ChanelData& ch_data) {
     stream << ch_data.chanel_number << ch_data.segment_count;
     for(int i = 0; i < ch_data.segment_count; i++) {
-        stream << (ch_data.segment_plan[i]);
+        stream << *(ch_data.segment_plan[i]);
     }
 
     return stream;
@@ -247,10 +250,11 @@ MessageSegmentPlan::MessageSegmentPlan()
 
 MessageSegmentPlan::~MessageSegmentPlan()
 {
-   // for (int i = 0; i < m; ++i) {
-   //     delete[] this->cel[i];
-   // }
-   // delete[] cel;
+    //qDebug() << "segmentPlan deleted";
+    for (int i = 0; i < m; ++i) {
+        delete[] this->cel[i];
+    }
+    delete[] cel;
 }
 
 void MessageSegmentPlan::init(uint16_t m)
@@ -263,7 +267,13 @@ void MessageSegmentPlan::init(uint16_t m)
 
 ChanelData::~ChanelData()
 {
-  //  delete this->segment_plan;
+    //qDebug() << "Chanel data Deleted";
+
+    for (int i= 0; i < segment_count; ++i){
+
+        delete  segment_plan[i];
+    }
+    delete[] segment_plan;
 }
 
 void ChanelData::init(uint8_t chanel_number)

@@ -40,9 +40,9 @@ bool SegmentPlan::initCel(std::shared_ptr<Cel> celPtr, uint8_t sectorNumb,uint8_
     }
 
     delta_dt = QDateTime::fromMSecsSinceEpoch(msec_delta);
-    if (msec_delta < 1000) {
-        return false;
-    }
+   // if (msec_delta < 1000) {
+   //     return false;
+   // }
 
     return true;
 }
@@ -67,32 +67,33 @@ int SegmentPlan::size()
     return time_cel->time.size();
 }
 
-MessageSegmentPlan SegmentPlan::toMessage()
+MessageSegmentPlan* SegmentPlan::toMessage()
 {
-    MessageSegmentPlan msg;
-    msg.sector_number = sector_number;
-    msg.pol = pol;
-    msg.ka_number = ka_number;
-    msg.freq = freq;
+    MessageSegmentPlan* msg;
+    msg = new MessageSegmentPlan;
+    msg->sector_number = sector_number;
+    msg->pol = pol;
+    msg->ka_number = ka_number;
+    msg->freq = freq;
     if (time_cel->time.size() > 1) {
-    msg.m = time_cel->time.size()-1;
+        msg->m = time_cel->time.size()-1;
     }
     else
     {
-        msg.m = 1;
+        msg->m = 1;
     }
 
    // quint64  sec = time_cel->time.front().toSecsSinceEpoch();
    // msg.start_time =double(sec) / double (86400) + 25569;
-    msg.start_time = start_time;
+    msg->start_time = start_time;
     quint64  sec2 = time_cel->time.back().toSecsSinceEpoch();
-    msg.end_time = double(sec2) / double (86400) + 25569;
+    msg->end_time = double(sec2) / double (86400) + 25569;
     //msg.end_time = end_time;
-    msg.chanel_number = chanel_number;
+    msg->chanel_number = chanel_number;
 
-    msg.cel = new int16_t *[msg.m];
-    for (int i = 0; i < msg.m; ++i) {
-        msg.cel[i] = new int16_t[2];
+    msg->cel = new int16_t *[msg->m];
+    for (int i = 0; i < msg->m; ++i) {
+        msg->cel[i] = new int16_t[2];
     }
     auto angle_it = time_cel->angle.begin();
     auto az_it = time_cel->az.begin();
@@ -105,8 +106,8 @@ MessageSegmentPlan SegmentPlan::toMessage()
     if(time_cel->time.size() == 1)  {it_end = time_cel->angle.end();}
 
     while(angle_it != it_end) {
-        msg.cel[i][0] = *az_it;
-        msg.cel[i][1] = *angle_it;
+        msg->cel[i][0] = *az_it;
+        msg->cel[i][1] = *angle_it;
         ++i;
         ++az_it;
         ++angle_it;

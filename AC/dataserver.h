@@ -26,6 +26,8 @@ class DataServer : public QObject
 public:
     explicit DataServer(QObject *parent = nullptr);
 
+    P2SocketHandler *p2SocketHandler() const;
+
 signals:
 
 

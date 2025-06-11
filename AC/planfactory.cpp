@@ -80,6 +80,14 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         m_plan_storage->unloock();
         return 255;
     }
+    else {
+        if((sector_number > 1) &&(sector_number < 5)) {
+            qInfo() <<  "Сектор" << sector_number<<"не доступен.";
+            m_plan_storage->unloock();
+            return sector_number;
+        }
+    }
+
     if(!(segment_ptr->initCel(cel_plan, sector_number,cel_plan->chanel_number, 0
                                ,m_sector_vector->at(sector_number-1).az_start,
                                m_sector_vector->at(sector_number-1).az_end))) {
@@ -95,15 +103,32 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
         //валидируется  полученный отрезок плана и добавляется в планы сектора и планы каналов данных.
         if(current_sector_number != sector_number) {
             if(current_sector_number == 0) {
-                //if(m_data_plans->at(cel_plan->chanel_number).is_empty()) {
-                //    m_data_plans->extract(cel_plan->chanel_number);
-                //}
+                if(m_data_plans->find(cel_plan->chanel_number) != m_data_plans->end()){
+                    if(m_data_plans->at(cel_plan->chanel_number).is_empty()) {
+                        m_data_plans->extract(cel_plan->chanel_number);
+                    }
+                }
               //  if(m_sector_plans->at(sector_number).is_empty()){
               //      m_sector_plans->extract(sector_number);
               //  }
                 m_plan_storage->unloock();
                 return 255;
             }
+            else {
+                if((current_sector_number > 1) && (current_sector_number < 5)) {
+                    qInfo() <<  "Сектор" << current_sector_number<<"не доступен.";
+                    if(m_data_plans->find(cel_plan->chanel_number)!= m_data_plans->end()){
+                        if(m_data_plans->at(cel_plan->chanel_number).is_empty()) {
+                            m_data_plans->extract(cel_plan->chanel_number);
+                        }
+                    }
+                    m_plan_storage->unloock();
+                    return current_sector_number
+                                                   ;
+                }
+            }
+
+
             if(segment_ptr->time_cel->time.size() == 1) {
                     QDateTime time = segment_ptr->time_cel->time.front();
                     qint16 az =segment_ptr->time_cel->az.front();
@@ -145,8 +170,10 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 sector_number = current_sector_number;
             }
             else {
-                if(m_data_plans->at(cel_plan->chanel_number).is_empty()){
-                m_data_plans->extract(cel_plan->chanel_number);
+                if(m_data_plans->find(cel_plan->chanel_number) != m_data_plans->end()){
+                    if(m_data_plans->at(cel_plan->chanel_number).is_empty()){
+                        m_data_plans->extract(cel_plan->chanel_number);
+                    }
                 }
                 m_plan_storage->unloock();
                 qDebug() << "unlock";
@@ -218,10 +245,13 @@ int PlanFactory::createPlan(std::shared_ptr<Cel> cel_plan)
                 }
             }
             else {
-                if(m_data_plans->at(cel_plan->chanel_number).size() == 0) {
-                    m_data_plans->extract(cel_plan->chanel_number);
+                if(m_data_plans->find(cel_plan->chanel_number)!= m_data_plans->end()){
+                    if(m_data_plans->at(cel_plan->chanel_number).is_empty()) {
+                        m_data_plans->extract(cel_plan->chanel_number);
+                    }
                 }
                 m_plan_storage->unloock();
+                qDebug() << "unlock";
                 return sector_number;
             }
         }
@@ -245,21 +275,32 @@ PlanFactory::~PlanFactory()
 }
 
 void PlanFactory::onPlanRecieved(std::shared_ptr<Cel> cel, long long packet_id)
-{
-    int ret = createPlan(cel);
-    if(ret == 0) {
-        qInfo() << "Планы созданы";
-        emit messageHandled(packet_id, 0);
+{ 	if (!p2_connected){
+        qDebug() << "Соеденение с П2 не установленно";
+        emit messageHandled(packet_id, 255);
     }
     else {
-        if(ret == 255) {
-            qInfo() << "Неверные входны данные";
+        int ret = createPlan(cel);
+        if(ret == 0) {
+            qInfo() << "Планы созданы";
+            emit messageHandled(packet_id, 0);
         }
         else {
-            qInfo() << "Невозможно создать план слеженеия. Планы пересекаются в сеторе" <<  ret;
+            if(ret == 255) {
+                qInfo() << "Неверные входны данные";
+            }
+            else {
+                qInfo() << "Невозможно создать план слеженеия. Планы пересекаются в сеторе" <<  ret;
+            }
+            emit messageHandled(packet_id, ret);
         }
-        emit messageHandled(packet_id, ret);
     }
+}
+
+void PlanFactory::onP2SocketStateChanging(bool p2_con)
+{
+    qDebug() << "State change " << p2_con;
+    p2_connected = p2_con;
 }
 
 uint8_t PlanFactory::calculate_sector(int16_t* vec, const std::vector<Sector> &sector_vector)

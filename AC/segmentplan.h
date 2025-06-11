@@ -56,7 +56,7 @@ public:
                  int16_t sector_start,int16_t sector_end);
     void appendCel(std::shared_ptr<Cel> cel);
     int size();
-    MessageSegmentPlan toMessage();
+    MessageSegmentPlan* toMessage();
 };
 
 #endif // SEGMENTPLAN_H

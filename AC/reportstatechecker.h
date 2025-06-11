@@ -35,6 +35,7 @@ signals:
 private:
 //    QTimer* m_timer;
     PlanStorage *m_plan_storage;
+    //std::shared_ptr<SessionInfo> sessionInfoPtr;
 
     std::map<int, DataChanel> m_data_chanel_plans;
 

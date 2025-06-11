@@ -145,6 +145,11 @@ bool DataServer::checkHeader(const packet_header *packet_header)
     return true;
 }
 
+P2SocketHandler *DataServer::p2SocketHandler() const
+{
+    return m_p2SocketHandler;
+}
+
 bool DataServer::setAffinity(int cpuCore)
 {
     cpu_set_t cpuset;

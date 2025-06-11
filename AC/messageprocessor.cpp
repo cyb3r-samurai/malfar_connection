@@ -63,13 +63,13 @@ void MessageProcessor::onSessionStateCreated(std::shared_ptr<SessionInfo> s_i)
         for(int i =0; i < s_i->active_data_chanel_count; ++i){
             header.n += s_i->m_chanel_data[i].segment_count * 27;
             for(int j = 0; j < s_i->m_chanel_data[i].segment_count; ++j) {
-                header.n += s_i->m_chanel_data[i].segment_plan[j].m * 4;
+                header.n += (s_i->m_chanel_data[i].segment_plan[j]->m) * 4;
             }
         }
         header.time = getTime();
         QByteArray bytes = s_i->SerializeStruct();
-        qDebug() << bytes.size();
-        qDebug() << header.n;
+      //  qDebug() << bytes.size();
+      //  qDebug() << header.n;
 
         Q_ASSERT(bytes.size() == header.n);
         emit message_created(header, bytes);
@@ -82,12 +82,12 @@ void MessageProcessor::onAcStateCreated(std::shared_ptr<AcState> a_s)
     if(m_connected) {
         Header header;
         header.msg_type = 0x83;
-        header.n = 7168 + 640 + 60 + 6;
+        header.n = 1792 + 155 + 20 + 6;
         header.time = getTime();
         AcState acState;
         QByteArray data = acState.serializeStruct();
-        qDebug() <<  data.size();
-        qDebug() << header.n;
+        //qDebug() <<  data.size();
+        //qDebug() << header.n;
 
         Q_ASSERT(data.size() == header.n);
         emit message_created(header , data);

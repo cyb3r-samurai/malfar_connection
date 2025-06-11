@@ -1,6 +1,7 @@
 #include "TcpServer.h"
 #include <QTimer>
 #include <qnativeinterface.h>
+#include <dataserver.h>
 
 #define HEADER_SIZE 16
 
@@ -46,7 +47,9 @@ TcpServer::TcpServer(QObject* parent) :
     connect(m_ac->plan_factory(), &PlanFactory::stopSegment, m_data_server, &DataServer::onStopSegment);
     connect(m_ac, &AC::stopSending, m_data_server, &DataServer::onTotalStop);
     connect(m_ac, &AC::finish_segment, m_data_server, &DataServer::onFinishSegment);
-
+    connect(thread_data_server,&QThread::started, this ,[this](){
+        connect(m_data_server->p2SocketHandler(), &P2SocketHandler::p2StateChnge, m_ac->plan_factory(), &PlanFactory::onP2SocketStateChanging);
+    });
     thread_ac->start(QThread::NormalPriority);
     thread_message_processor->start(QThread::NormalPriority);
     thread_data_server->start(QThread::TimeCriticalPriority);
@@ -152,7 +155,7 @@ Header TcpServer::DeserializeHeader(QByteArray &data)
 void TcpServer::loadSettings()
 {
     QSettings settings;
-    qDebug()<<"Путь к конфигурационному файлу:"<< settings.fileName();
+    //qDebug()<<"Путь к конфигурационному файлу:"<< settings.fileName();
     m_preferences.port = settings.value("port", 5555).toInt();
 }
 

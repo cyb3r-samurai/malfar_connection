@@ -24,7 +24,7 @@ public slots:
     void stop();
 
 signals:
-
+    void p2StateChnge(bool);
 private:
     void loadSettings();
     QTcpSocket* m_socket;
@@ -32,7 +32,7 @@ private:
     int m_port;
     long long count;
     QTimer* reconnectTimer;
-    bool connected;
+    bool connected = false;
 
     double getTime() const;
 };

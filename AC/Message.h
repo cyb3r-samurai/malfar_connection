@@ -120,7 +120,7 @@ public:
     quint8 comm_state2 = 0;
     quint8 pc_state = 0;
 
-    quint8 sector_count = 4;
+    quint8 sector_count = 1;
 
     CDO_state* cdo_state;
 
@@ -181,7 +181,7 @@ struct ChanelData {
     void init(uint8_t chanel_number);
     uint8_t chanel_number;
     uint8_t segment_count;
-    MessageSegmentPlan* segment_plan;
+    MessageSegmentPlan** segment_plan;
 
     friend QDataStream &operator << (QDataStream &stream, ChanelData& ch_data);
 };
